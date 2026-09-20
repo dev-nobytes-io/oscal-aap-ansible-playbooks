@@ -46,6 +46,39 @@ licence and are NOT reproduced in this repository.
   https://www.pmc.gov.au/government/commonwealth-coat-arms
 
 ================================================================================
+THIRD-PARTY DATA: operating-system end-of-life dates
+================================================================================
+
+  Title   : endoflife.date product lifecycle data
+  Author  : endoflife.date contributors
+  Source  : https://endoflife.date
+  Licence : MIT
+
+Vendored under `data/eol/`, normalised and checksummed.
+
+IMPORTANT: this data is COMMUNITY-MAINTAINED and is NOT vendor-authoritative.
+For a compliance assertion about vendor support, the vendor's own lifecycle
+documentation is the authority. Checks consuming this data therefore report
+`proxy` confidence and never `direct`, and a deployment may override entries
+with vendor-confirmed dates.
+
+================================================================================
+THIRD-PARTY CONTENT: ansible-lockdown (reference only)
+================================================================================
+
+  Author  : MindPoint Group - A Tyto Athene Company / Ansible Lockdown
+  Source  : https://github.com/ansible-lockdown
+  Licence : MIT
+
+No ansible-lockdown code is vendored or executed by this project. Their STIG
+and CIS roles are remediation content and would modify a host, which is
+incompatible with this project's read-only assessment guarantee; see
+docs/adr/0012-mine-ansible-lockdown-tags-do-not-execute-its-roles.md.
+
+Their task TAGS (STIG rule, Vuln ID, CCI and NIST 800-53 identifiers) are used
+as one input when authoring control crosswalks, attributed under MIT.
+
+================================================================================
 THIRD-PARTY DATA: NIST OSCAL schemas
 ================================================================================
 

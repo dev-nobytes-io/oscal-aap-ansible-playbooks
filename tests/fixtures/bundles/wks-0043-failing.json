@@ -109,6 +109,18 @@
       "collected": "2026-09-20T02:14:06+10:00",
       "source": "registry:HKLM\\SOFTWARE\\Policies\\Microsoft\\Internet Explorer",
       "value": {}
+    },
+    "os.release": {
+      "collected": "2026-09-20T02:14:07+10:00",
+      "source": "registry:HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+      "value": {
+        "product_name": "Windows 10 Enterprise",
+        "display_version": "22H2",
+        "current_build": "19045",
+        "edition_id": "Enterprise",
+        "install_type": "Client",
+        "eol_product": "windows"
+      }
     }
   }
 }

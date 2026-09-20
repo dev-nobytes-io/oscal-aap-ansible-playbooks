@@ -1,0 +1,12 @@
+---
+# Maps an /etc/os-release ID to the end-of-life dataset product key.
+# Anything not listed here is reported as-is and becomes `unassessed`, never a
+# failure: not recognising a distribution is not evidence it is unsupported.
+collect_linux_base_eol_products:
+  rhel: rhel
+  redhat: rhel
+  centos: rhel
+  rocky: rocky
+  almalinux: rhel
+  ubuntu: ubuntu
+  debian: debian

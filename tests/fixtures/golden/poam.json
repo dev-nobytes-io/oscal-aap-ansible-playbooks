@@ -22,7 +22,7 @@
       {
         "uuid": "b2d64925-4439-5a14-afd3-147fd06a81aa",
         "title": "ism-1488 not satisfied",
-        "description": "1 of 2 assessed subjects do not satisfy this control.",
+        "description": "1 of 3 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -51,7 +51,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "2",
+            "value": "3",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -69,7 +69,7 @@
       {
         "uuid": "dc2f609f-bc9e-5be6-9485-6972e02cb574",
         "title": "ism-1489 not satisfied",
-        "description": "1 of 2 assessed subjects do not satisfy this control.",
+        "description": "1 of 3 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -98,7 +98,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "2",
+            "value": "3",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -116,7 +116,7 @@
       {
         "uuid": "e321dabe-19f9-548a-b386-fa1984801a16",
         "title": "ism-1654 not satisfied",
-        "description": "1 of 2 assessed subjects do not satisfy this control.",
+        "description": "1 of 3 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -145,7 +145,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "2",
+            "value": "3",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -163,7 +163,7 @@
       {
         "uuid": "530728ff-a0f0-55f5-bd0d-8155f81146d7",
         "title": "ism-1671 not satisfied",
-        "description": "1 of 2 assessed subjects do not satisfy this control.",
+        "description": "1 of 3 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -192,7 +192,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "2",
+            "value": "3",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {

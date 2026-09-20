@@ -375,6 +375,120 @@
         ]
       },
       {
+        "uuid": "7d09cefe-891f-5527-a233-30e2ccc9b098",
+        "type": "software",
+        "title": "Operating System",
+        "description": "Assessment coverage provided by nobytes.compliance collectors and nobytes_cca evaluators for operating-system. This document asserts what is ASSESSED, not what is implemented.",
+        "props": [
+          {
+            "name": "platform-family",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "linux"
+          },
+          {
+            "name": "component-key",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "operating-system"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "d111366b-fd23-5a40-b03b-06cef3f9bad5",
+            "source": "../upstream/ism/v2026.09.4/ISM_catalog.json",
+            "description": "Controls this component can produce evidence for. A control absent from this list is not assessed on this platform.",
+            "props": [
+              {
+                "name": "implementation-kind",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                "value": "assessment"
+              }
+            ],
+            "implemented-requirements": [
+              {
+                "uuid": "310d4f1a-b4ed-5aaa-bde2-4482519b9a23",
+                "control-id": "ism-1501",
+                "description": "Compares the observed OS release against a vendored end-of-life dataset. Two limits matter. The dataset (endoflife.date) is COMMUNITY-MAINTAINED, not vendor-authoritative, so a date may lag or differ from the vendor's own lifecycle page. And the control says \"are replaced\" -- this observes whether a system IS supported, not whether an unsupported one is being replaced, which is a project state held outside the host.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "os-vendor-supported"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_linux_base"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.common.os_support:vendor_supported"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "68bbe0ac3f380ef469dbf5761080c2f154f8772ffa4ac1c5a94ec5c437c9721d"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1501_smt",
+                    "uuid": "30208070-68f2-527f-841f-ae1fe42533ad",
+                    "description": "Operating systems that are no longer supported by vendors are replaced."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Compares the observed OS release against a vendored end-of-life dataset. Two limits matter. The dataset (endoflife.date) is COMMUNITY-MAINTAINED, not vendor-authoritative, so a date may lag or differ from the vendor's own lifecycle page. And the control says \"are replaced\" -- this observes whether a system IS supported, not whether an unsupported one is being replaced, which is a project state held outside the host."
+              }
+            ]
+          }
+        ]
+      },
+      {
         "uuid": "6f692ed9-e75a-5ec9-a014-f37f8288556a",
         "type": "software",
         "title": "Windows Operating System",

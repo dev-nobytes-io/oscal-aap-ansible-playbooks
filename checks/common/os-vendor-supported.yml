@@ -1,0 +1,53 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: os-vendor-supported
+version: 1.0.0
+title: The operating system is still supported by its vendor
+platform_family: linux
+component: operating-system
+
+controls:
+  - id: ism-1501
+    statement_id: ism-1501_smt
+    control_revision: "1"
+    statement_sha256: 68bbe0ac3f380ef469dbf5761080c2f154f8772ffa4ac1c5a94ec5c437c9721d
+    coverage: partial
+    rationale: >-
+      Compares the observed OS release against a vendored end-of-life dataset.
+      Two limits matter. The dataset (endoflife.date) is COMMUNITY-MAINTAINED,
+      not vendor-authoritative, so a date may lag or differ from the vendor's
+      own lifecycle page. And the control says "are replaced" -- this observes
+      whether a system IS supported, not whether an unsupported one is being
+      replaced, which is a project state held outside the host.
+
+method: TEST
+# Community-sourced dates cannot support a `direct` claim about vendor support.
+confidence: proxy
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_linux_base
+  facts:
+    required:
+      - os.release
+
+evaluator: nobytes_cca.checks.common.os_support:vendor_supported
+
+parameters:
+  # Under paid extended support (Microsoft ESU, RHEL ELS, Ubuntu Pro) the vendor
+  # IS still issuing patches, so the control's literal wording is met. That is a
+  # defensible but lawyerly reading, and some organisations treat ESU as a
+  # finding in its own right. The interpretation is therefore a parameter, not a
+  # silent decision -- and the ESU end date appears in the evidence either way,
+  # so nobody can read an ESU pass as a healthy system.
+  extended_support_counts_as_supported: true
+
+references:
+  - source: endoflife.date
+    url: https://endoflife.date
+    note: >-
+      Community-maintained. Deployments may override entries with
+      vendor-confirmed dates; overrides are recorded in the evidence.

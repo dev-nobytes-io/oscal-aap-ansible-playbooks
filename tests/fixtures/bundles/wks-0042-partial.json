@@ -105,6 +105,18 @@
           "state": "Disabled"
         }
       ]
+    },
+    "os.release": {
+      "collected": "2026-09-20T02:14:07+10:00",
+      "source": "registry:HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+      "value": {
+        "product_name": "Windows 11 Enterprise",
+        "display_version": "24H2",
+        "current_build": "26100",
+        "edition_id": "Enterprise",
+        "install_type": "Client",
+        "eol_product": "windows"
+      }
     }
   }
 }

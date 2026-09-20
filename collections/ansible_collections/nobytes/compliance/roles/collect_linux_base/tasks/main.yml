@@ -1,0 +1,41 @@
+---
+# READ-ONLY. `slurp` reads a file and cannot modify one, which keeps this role
+# free of any mutating module surface -- and it works on legacy targets where
+# ee-legacy (ansible-core 2.16) is the only image that can reach them at all.
+
+- name: Read /etc/os-release
+  ansible.builtin.slurp:
+    src: /etc/os-release
+  register: collect_linux_base_os_release
+  failed_when: false
+
+- name: Parse /etc/os-release into key/value pairs
+  ansible.builtin.set_fact:
+    collect_linux_base_parsed: >-
+      {{ dict(
+           (collect_linux_base_os_release.content | b64decode).splitlines()
+           | select('search', '=')
+           | map('regex_replace', '^([A-Za-z_]+)=[\"]?([^\"]*)[\"]?$', '\1|\2')
+           | map('split', '|')
+         ) }}
+  when: collect_linux_base_os_release.content is defined
+
+- name: Record baseline Linux facts into this host's bundle
+  ansible.builtin.include_role:
+    name: nobytes.compliance.fact_bundle
+    tasks_from: record
+  vars:
+    _cca_distro_id: "{{ (collect_linux_base_parsed | default({})).get('ID', '') | lower }}"
+    _cca_version_id: "{{ (collect_linux_base_parsed | default({})).get('VERSION_ID', '') }}"
+    fact_records:
+      os.release:
+        source: /etc/os-release
+        partial: "{{ collect_linux_base_os_release.content is not defined }}"
+        value:
+          id: "{{ _cca_distro_id }}"
+          version_id: "{{ _cca_version_id }}"
+          pretty_name: "{{ (collect_linux_base_parsed | default({})).get('PRETTY_NAME', '') }}"
+          # Empty when the distribution is not in the map. The evaluator then
+          # reports unassessed rather than inventing a support status.
+          eol_product: "{{ collect_linux_base_eol_products.get(_cca_distro_id, '') }}"
+          eol_cycle: "{{ _cca_version_id }}"

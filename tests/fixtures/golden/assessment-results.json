@@ -21,7 +21,7 @@
       {
         "uuid": "c459b237-d9c4-5b3c-9fe9-92fd446c9185",
         "title": "E8_ML1 assessment run golden:001",
-        "description": "Automated assessment of the E8_ML1 baseline against SYSTEM-GOVDESK. 5 of 46 baseline controls were determined; 41 were not and are reported as unassessed rather than compliant.",
+        "description": "Automated assessment of the E8_ML1 baseline against SYSTEM-GOVDESK. 6 of 46 baseline controls were determined; 40 were not and are reported as unassessed rather than compliant.",
         "start": "2026-09-20T02:14:07+10:00",
         "end": "2026-09-20T03:05:12+10:00",
         "props": [
@@ -52,12 +52,12 @@
           },
           {
             "name": "controls-determined",
-            "value": "5",
+            "value": "6",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
             "name": "controls-unassessed",
-            "value": "41",
+            "value": "40",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -67,12 +67,27 @@
           },
           {
             "name": "subjects-assessed",
-            "value": "2",
+            "value": "3",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           }
         ],
         "local-definitions": {
           "inventory-items": [
+            {
+              "uuid": "2571d73c-d2f5-5e1d-ae6c-23dfe2552d21",
+              "description": "RHEL 7 application server",
+              "props": [
+                {
+                  "name": "asset-id",
+                  "value": "corp.example.gov.au/SRV-RHEL7-01"
+                },
+                {
+                  "name": "ee-tier",
+                  "value": "legacy",
+                  "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                }
+              ]
+            },
             {
               "uuid": "892800ca-2802-5eaf-acd4-20b993b52a6c",
               "description": "Windows 11 workstation WKS-0042",
@@ -392,6 +407,464 @@
           ]
         },
         "observations": [
+          {
+            "uuid": "2f0b65c4-e260-5905-9ba4-b63588075853",
+            "title": "ism-1501 / os-vendor-supported \u2014 corp.example.gov.au/SRV-RHEL7-01",
+            "description": "rhel 7 is PAST mainstream support and relies on paid extended support: mainstream support ended 2024-06-30; extended support runs to 2029-05-31. The vendor is still issuing patches, so the control's wording is met, but this is a degraded state with a hard end date.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "os-vendor-supported",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2571d73c-d2f5-5e1d-ae6c-23dfe2552d21",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/SRV-RHEL7-01"
+              }
+            ],
+            "collected": "2026-09-20T02:20:00+10:00",
+            "expires": "2026-09-27T02:20:00+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "assessed_as_of,cycle,dataset,eol,extended_support,in_extended_support,observed,product,supported",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "8449989c-f4e3-564b-a888-3e5f881699d2",
+            "title": "ism-1654 / win-ie11-disabled \u2014 corp.example.gov.au/SRV-RHEL7-01",
+            "description": "missing required fact(s): windows.os.optional_features",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-ie11-disabled",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2571d73c-d2f5-5e1d-ae6c-23dfe2552d21",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/SRV-RHEL7-01"
+              }
+            ],
+            "collected": "2026-09-20T02:20:00+10:00",
+            "expires": "2026-09-27T02:20:00+10:00"
+          },
+          {
+            "uuid": "a5cee166-1e1c-540b-b94a-4a78a4cfbdf3",
+            "title": "ism-1672 / win-office-macro-av-scanning \u2014 corp.example.gov.au/SRV-RHEL7-01",
+            "description": "missing required fact(s): windows.office.install, windows.office.macro_policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macro-av-scanning",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2571d73c-d2f5-5e1d-ae6c-23dfe2552d21",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/SRV-RHEL7-01"
+              }
+            ],
+            "collected": "2026-09-20T02:20:00+10:00",
+            "expires": "2026-09-27T02:20:00+10:00"
+          },
+          {
+            "uuid": "2f71865b-ab17-547c-9497-2f1bf8ba7849",
+            "title": "ism-1488 / win-office-macro-internet-blocked \u2014 corp.example.gov.au/SRV-RHEL7-01",
+            "description": "missing required fact(s): windows.office.install, windows.office.macro_policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macro-internet-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2571d73c-d2f5-5e1d-ae6c-23dfe2552d21",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/SRV-RHEL7-01"
+              }
+            ],
+            "collected": "2026-09-20T02:20:00+10:00",
+            "expires": "2026-09-27T02:20:00+10:00"
+          },
+          {
+            "uuid": "9cb72588-03e2-5fd8-b933-acbfdf4a966b",
+            "title": "ism-1489 / win-office-macro-settings-locked \u2014 corp.example.gov.au/SRV-RHEL7-01",
+            "description": "missing required fact(s): windows.office.install, windows.office.macro_policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macro-settings-locked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2571d73c-d2f5-5e1d-ae6c-23dfe2552d21",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/SRV-RHEL7-01"
+              }
+            ],
+            "collected": "2026-09-20T02:20:00+10:00",
+            "expires": "2026-09-27T02:20:00+10:00"
+          },
+          {
+            "uuid": "e84d7321-059b-55df-a69c-e8f4b2127d80",
+            "title": "ism-1671 / win-office-macros-disabled \u2014 corp.example.gov.au/SRV-RHEL7-01",
+            "description": "missing required fact(s): windows.office.install, windows.office.macro_policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macros-disabled",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2571d73c-d2f5-5e1d-ae6c-23dfe2552d21",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/SRV-RHEL7-01"
+              }
+            ],
+            "collected": "2026-09-20T02:20:00+10:00",
+            "expires": "2026-09-27T02:20:00+10:00"
+          },
+          {
+            "uuid": "47f54ba1-2568-57b3-a18d-cc4bf3a683ee",
+            "title": "ism-1501 / os-vendor-supported \u2014 corp.example.gov.au/WKS-0042",
+            "description": "windows 11-24h2-e is within vendor support as of 2026-09-20 (vendor support runs to 2027-10-12).",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "os-vendor-supported",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "892800ca-2802-5eaf-acd4-20b993b52a6c",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0042"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "assessed_as_of,cycle,dataset,eol,extended_support,in_extended_support,observed,product,supported",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
           {
             "uuid": "c2c9ec21-ff24-5a0c-85f2-2b050b67476d",
             "title": "ism-1654 / win-ie11-disabled \u2014 corp.example.gov.au/WKS-0042",
@@ -756,6 +1229,80 @@
                   {
                     "name": "fact-keys",
                     "value": "apps_without_evidence,not_disabled,note,required_vbawarnings",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "4491687a-9e4e-595a-95cb-2b22f0d28f11",
+            "title": "ism-1501 / os-vendor-supported \u2014 corp.example.gov.au/WKS-0043",
+            "description": "windows 10-22h2 is PAST mainstream support and relies on paid extended support: mainstream support ended 2025-10-14; extended support runs to 2028-10-10. The vendor is still issuing patches, so the control's wording is met, but this is a degraded state with a hard end date.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "os-vendor-supported",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "0d09a1f7-0caf-58dc-8c96-a515483154e2",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0043"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "assessed_as_of,cycle,dataset,eol,extended_support,in_extended_support,observed,product,supported",
                     "ns": "https://nobytes.io/ns/oscal/cca/1.0"
                   }
                 ]
@@ -1137,7 +1684,7 @@
           {
             "uuid": "27bfe796-81f7-5075-9771-d681abaa54c2",
             "title": "ism-1488 not-satisfied",
-            "description": "1 of 2 assessed subjects do not satisfy this control.",
+            "description": "1 of 3 assessed subjects do not satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -1161,7 +1708,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "2",
+                "value": "3",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -1179,11 +1726,11 @@
               "type": "statement-id",
               "target-id": "ism-1488_smt",
               "title": "Microsoft Office macros in files originating from the internet are blocked.",
-              "description": "1 of 2 assessed subjects do not satisfy this control.",
+              "description": "1 of 3 assessed subjects do not satisfy this control.",
               "status": {
                 "state": "not-satisfied",
                 "reason": "fail",
-                "remarks": "Determined from 1 subject observation(s) at `proxy` confidence. Coverage is incomplete: 48 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 1 subject observation(s) at `proxy` confidence. Coverage is incomplete: 47 in-scope subject(s) were not assessed and are not represented in this determination."
               }
             },
             "related-observations": [
@@ -1195,7 +1742,7 @@
           {
             "uuid": "15be50a6-2457-5c78-809a-576eb0a0b41d",
             "title": "ism-1489 not-satisfied",
-            "description": "1 of 2 assessed subjects do not satisfy this control.",
+            "description": "1 of 3 assessed subjects do not satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -1219,7 +1766,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "2",
+                "value": "3",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -1237,11 +1784,11 @@
               "type": "statement-id",
               "target-id": "ism-1489_smt",
               "title": "Microsoft Office macro security settings cannot be changed by human users.",
-              "description": "1 of 2 assessed subjects do not satisfy this control.",
+              "description": "1 of 3 assessed subjects do not satisfy this control.",
               "status": {
                 "state": "not-satisfied",
                 "reason": "fail",
-                "remarks": "Determined from 1 subject observation(s) at `proxy` confidence. Coverage is incomplete: 48 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 1 subject observation(s) at `proxy` confidence. Coverage is incomplete: 47 in-scope subject(s) were not assessed and are not represented in this determination."
               }
             },
             "related-observations": [
@@ -1251,128 +1798,9 @@
             ]
           },
           {
-            "uuid": "7be794e8-1339-52a7-8345-95f289d006b1",
-            "title": "ism-1654 not-satisfied",
-            "description": "1 of 2 assessed subjects do not satisfy this control.",
-            "props": [
-              {
-                "name": "assessment-status",
-                "value": "not-satisfied",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "confidence",
-                "value": "direct",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "aggregation-key",
-                "value": "SYSTEM-GOVDESK/E8_ML1",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "population-total",
-                "value": "50",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "population-assessed",
-                "value": "2",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "population-failing",
-                "value": "1",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "population-na",
-                "value": "0",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              }
-            ],
-            "target": {
-              "type": "statement-id",
-              "target-id": "ism-1654_smt",
-              "title": "Internet Explorer 11 is disabled or removed.",
-              "description": "1 of 2 assessed subjects do not satisfy this control.",
-              "status": {
-                "state": "not-satisfied",
-                "reason": "fail",
-                "remarks": "Determined from 2 subject observation(s) at `direct` confidence. Coverage is incomplete: 48 in-scope subject(s) were not assessed and are not represented in this determination."
-              }
-            },
-            "related-observations": [
-              {
-                "observation-uuid": "c2c9ec21-ff24-5a0c-85f2-2b050b67476d"
-              },
-              {
-                "observation-uuid": "efaffc23-b074-5460-a888-b7d54af26f47"
-              }
-            ]
-          },
-          {
-            "uuid": "9d2db1be-a953-51c7-b905-5ef82c43c4a6",
-            "title": "ism-1671 not-satisfied",
-            "description": "1 of 2 assessed subjects do not satisfy this control.",
-            "props": [
-              {
-                "name": "assessment-status",
-                "value": "not-satisfied",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "confidence",
-                "value": "partial",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "aggregation-key",
-                "value": "SYSTEM-GOVDESK/E8_ML1",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "population-total",
-                "value": "50",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "population-assessed",
-                "value": "2",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "population-failing",
-                "value": "1",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              },
-              {
-                "name": "population-na",
-                "value": "0",
-                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-              }
-            ],
-            "target": {
-              "type": "statement-id",
-              "target-id": "ism-1671_smt",
-              "title": "Microsoft Office macros are disabled for human users that do not have a demonstrated business requirement.",
-              "description": "1 of 2 assessed subjects do not satisfy this control.",
-              "status": {
-                "state": "not-satisfied",
-                "reason": "fail",
-                "remarks": "Determined from 1 subject observation(s) at `partial` confidence. Coverage is incomplete: 48 in-scope subject(s) were not assessed and are not represented in this determination."
-              }
-            },
-            "related-observations": [
-              {
-                "observation-uuid": "7f42346a-fd59-5c2b-9204-83d69c17dc31"
-              }
-            ]
-          },
-          {
-            "uuid": "5fb7dea2-d8db-578d-83e5-af0ea26f5241",
-            "title": "ism-1672 satisfied",
-            "description": "All 2 assessed subjects satisfy this control.",
+            "uuid": "4130557c-7479-54db-9282-89df0243c9f7",
+            "title": "ism-1501 satisfied",
+            "description": "All 3 assessed subjects satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -1396,7 +1824,190 @@
               },
               {
                 "name": "population-assessed",
-                "value": "2",
+                "value": "3",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1501_smt",
+              "title": "Operating systems that are no longer supported by vendors are replaced.",
+              "description": "All 3 assessed subjects satisfy this control.",
+              "status": {
+                "state": "satisfied",
+                "reason": "pass",
+                "remarks": "Determined from 3 subject observation(s) at `proxy` confidence. Coverage is incomplete: 47 in-scope subject(s) were not assessed and are not represented in this determination."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "2f0b65c4-e260-5905-9ba4-b63588075853"
+              },
+              {
+                "observation-uuid": "47f54ba1-2568-57b3-a18d-cc4bf3a683ee"
+              },
+              {
+                "observation-uuid": "4491687a-9e4e-595a-95cb-2b22f0d28f11"
+              }
+            ]
+          },
+          {
+            "uuid": "7be794e8-1339-52a7-8345-95f289d006b1",
+            "title": "ism-1654 not-satisfied",
+            "description": "1 of 3 assessed subjects do not satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "direct",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "50",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "3",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1654_smt",
+              "title": "Internet Explorer 11 is disabled or removed.",
+              "description": "1 of 3 assessed subjects do not satisfy this control.",
+              "status": {
+                "state": "not-satisfied",
+                "reason": "fail",
+                "remarks": "Determined from 2 subject observation(s) at `direct` confidence. Coverage is incomplete: 47 in-scope subject(s) were not assessed and are not represented in this determination."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "c2c9ec21-ff24-5a0c-85f2-2b050b67476d"
+              },
+              {
+                "observation-uuid": "efaffc23-b074-5460-a888-b7d54af26f47"
+              }
+            ]
+          },
+          {
+            "uuid": "9d2db1be-a953-51c7-b905-5ef82c43c4a6",
+            "title": "ism-1671 not-satisfied",
+            "description": "1 of 3 assessed subjects do not satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "partial",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "50",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "3",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1671_smt",
+              "title": "Microsoft Office macros are disabled for human users that do not have a demonstrated business requirement.",
+              "description": "1 of 3 assessed subjects do not satisfy this control.",
+              "status": {
+                "state": "not-satisfied",
+                "reason": "fail",
+                "remarks": "Determined from 1 subject observation(s) at `partial` confidence. Coverage is incomplete: 47 in-scope subject(s) were not assessed and are not represented in this determination."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "7f42346a-fd59-5c2b-9204-83d69c17dc31"
+              }
+            ]
+          },
+          {
+            "uuid": "5fb7dea2-d8db-578d-83e5-af0ea26f5241",
+            "title": "ism-1672 satisfied",
+            "description": "All 3 assessed subjects satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "50",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "3",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -1414,11 +2025,11 @@
               "type": "statement-id",
               "target-id": "ism-1672_smt",
               "title": "Microsoft Office macro antivirus scanning is enabled.",
-              "description": "All 2 assessed subjects satisfy this control.",
+              "description": "All 3 assessed subjects satisfy this control.",
               "status": {
                 "state": "satisfied",
                 "reason": "pass",
-                "remarks": "Determined from 2 subject observation(s) at `proxy` confidence. Coverage is incomplete: 48 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 2 subject observation(s) at `proxy` confidence. Coverage is incomplete: 47 in-scope subject(s) were not assessed and are not represented in this determination."
               }
             },
             "related-observations": [
