@@ -1,0 +1,39 @@
+# Python tooling configuration. This project ships no installable Python
+# package yet; pyproject.toml exists to configure ruff in one place.
+
+[tool.ruff]
+target-version = "py39"      # the evaluator must run inside ee-legacy; see ADR 0007
+line-length = 100
+src = ["tools", "tests"]
+extend-exclude = [".venv", ".ansible", "oscal/upstream", "oscal/schemas"]
+
+[tool.ruff.lint]
+# Deliberately broader than the default. This tool holds estate-wide
+# credentials and writes compliance evidence, so the bandit-derived `S` rules
+# and the datetime rules (`DTZ` -- naive timestamps would corrupt evidence
+# expiry) earn their place.
+select = [
+    "E", "W",    # pycodestyle
+    "F",         # pyflakes
+    "I",         # import sorting
+    "UP",        # pyupgrade
+    "B",         # bugbear
+    "S",         # flake8-bandit
+    "DTZ",       # naive datetime use
+    "PTH",       # prefer pathlib
+    "RET", "SIM", "C4", "ISC", "RUF",
+]
+ignore = [
+    "S101",      # assert: fine in tests, and we gate on that below
+    "E501",      # line length is handled by the formatter, not the linter
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests legitimately assert, use fixtures, and poke at internals.
+"tests/**" = ["S101", "S105", "S106"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ism_release", "oscal_validate"]
+
+[tool.ruff.format]
+quote-style = "double"

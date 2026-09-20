@@ -134,6 +134,12 @@ make lint         # yamllint + ansible-lint (production profile) + ruff
 make help         # everything else
 ```
 
+```bash
+make fetch        # vendor the pinned ISM OSCAL release + NIST schemas (needs network)
+make validate     # verify checksums, validate against pinned schemas (fully offline)
+make test         # canary tests over the vendored catalog
+```
+
 Targets for work that has not landed yet print an explicit `SKIP` naming the
 pull request that delivers them. They do not report success for work not done —
 that failure mode is the whole reason this project exists.
@@ -152,9 +158,9 @@ content, gradually.
 | PR | Chunk | State |
 |---|---|---|
 | 01 | Repository skeleton, licensing, lint + CI | merged |
-| 02 | Governance, assurance principles, regulatory scope, ADRs | **this PR** |
-| 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | next |
-| 04 | Check contract, evaluator, assessment-results + POA&M emitters | planned |
+| 02 | Governance, assurance principles, regulatory scope, ADRs | open |
+| 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | **this PR** |
+| 04 | Check contract, evaluator, assessment-results + POA&M emitters | next |
 | 05 | Component-definition model + Windows collectors | planned |
 | 06 | Linux collectors + end-of-life dataset | planned |
 | 07 | Dual execution environments + AAP/AWX configuration-as-code | planned |

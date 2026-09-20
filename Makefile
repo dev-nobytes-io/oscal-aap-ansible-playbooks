@@ -9,9 +9,13 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 VENV        ?= .venv
-PY          ?= $(VENV)/bin/python
+# BIN is a command PREFIX, not a directory. It resolves to the virtualenv when
+# one exists (local development) and to empty when it does not (CI, where pip
+# installs onto PATH). This keeps `make lint` identical in both places -- a
+# green laptop and a green pull request should mean the same thing.
+BIN         ?= $(if $(wildcard $(VENV)/bin/python),$(VENV)/bin/,)
+PY          ?= $(BIN)python
 PIP         ?= $(VENV)/bin/pip
-BIN         ?= $(VENV)/bin
 COLLECTIONS ?= collections
 OUT         ?= out
 
@@ -28,28 +32,29 @@ bootstrap: ## Create the virtualenv and install pinned Python tooling
 	python3 -m venv $(VENV)
 	$(PIP) install --quiet --upgrade pip
 	$(PIP) install --quiet -r requirements.txt
-	@echo "bootstrap OK -> $$($(PY) -V), $$($(BIN)/ansible --version | head -1)"
+	@echo "bootstrap OK -> $$($(VENV)/bin/python -V), $$($(VENV)/bin/ansible --version | head -1)"
 
 deps: ## Install Ansible collection dependencies into collections/
-	$(BIN)/ansible-galaxy collection install -r requirements.yml -p $(COLLECTIONS) --force
+	$(BIN)ansible-galaxy collection install -r requirements.yml -p $(COLLECTIONS) --force
 
 lint: ## Lint YAML, Ansible (production profile) and Python
-	$(BIN)/yamllint --strict .
-	$(BIN)/ansible-lint
-	$(BIN)/ruff check tools tests
+	$(BIN)yamllint --strict .
+	$(BIN)ansible-lint
+	$(BIN)ruff check tools tests
 	$(MAKE) docs
 
 docs: ## Check that every relative documentation link resolves
-	$(BIN)/python tools/check_doc_links.py
+	$(BIN)python tools/check_doc_links.py
 
 validate: ## Validate every OSCAL artefact against the pinned NIST 1.1.2 schemas
-	@echo "SKIP: validate lands in PR 03 (OSCAL ingest)."
+	$(BIN)python tools/fetch_ism_oscal.py --verify --release $(ISM_RELEASE)
+	$(BIN)python tools/oscal_validate.py
 
-fetch: ## Download + checksum the pinned ACSC ISM OSCAL release
-	@echo "SKIP: fetch lands in PR 03 (OSCAL ingest). Pinned release: $(ISM_RELEASE)"
+fetch: ## Download + checksum the pinned ACSC ISM OSCAL release and NIST schemas
+	$(BIN)python tools/fetch_ism_oscal.py --release $(ISM_RELEASE)
 
 test: ## Run the Python unit test suite
-	@echo "SKIP: test lands in PR 04 (check contract + evaluator)."
+	$(BIN)python -m pytest tests/ -q
 
 assess-local: ## End-to-end collect -> evaluate -> emit against localhost
 	@echo "SKIP: assess-local lands in PR 04 (check contract + evaluator)."
