@@ -14,6 +14,7 @@ extend-exclude = [".venv", ".ansible", "oscal/upstream", "oscal/schemas"]
 # expiry) earn their place.
 select = [
     "E", "W",    # pycodestyle
+    "E402",      # imports not at top: real, and we suppress it deliberately where a sys.path shim requires it
     "F",         # pyflakes
     "I",         # import sorting
     "UP",        # pyupgrade

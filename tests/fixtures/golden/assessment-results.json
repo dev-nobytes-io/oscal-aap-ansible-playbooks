@@ -1,0 +1,607 @@
+{
+  "assessment-results": {
+    "uuid": "7ab84819-56ee-5f80-beaa-4c71a9ec9d0a",
+    "metadata": {
+      "title": "Continuous assessment \u2014 E8_ML1 \u2014 SYSTEM-GOVDESK",
+      "last-modified": "2026-09-20T03:05:12+10:00",
+      "version": "2026.09.4",
+      "oscal-version": "1.1.2",
+      "props": [
+        {
+          "name": "marking",
+          "value": "OFFICIAL: Sensitive",
+          "class": "pspf"
+        }
+      ]
+    },
+    "import-ap": {
+      "href": "./assessment-plan.json"
+    },
+    "results": [
+      {
+        "uuid": "c459b237-d9c4-5b3c-9fe9-92fd446c9185",
+        "title": "E8_ML1 assessment run golden:001",
+        "description": "Automated assessment of the E8_ML1 baseline against SYSTEM-GOVDESK. 1 of 46 baseline controls were determined; 45 were not and are reported as unassessed rather than compliant.",
+        "start": "2026-09-20T02:14:07+10:00",
+        "end": "2026-09-20T03:05:12+10:00",
+        "props": [
+          {
+            "name": "catalog-version",
+            "value": "2026.09.4",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "baseline",
+            "value": "E8_ML1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "system-id",
+            "value": "SYSTEM-GOVDESK",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "run-id",
+            "value": "golden:001",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "controls-in-baseline",
+            "value": "46",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "controls-determined",
+            "value": "1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "controls-unassessed",
+            "value": "45",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "subjects-in-scope",
+            "value": "50",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "subjects-assessed",
+            "value": "2",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          }
+        ],
+        "local-definitions": {
+          "inventory-items": [
+            {
+              "uuid": "892800ca-2802-5eaf-acd4-20b993b52a6c",
+              "description": "Windows 11 workstation WKS-0042",
+              "props": [
+                {
+                  "name": "asset-id",
+                  "value": "corp.example.gov.au/WKS-0042"
+                },
+                {
+                  "name": "ee-tier",
+                  "value": "current",
+                  "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                }
+              ]
+            },
+            {
+              "uuid": "0d09a1f7-0caf-58dc-8c96-a515483154e2",
+              "description": "Windows 11 workstation WKS-0043",
+              "props": [
+                {
+                  "name": "asset-id",
+                  "value": "corp.example.gov.au/WKS-0043"
+                },
+                {
+                  "name": "ee-tier",
+                  "value": "current",
+                  "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                }
+              ]
+            }
+          ]
+        },
+        "reviewed-controls": {
+          "description": "Generated from the assessment plan, so it enumerates the whole baseline including controls no check determined. reviewed-controls minus findings is exactly the unassessed set.",
+          "control-selections": [
+            {
+              "description": "The complete E8_ML1 baseline.",
+              "include-controls": [
+                {
+                  "control-id": "ism-0445",
+                  "statement-ids": [
+                    "ism-0445_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-0843",
+                  "statement-ids": [
+                    "ism-0843_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1175",
+                  "statement-ids": [
+                    "ism-1175_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1380",
+                  "statement-ids": [
+                    "ism-1380_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1401",
+                  "statement-ids": [
+                    "ism-1401_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1485",
+                  "statement-ids": [
+                    "ism-1485_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1486",
+                  "statement-ids": [
+                    "ism-1486_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1488",
+                  "statement-ids": [
+                    "ism-1488_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1489",
+                  "statement-ids": [
+                    "ism-1489_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1501",
+                  "statement-ids": [
+                    "ism-1501_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1504",
+                  "statement-ids": [
+                    "ism-1504_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1507",
+                  "statement-ids": [
+                    "ism-1507_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1511",
+                  "statement-ids": [
+                    "ism-1511_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1515",
+                  "statement-ids": [
+                    "ism-1515_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1585",
+                  "statement-ids": [
+                    "ism-1585_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1654",
+                  "statement-ids": [
+                    "ism-1654_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1657",
+                  "statement-ids": [
+                    "ism-1657_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1671",
+                  "statement-ids": [
+                    "ism-1671_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1672",
+                  "statement-ids": [
+                    "ism-1672_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1679",
+                  "statement-ids": [
+                    "ism-1679_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1680",
+                  "statement-ids": [
+                    "ism-1680_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1681",
+                  "statement-ids": [
+                    "ism-1681_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1688",
+                  "statement-ids": [
+                    "ism-1688_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1689",
+                  "statement-ids": [
+                    "ism-1689_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1690",
+                  "statement-ids": [
+                    "ism-1690_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1691",
+                  "statement-ids": [
+                    "ism-1691_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1694",
+                  "statement-ids": [
+                    "ism-1694_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1695",
+                  "statement-ids": [
+                    "ism-1695_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1698",
+                  "statement-ids": [
+                    "ism-1698_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1699",
+                  "statement-ids": [
+                    "ism-1699_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1701",
+                  "statement-ids": [
+                    "ism-1701_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1702",
+                  "statement-ids": [
+                    "ism-1702_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1704",
+                  "statement-ids": [
+                    "ism-1704_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1807",
+                  "statement-ids": [
+                    "ism-1807_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1808",
+                  "statement-ids": [
+                    "ism-1808_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1810",
+                  "statement-ids": [
+                    "ism-1810_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1811",
+                  "statement-ids": [
+                    "ism-1811_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1812",
+                  "statement-ids": [
+                    "ism-1812_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1814",
+                  "statement-ids": [
+                    "ism-1814_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1870",
+                  "statement-ids": [
+                    "ism-1870_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1876",
+                  "statement-ids": [
+                    "ism-1876_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1877",
+                  "statement-ids": [
+                    "ism-1877_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1883",
+                  "statement-ids": [
+                    "ism-1883_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1892",
+                  "statement-ids": [
+                    "ism-1892_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1893",
+                  "statement-ids": [
+                    "ism-1893_smt"
+                  ]
+                },
+                {
+                  "control-id": "ism-1905",
+                  "statement-ids": [
+                    "ism-1905_smt"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "observations": [
+          {
+            "uuid": "85c8784b-8739-52fc-b23c-028e71ac3059",
+            "title": "ism-1488 / win-office-macro-internet-blocked \u2014 corp.example.gov.au/WKS-0042",
+            "description": "No failures observed, but 1 user profile hive(s) were not loaded and 0 in-scope application(s) had no policy evidence in any assessable scope. Not enough to conclude the control is met.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macro-internet-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "partial-population",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "892800ca-2802-5eaf-acd4-20b993b52a6c",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0042"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "apps_without_evidence,blocked_machine_wide,failing,profiles_loaded,profiles_total,profiles_unloaded",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "cb71fdaa-bfdd-53e7-bef6-8149059764fe",
+            "title": "ism-1488 / win-office-macro-internet-blocked \u2014 corp.example.gov.au/WKS-0043",
+            "description": "1 application/profile combination(s) do not block macros in files originating from the internet.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macro-internet-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "0d09a1f7-0caf-58dc-8c96-a515483154e2",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0043"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "apps_without_evidence,blocked_machine_wide,failing,profiles_loaded,profiles_total,profiles_unloaded",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "findings": [
+          {
+            "uuid": "27bfe796-81f7-5075-9771-d681abaa54c2",
+            "title": "ism-1488 not-satisfied",
+            "description": "1 of 2 assessed subjects do not satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "50",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "2",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1488_smt",
+              "title": "Microsoft Office macros in files originating from the internet are blocked.",
+              "description": "1 of 2 assessed subjects do not satisfy this control.",
+              "status": {
+                "state": "not-satisfied",
+                "reason": "fail",
+                "remarks": "Determined from 1 subject observation(s) at `proxy` confidence. Coverage is incomplete: 48 in-scope subject(s) were not assessed and are not represented in this determination."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "cb71fdaa-bfdd-53e7-bef6-8149059764fe"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

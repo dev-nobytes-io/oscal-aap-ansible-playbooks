@@ -1,0 +1,182 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nobytes.io/schema/oscal-cca/check/1.0",
+  "title": "Check registry entry",
+  "description": "The authoring contract. Every field marked required is required because omitting it has produced a specific class of wrong compliance output; see the description on each.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "version", "title", "platform_family", "component",
+    "controls", "method", "confidence", "scope", "evidence_tier",
+    "freshness_hours", "history_window_days", "collect", "evaluator"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stable check identifier. Appears in OSCAL output and in deterministic UUID derivation, so renaming one breaks continuity of its POA&M item."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the check. A change that alters the verdict for unchanged input is a MAJOR bump, even when the new verdict is more correct: someone holds a published result it contradicts."
+    },
+    "title": {"type": "string", "minLength": 10},
+    "platform_family": {
+      "type": "string",
+      "enum": [
+        "windows", "linux", "entra-id", "active-directory", "adcs", "adfs",
+        "keycloak", "exchange", "cyberark", "netapp", "splunk",
+        "change-auditor", "vmware", "proxmox", "xcp-ng", "containers",
+        "kubernetes", "network", "cloud"
+      ]
+    },
+    "component": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "The OSCAL component this check contributes evidence for."
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement_id", "control_revision", "statement_sha256", "coverage", "rationale"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ism-([0-9]{4}|principle-[a-z]+-[0-9]{2})$",
+            "description": "ISM control id. Validated against the vendored catalog; a typo or a control ASD later withdrew is rejected."
+          },
+          "statement_id": {
+            "type": "string",
+            "pattern": "^ism-.*_smt$",
+            "description": "The OSCAL statement id, always <control-id>_smt. This is what findings target."
+          },
+          "control_revision": {"type": "string"},
+          "statement_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "SHA-256 of the control statement prose this check was written against. ASD reworded 111 statements in a single quarter while keeping control ids unchanged; without this, a check keeps passing while no longer testing what the control says. CI fails on drift."
+          },
+          "coverage": {
+            "type": "string",
+            "enum": ["full", "partial", "proxy-only", "none"],
+            "description": "How much of the control this check actually covers."
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 40,
+            "description": "What this check does NOT prove. The most valuable text in the file, because it is the part nobody else supplies. Aggregated into the published coverage statement."
+          }
+        }
+      }
+    },
+    "method": {"type": "string", "enum": ["TEST", "EXAMINE", "INTERVIEW"]},
+    "confidence": {
+      "type": "string",
+      "enum": ["direct", "proxy", "partial", "attested"],
+      "description": "Ceiling, not a claim. An evaluator may lower it at runtime; it may never raise it. Headline compliance figures count `direct` only."
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["subject", "aggregate"],
+      "description": "`aggregate` for controls that are statements about a population rather than about one host."
+    },
+    "evidence_tier": {
+      "type": "string",
+      "enum": ["passive", "active"],
+      "description": "`passive` observes only. `active` probes with side effects: opt-in, separate credential, results marked non-reproducible. `mutating` is never valid for a check."
+    },
+    "freshness_hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8760,
+      "description": "How long an observation stays valid. Enforced at REPORT time, not merely recorded at emit time -- otherwise a host that stopped being collected keeps rendering green and the dashboard gets greener as collection degrades."
+    },
+    "history_window_days": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Non-zero for rate controls -- patch windows, scan cadence. Roughly a quarter of Essential Eight ML1 is temporal rather than stateful. A check that cannot satisfy its window returns unassessed/insufficient-history, never not-satisfied."
+    },
+    "collect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "facts"],
+      "properties": {
+        "role": {"type": "string", "pattern": "^[a-z0-9_]+\\.[a-z0-9_]+\\.[a-z0-9_]+$"},
+        "facts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required"],
+          "properties": {
+            "required": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "optional": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "evaluator": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.]+:[a-z0-9_]+$",
+      "description": "Dotted path to a pure function, module:function. Resolved and imported during registry validation, so a typo fails CI rather than a production run."
+    },
+    "parameters": {"type": "object"},
+    "not_applicable_when": {"type": "string", "minLength": 20},
+    "references": {
+      "type": "array",
+      "description": "Citations supporting the check objective -- an ASD Blueprint page, a vendor doc. Required when the objective is not self-evident from the control statement.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source", "url"],
+        "properties": {
+          "source": {"type": "string"},
+          "url": {"type": "string"},
+          "version": {"type": "string"},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "remediation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "risk", "user_impact"],
+      "properties": {
+        "role": {"type": "string"},
+        "tasks_from": {"type": "string"},
+        "risk": {"type": "string", "enum": ["low", "medium", "high"]},
+        "reboot_required": {"type": "boolean"},
+        "user_impact": {
+          "type": "string",
+          "minLength": 20,
+          "description": "What breaks for a user when this is applied. Remediation without a stated impact does not get approved in a change process, so it does not get written here either."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"coverageCheck": {"const": true}}},
+      "then": {}
+    },
+    {
+      "description": "A partial-coverage control needs a rationale long enough to actually say something.",
+      "if": {
+        "properties": {
+          "controls": {
+            "contains": {"properties": {"coverage": {"enum": ["partial", "proxy-only"]}}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "controls": {
+            "items": {"properties": {"rationale": {"minLength": 40}}}
+          }
+        }
+      }
+    }
+  ]
+}

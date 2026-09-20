@@ -23,6 +23,9 @@ OUT         ?= out
 ISM_RELEASE ?= v2026.09.4
 ISM_MIRROR  ?= https://github.com/AustralianCyberSecurityCentre/ism-oscal
 
+# Default baseline for coverage and local assessment runs.
+BASELINE    ?= E8_ML1
+
 .PHONY: help bootstrap deps lint docs validate test assess-local coverage fetch clean
 
 help: ## Show this help
@@ -46,9 +49,10 @@ lint: ## Lint YAML, Ansible (production profile) and Python
 docs: ## Check that every relative documentation link resolves
 	$(BIN)python tools/check_doc_links.py
 
-validate: ## Validate every OSCAL artefact against the pinned NIST 1.1.2 schemas
+validate: ## Validate vendored data, OSCAL artefacts and the check registry
 	$(BIN)python tools/fetch_ism_oscal.py --verify --release $(ISM_RELEASE)
 	$(BIN)python tools/oscal_validate.py
+	$(BIN)python tools/cca.py validate-registry
 
 fetch: ## Download + checksum the pinned ACSC ISM OSCAL release and NIST schemas
 	$(BIN)python tools/fetch_ism_oscal.py --release $(ISM_RELEASE)
@@ -56,11 +60,13 @@ fetch: ## Download + checksum the pinned ACSC ISM OSCAL release and NIST schemas
 test: ## Run the Python unit test suite
 	$(BIN)python -m pytest tests/ -q
 
-assess-local: ## End-to-end collect -> evaluate -> emit against localhost
-	@echo "SKIP: assess-local lands in PR 04 (check contract + evaluator)."
+assess-local: ## End-to-end evaluate -> emit using the bundled fixtures
+	$(BIN)python tools/cca.py evaluate tests/fixtures/bundles/*.json \
+		--baseline $(BASELINE) --system-id LOCAL --run-id local:$(shell date +%s) \
+		--population-total 50 --out $(OUT)
 
-coverage: ## Regenerate the control-coverage ledger
-	@echo "SKIP: coverage lands in PR 04 (check contract + evaluator)."
+coverage: ## Report control coverage for a baseline (honest, not flattering)
+	$(BIN)python tools/cca.py coverage --baseline $(BASELINE)
 
 clean: ## Remove generated output and caches
 	rm -rf $(OUT) .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage
