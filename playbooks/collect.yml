@@ -30,6 +30,13 @@
           ansible.builtin.include_role:
             name: nobytes.compliance.collect_windows_office
 
+    - name: Collect Linux evidence
+      when: ansible_facts.os_family | default('') != 'Windows'
+      block:
+        - name: Collect baseline Linux state
+          ansible.builtin.include_role:
+            name: nobytes.compliance.collect_linux_base
+
     - name: Write this host's fact bundle
       ansible.builtin.include_role:
         name: nobytes.compliance.fact_bundle

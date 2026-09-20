@@ -39,11 +39,41 @@
   changed_when: false
   check_mode: false
 
+- name: Read the Windows release identity
+  ansible.windows.win_powershell:
+    script: |
+      $ErrorActionPreference = 'Stop'
+      $cv = Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion'
+      # DisplayVersion is the release ID on modern builds (22H2); ReleaseId on
+      # older ones. Edition matters: Windows 11 Enterprise and Pro have support
+      # dates a full year apart, so it is reported rather than assumed.
+      [pscustomobject]@{
+        product_name    = $cv.ProductName
+        display_version = $cv.DisplayVersion
+        release_id      = $cv.ReleaseId
+        current_build   = $cv.CurrentBuild
+        edition_id      = $cv.EditionID
+        install_type    = $cv.InstallationType
+      } | ConvertTo-Json -Depth 3 -Compress
+  register: collect_windows_base_release
+  changed_when: false
+  check_mode: false
+
 - name: Record baseline Windows facts into this host's bundle
   ansible.builtin.include_role:
     name: nobytes.compliance.fact_bundle
     tasks_from: record
   vars:
+    _cca_win: "{{ (collect_windows_base_release.output | default([{}]))[0] | default({}) }}"
+    # Raw identity only. Deriving the end-of-life lookup key is interpretation,
+    # so it lives in the evaluator where it is unit-testable -- not here.
+    _cca_windows_release:
+      product_name: "{{ _cca_win.get('product_name', '') }}"
+      display_version: "{{ _cca_win.get('display_version', '') or _cca_win.get('release_id', '') }}"
+      current_build: "{{ _cca_win.get('current_build', '') }}"
+      edition_id: "{{ _cca_win.get('edition_id', '') }}"
+      install_type: "{{ _cca_win.get('install_type', '') }}"
+      eol_product: "{{ 'windows-server' if _cca_win.get('install_type', '') == 'Server' else 'windows' }}"
     fact_records:
       windows.os.optional_features:
         source: Get-WindowsOptionalFeature
@@ -52,3 +82,7 @@
       windows.browser.ie_policy:
         source: "registry:HKLM\\SOFTWARE\\Policies\\Microsoft\\Internet Explorer"
         value: "{{ (collect_windows_base_ie_policy.output | default([{}]))[0] | default({}) }}"
+      os.release:
+        source: "registry:HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"
+        partial: "{{ (collect_windows_base_release.output | default([]) | length) == 0 }}"
+        value: "{{ _cca_windows_release }}"

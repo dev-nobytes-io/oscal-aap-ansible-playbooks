@@ -54,11 +54,13 @@ generate: ## Regenerate derived OSCAL artefacts (component-definitions)
 
 validate: ## Validate vendored data, OSCAL artefacts and the check registry
 	$(BIN)python tools/fetch_ism_oscal.py --verify --release $(ISM_RELEASE)
+	$(BIN)python tools/fetch_eol_data.py --verify
 	$(BIN)python tools/oscal_validate.py
 	$(BIN)python tools/cca.py validate-registry
 
-fetch: ## Download + checksum the pinned ACSC ISM OSCAL release and NIST schemas
+fetch: ## Download + checksum the ISM OSCAL release, NIST schemas and EOL data
 	$(BIN)python tools/fetch_ism_oscal.py --release $(ISM_RELEASE)
+	$(BIN)python tools/fetch_eol_data.py
 
 test: ## Run the Python unit test suite
 	$(BIN)python -m pytest tests/ -q

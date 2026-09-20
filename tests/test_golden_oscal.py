@@ -35,8 +35,11 @@ def _emit_all() -> dict:
     baseline = catalog.baseline(e8="ML1")
 
     evaluations = []
-    for name in ("wks-0042-partial.json", "wks-0043-failing.json"):
-        bundle = load_bundle(BUNDLES / name)
+    # Enumerated from disk, not hardcoded: adding a fixture must change the
+    # golden output rather than being silently ignored by the test that is
+    # supposed to notice changes.
+    for path in sorted(BUNDLES.glob("*.json")):
+        bundle = load_bundle(path)
         bundle.subject["inventory_item_uuid"] = ids.inventory_item_uuid(
             "SYSTEM-GOVDESK", bundle.subject["asset_id"]
         )
@@ -93,7 +96,11 @@ def test_population_denominator_comes_from_inventory_not_results() -> None:
     finding = results["assessment-results"]["results"][0]["findings"][0]
     props = {p["name"]: p["value"] for p in finding["props"]}
     assert props["population-total"] == "50"
-    assert props["population-assessed"] == "2"
+    # Assessed count comes from the bundles actually present; the denominator
+    # does not. Three subjects out of fifty in scope must not render as 100%.
+    assessed = int(props["population-assessed"])
+    assert assessed < 50
+    assert props["population-total"] != props["population-assessed"]
     assert "not assessed" in finding["target"]["status"]["remarks"]
 
 

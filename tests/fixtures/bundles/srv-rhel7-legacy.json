@@ -1,0 +1,32 @@
+{
+  "schema": "https://nobytes.io/schema/oscal-cca/fact-bundle/1.0",
+  "run_id": "fixture:legacy",
+  "collected": "2026-09-20T02:20:00+10:00",
+  "subject": {
+    "asset_id": "corp.example.gov.au/SRV-RHEL7-01",
+    "description": "RHEL 7 application server",
+    "platform_family": "linux",
+    "estate_tier": "legacy"
+  },
+  "collector": {
+    "collection": "nobytes.compliance",
+    "version": "0.1.0"
+  },
+  "marking": {
+    "system": "pspf",
+    "value": "OFFICIAL: Sensitive"
+  },
+  "facts": {
+    "os.release": {
+      "collected": "2026-09-20T02:20:00+10:00",
+      "source": "/etc/os-release",
+      "value": {
+        "id": "rhel",
+        "version_id": "7.9",
+        "pretty_name": "Red Hat Enterprise Linux Server 7.9 (Maipo)",
+        "eol_product": "rhel",
+        "eol_cycle": "7"
+      }
+    }
+  }
+}
