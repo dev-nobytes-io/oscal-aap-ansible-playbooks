@@ -1,0 +1,28 @@
+---
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    level: warning
+  # Ansible convention: `yes`/`no` are idiomatic in playbooks.
+  truthy:
+    allowed-values: ["true", "false", "yes", "no"]
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: false
+  braces:
+    max-spaces-inside: 1
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
+# Third-party and vendored content is not ours to lint. `.ansible/` matters:
+# ansible-lint transparently installs collections there during a run, and
+# yamllint --strict would otherwise fail CI on upstream projects' YAML style.
+ignore: |
+  .venv/
+  .ansible/
+  collections/ansible_collections/
+  oscal/upstream/
+  oscal/schemas/

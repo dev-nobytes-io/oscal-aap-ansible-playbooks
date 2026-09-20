@@ -1,0 +1,57 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.eggs/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ---- Ansible ----
+*.retry
+.ansible/
+fact_cache/
+ansible.log
+
+# Galaxy installs third-party collections into collections/ansible_collections/.
+# Ignore everything there EXCEPT our own nobytes.compliance collection.
+# Each level is negated before descending: git cannot re-include a path whose
+# parent directory is itself excluded.
+collections/ansible_collections/*
+!collections/ansible_collections/nobytes
+collections/ansible_collections/nobytes/*
+!collections/ansible_collections/nobytes/compliance
+
+# ---- Assessment output ----
+# Evidence is generated, never committed. Committing real assessment results
+# would leak estate security posture into git history, permanently.
+out/
+results/
+evidence/
+fact-bundles/
+*.assessment-results.json
+*.poam.json
+
+# ---- Execution environment build artefacts ----
+aap/execution-environment/context/
+*.tar
+*.tar.gz
+
+# ---- Secrets ----
+# Belt and braces. Real secrets belong in a vault or AAP credential, never here.
+*.vault
+vault-password*
+*.pem
+*.key
+.env
+credentials.yml
+
+# ---- Editors / OS ----
+.idea/
+.vscode/
+*.swp
+.DS_Store

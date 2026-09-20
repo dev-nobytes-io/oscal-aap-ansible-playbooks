@@ -1,0 +1,30 @@
+---
+# Ansible collection dependencies.
+#
+# This file grows one pull request at a time, alongside the collectors that
+# need each entry. Collections are NOT added speculatively: an unused
+# dependency in a compliance tool is extra supply-chain surface for no benefit.
+#
+# Install with:  make deps   (ansible-galaxy collection install -r requirements.yml -p collections/)
+
+collections:
+  # --- Core, needed from the first collector onwards ---
+  - name: ansible.posix
+    version: ">=1.5.4,<3.0.0"
+  - name: ansible.windows
+    version: ">=2.5.0,<4.0.0"
+  - name: community.general
+    version: ">=10.0.0,<13.0.0"
+
+  # --- Added in later PRs, kept here as documented intent ---
+  # PR 05  Windows collectors
+  # - name: community.windows
+  # PR 07  AAP / AWX configuration-as-code
+  # - name: infra.aap_configuration    # AAP 2.5+; supersedes redhat_cop.controller_configuration
+  # - name: awx.awx                    # AWX (open-source) equivalent
+  # PR 08  Identity collectors
+  # - name: microsoft.ad
+  # PR 11+ Platform collectors
+  # - name: kubernetes.core
+  # - name: community.docker
+  # - name: community.vmware

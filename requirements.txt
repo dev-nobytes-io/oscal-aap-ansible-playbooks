@@ -1,0 +1,47 @@
+# Development and CI tooling for oscal-aap-ansible-playbooks.
+# Pinned exactly: compliance tooling that silently changes behaviour between
+# runs is worse than no tooling at all.
+#
+# ansible-core pin rationale
+# --------------------------
+# ansible-core 2.20+ requires Python >= 3.12. This repository targets Python
+# 3.11 for control-node/CI work, so 2.19.x is the newest usable line here.
+#
+# This pin governs the CONTROL NODE only. Managed-node reach is decided by the
+# execution environment, and this project ships two (see aap/execution-environment):
+#
+#   ee-current  ansible-core 2.19.x  -> Server 2016+/Win11, RHEL 9/10, Ubuntu 22/24
+#   ee-legacy   ansible-core 2.16.x  -> Server 2012/2012R2, RHEL 7/8, Python 2.7/3.6
+#
+# ansible-core dropped Windows Server 2012/2012R2 after 2.16, dropped
+# managed-node Python 2.7/3.6 in 2.17, and does not support RHEL 8 as a managed
+# node in 2.20. A large government estate still runs all of those, so the older
+# line is a deliberate, documented capability -- not technical debt.
+ansible-core==2.19.13
+
+# Linting / static analysis
+ansible-lint==26.8.0
+ruff==0.16.8
+
+# OSCAL validation.
+# `regex` is NOT optional: the NIST OSCAL JSON schemas use \p{...} Unicode
+# property escapes, which Python's stdlib `re` cannot compile at all -- stock
+# jsonschema raises `re.error: bad escape \p` and validation CRASHES rather
+# than failing cleanly. tools/oscal_validate.py overrides the `pattern` keyword
+# to use `regex` instead. See docs/03-ism-oscal-ingest.md.
+jsonschema==4.26.0
+regex==2026.9.10
+
+# Data handling
+PyYAML==6.0.3
+
+# Tests
+pytest==9.1.1
+pytest-cov==7.1.0
+
+# Container-dependent tooling. Installable anywhere, but only RUNNABLE where a
+# container runtime is available -- these are exercised in CI, not on a laptop
+# or in a restricted sandbox without a Docker/Podman daemon.
+molecule==26.8.0
+molecule-plugins==26.7.15
+ansible-builder==3.1.1

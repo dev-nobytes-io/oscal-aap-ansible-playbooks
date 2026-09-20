@@ -1,0 +1,28 @@
+---
+# `production` is the strictest ansible-lint profile and the bar for Ansible
+# Automation Platform certified content. A repository that asserts other
+# people's compliance should be able to meet a published standard itself.
+profile: production
+
+exclude_paths:
+  - .github/
+  - .venv/
+  - collections/ansible_collections/  # third-party; not ours to lint
+  - oscal/upstream/                   # vendored Commonwealth data; never modified
+  - tests/fixtures/
+
+# Enforced beyond the profile default.
+enable_list:
+  - args
+  - empty-string-compare
+  - no-log-password
+  - no-same-owner
+
+# Warnings we accept but do not fail on yet.
+warn_list:
+  - experimental
+
+kinds:
+  - playbook: "playbooks/*.yml"
+  - tasks: "collections/ansible_collections/nobytes/compliance/roles/*/tasks/*.yml"
+  - vars: "inventory/group_vars/*.yml"
