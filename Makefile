@@ -19,7 +19,7 @@ OUT         ?= out
 ISM_RELEASE ?= v2026.09.4
 ISM_MIRROR  ?= https://github.com/AustralianCyberSecurityCentre/ism-oscal
 
-.PHONY: help bootstrap deps lint validate test assess-local coverage fetch clean
+.PHONY: help bootstrap deps lint docs validate test assess-local coverage fetch clean
 
 help: ## Show this help
 	@awk 'BEGIN{FS=":.*?## "} /^[a-zA-Z_-]+:.*?## /{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -37,6 +37,10 @@ lint: ## Lint YAML, Ansible (production profile) and Python
 	$(BIN)/yamllint --strict .
 	$(BIN)/ansible-lint
 	$(BIN)/ruff check tools tests
+	$(MAKE) docs
+
+docs: ## Check that every relative documentation link resolves
+	$(BIN)/python tools/check_doc_links.py
 
 validate: ## Validate every OSCAL artefact against the pinned NIST 1.1.2 schemas
 	@echo "SKIP: validate lands in PR 03 (OSCAL ingest)."
