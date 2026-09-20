@@ -29,6 +29,7 @@ claims about regulatory compliance, and a claim nobody can audit is worthless.
 [`ASSURANCE-PRINCIPLES.md`](ASSURANCE-PRINCIPLES.md) ·
 [`01-architecture.md`](01-architecture.md) ·
 [`02-oscal-primer.md`](02-oscal-primer.md) ·
+[`03-ism-oscal-ingest.md`](03-ism-oscal-ingest.md) ·
 [`04-regulatory-scope.md`](04-regulatory-scope.md) ·
 [`13-security-model.md`](13-security-model.md) ·
 [`oscal-extensions.md`](oscal-extensions.md) ·

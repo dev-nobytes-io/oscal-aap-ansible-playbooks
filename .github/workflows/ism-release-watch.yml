@@ -1,0 +1,143 @@
+---
+name: ISM release watch
+
+# ASD publishes the ISM roughly quarterly and tags each release in the mirror.
+# A bump is never absorbed silently: this opens a pull request carrying a
+# control-level diff, because control text gets reworded while ids stay the
+# same. Between v2026.06.18 and v2026.09.4 alone, 111 statements were reworded,
+# 44 controls added and 2 removed. A check bound to a reworded control keeps
+# passing while no longer testing what the control says.
+
+"on":
+  schedule:
+    - cron: "17 20 * * 1"   # Mondays, ~06:17 AEST
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Upstream tag to vendor (default: newest)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  PYTHON_VERSION: "3.11"
+  MIRROR: https://github.com/AustralianCyberSecurityCentre/ism-oscal
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install pinned tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Determine current and latest release
+        id: releases
+        run: |
+          set -euo pipefail
+          current="$(python -c 'import sys; sys.path.insert(0,"tools"); \
+            import ism_release; print(ism_release.PINNED_RELEASE)')"
+          # sort -V orders vYYYY.MM.N correctly; the API is not used because it
+          # is commonly blocked or rate-limited in restricted networks.
+          latest="$(git ls-remote --tags "$MIRROR" \
+            | grep -v '\^{}' | awk '{print $2}' | sed 's#refs/tags/##' \
+            | grep -E '^v[0-9]{4}\.[0-9]{2}\.[0-9]{1,2}$' | sort -V | tail -1)"
+          requested="${{ inputs.release }}"
+          target="${requested:-$latest}"
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "target=$target"   >> "$GITHUB_OUTPUT"
+          echo "Current: $current   Target: $target"
+
+      - name: Vendor the new release
+        if: steps.releases.outputs.current != steps.releases.outputs.target
+        run: |
+          set -euo pipefail
+          cp oscal/upstream/ism/${{ steps.releases.outputs.current }}/ISM_catalog.json \
+             /tmp/previous_catalog.json
+          python tools/fetch_ism_oscal.py --release ${{ steps.releases.outputs.target }}
+          # Exactly one vendored release directory is kept; git history retains
+          # the rest. Otherwise the tree grows ~14 MB per quarter.
+          rm -rf oscal/upstream/ism/${{ steps.releases.outputs.current }}
+          sed -i 's/^PINNED_RELEASE = .*/PINNED_RELEASE = "${{ steps.releases.outputs.target }}"/' \
+            tools/ism_release.py
+          sed -i 's/^ISM_RELEASE ?= .*/ISM_RELEASE ?= ${{ steps.releases.outputs.target }}/' Makefile
+
+      - name: Generate the control-level diff
+        if: steps.releases.outputs.current != steps.releases.outputs.target
+        run: |
+          python tools/ism_diff.py \
+            --old-file /tmp/previous_catalog.json \
+            --new-file oscal/upstream/ism/${{ steps.releases.outputs.target }}/ISM_catalog.json \
+            --output /tmp/ism-diff.md
+
+      - name: Validate the new release
+        if: steps.releases.outputs.current != steps.releases.outputs.target
+        continue-on-error: true
+        id: validate
+        run: |
+          python tools/fetch_ism_oscal.py --verify \
+            --release ${{ steps.releases.outputs.target }}
+          python tools/oscal_validate.py
+
+      - name: Build the pull request body
+        if: steps.releases.outputs.current != steps.releases.outputs.target
+        run: |
+          {
+            echo "Automated bump of the vendored ACSC ISM OSCAL release."
+            echo
+            echo "\`${{ steps.releases.outputs.current }}\` → \
+          \`${{ steps.releases.outputs.target }}\`"
+            echo
+            echo "## Before merging"
+            echo
+            echo "- [ ] Every reworded statement below has been reviewed"
+            echo "- [ ] Checks bound to reworded controls are re-affirmed or revised"
+            echo "- [ ] Canary test expectations in \`tests/test_catalog_canary.py\` updated"
+            echo "- [ ] Added controls triaged: assessable, or recorded as attested"
+            echo "- [ ] Orphaned checks for removed controls handled"
+            echo
+            echo "Canary tests are **expected to fail** on this PR until the"
+            echo "expected counts are updated. That is the mechanism working:"
+            echo "a human decides what moved rather than absorbing it."
+            echo
+            echo "Upstream validation: ${{ steps.validate.outcome }}"
+            echo
+            echo "---"
+            echo
+            cat /tmp/ism-diff.md
+            echo
+            echo "---"
+            echo "_Generated by [Claude Code](https://claude.ai/code)_"
+          } > /tmp/pr-body.md
+
+      - name: Open the pull request
+        if: steps.releases.outputs.current != steps.releases.outputs.target
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: ism-release/${{ steps.releases.outputs.target }}
+          base: main
+          title: "ISM OSCAL ${{ steps.releases.outputs.target }}"
+          body-path: /tmp/pr-body.md
+          labels: ism-release,needs-control-review
+          draft: true
+          commit-message: |
+            Vendor ISM OSCAL ${{ steps.releases.outputs.target }}
+
+            Automated bump from ${{ steps.releases.outputs.current }}.
+            Control-level diff is in the pull request body.
+
+      - name: Report no change
+        if: steps.releases.outputs.current == steps.releases.outputs.target
+        run: echo "Already on ${{ steps.releases.outputs.current }} — nothing to do."

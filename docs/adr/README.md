@@ -21,3 +21,4 @@ audit evidence.
 | [0007](0007-evaluator-is-a-plain-python-package.md) | Ship the evaluator as a plain Python package, not an Ansible plugin | Accepted |
 | [0008](0008-redaction-is-policy-driven-per-deployment.md) | Make evidence redaction a per-deployment policy | Accepted |
 | [0009](0009-licensing-apache-code-ccby-data.md) | License code under Apache-2.0 and attribute vendored ISM data under CC BY 4.0 | Accepted |
+| [0010](0010-do-not-depend-on-compliance-trestle.md) | Do not take compliance-trestle as a dependency | Accepted |

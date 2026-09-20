@@ -33,7 +33,7 @@ def main() -> int:
     root = Path(__file__).resolve().parent.parent
     os.chdir(root)
 
-    files = sorted(p for p in Path(".").rglob("*.md") if is_ours(p))
+    files = sorted(p for p in Path().rglob("*.md") if is_ours(p))
     broken: list[str] = []
 
     for path in files:
