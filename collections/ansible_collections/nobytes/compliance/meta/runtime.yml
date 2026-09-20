@@ -1,0 +1,5 @@
+---
+# 2.16 is the floor because ee-legacy pins ansible-core 2.16 to reach Windows
+# Server 2012/2012 R2 and RHEL 7/8 managed nodes, which 2.17+ dropped.
+# See docs/adr/0004-dual-execution-environments.md.
+requires_ansible: ">=2.16.0"

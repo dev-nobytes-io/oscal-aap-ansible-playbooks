@@ -24,6 +24,7 @@ from nobytes_cca.evaluate import (
     evaluate_bundle,
     unassessed_controls,
 )
+from nobytes_cca.generate import component_definitions
 from nobytes_cca.oscal import emit, ids
 from nobytes_cca.registry import Registry, validate, validate_schema
 
@@ -81,6 +82,24 @@ def cmd_coverage(args: argparse.Namespace) -> int:
             "\n  Coverage counts intent, not outcome. A control with a check is "
             "\n  covered even if the last run could not reach the host."
         )
+    return 0
+
+
+def cmd_generate(args: argparse.Namespace) -> int:
+    """Regenerate every derived OSCAL artefact.
+
+    CI runs this and fails on a diff, so the component-definitions cannot drift
+    away from the checks that produce them.
+    """
+    registry = Registry.load()
+    catalog = Catalog.load(catalog_path())
+    # A fixed timestamp keeps generation deterministic; the meaningful version
+    # is the catalog version, which is already carried in metadata.
+    now = dt.datetime(2000, 1, 1, tzinfo=dt.timezone.utc)
+    _write(
+        Path(args.out) / "component-definitions" / "nobytes-cca.json",
+        component_definitions.generate(registry, catalog, now),
+    )
     return 0
 
 
@@ -159,6 +178,9 @@ def main() -> int:
     cov.add_argument("--baseline", default="E8_ML1", choices=sorted(BASELINES))
     cov.add_argument("--json", action="store_true")
 
+    gen = sub.add_parser("generate", help="regenerate derived OSCAL artefacts")
+    gen.add_argument("--out", default="oscal")
+
     ev = sub.add_parser("evaluate", help="evaluate fact bundles and emit OSCAL")
     ev.add_argument("bundles", nargs="+")
     ev.add_argument("--baseline", default="E8_ML1", choices=sorted(BASELINES))
@@ -177,6 +199,7 @@ def main() -> int:
     return {
         "validate-registry": cmd_validate_registry,
         "coverage": cmd_coverage,
+        "generate": cmd_generate,
         "evaluate": cmd_evaluate,
     }[args.command](args)
 

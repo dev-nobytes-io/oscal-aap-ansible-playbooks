@@ -8,28 +8,107 @@
     "platform_family": "windows",
     "estate_tier": "current"
   },
-  "collector": {"collection": "nobytes.compliance", "version": "0.1.0"},
-  "marking": {"system": "pspf", "value": "OFFICIAL: Sensitive"},
+  "collector": {
+    "collection": "nobytes.compliance",
+    "version": "0.1.0"
+  },
+  "marking": {
+    "system": "pspf",
+    "value": "OFFICIAL: Sensitive"
+  },
   "facts": {
     "windows.office.install": {
       "collected": "2026-09-20T02:14:05+10:00",
       "source": "registry:HKLM\\SOFTWARE\\Microsoft\\Office\\ClickToRun",
-      "value": [{"product": "Microsoft 365 Apps for enterprise", "office_version": "16.0"}]
+      "value": [
+        {
+          "product": "Microsoft 365 Apps for enterprise",
+          "office_version": "16.0"
+        }
+      ]
     },
     "windows.office.macro_policy": {
       "collected": "2026-09-20T02:14:07+10:00",
       "source": "registry:HKLM+HKU\\*\\SOFTWARE\\Policies\\Microsoft\\office",
-      "meta": {"profiles_total": 3, "profiles_loaded": 3,
-               "profiles_unloaded": []},
+      "meta": {
+        "profiles_total": 3,
+        "profiles_loaded": 3,
+        "profiles_unloaded": []
+      },
       "value": [
-        {"scope": "user", "sid": "S-1-5-21-1-1-1-1174", "app": "word", "blockcontentexecutionfrominternet": 0, "gpo_delivered": false},
-        {"scope": "machine", "app": "excel",      "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
-        {"scope": "machine", "app": "powerpoint", "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
-        {"scope": "machine", "app": "access",     "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
-        {"scope": "machine", "app": "publisher",  "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
-        {"scope": "machine", "app": "visio",      "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
-        {"scope": "machine", "app": "project",    "blockcontentexecutionfrominternet": 1, "gpo_delivered": true}
+        {
+          "scope": "user",
+          "sid": "S-1-5-21-1-1-1-1174",
+          "app": "word",
+          "blockcontentexecutionfrominternet": 0,
+          "gpo_delivered": false,
+          "vbawarnings": 2,
+          "macroruntimescanscope": 2
+        },
+        {
+          "scope": "machine",
+          "app": "excel",
+          "blockcontentexecutionfrominternet": 1,
+          "gpo_delivered": true,
+          "vbawarnings": 4,
+          "macroruntimescanscope": 2
+        },
+        {
+          "scope": "machine",
+          "app": "powerpoint",
+          "blockcontentexecutionfrominternet": 1,
+          "gpo_delivered": true,
+          "vbawarnings": 4,
+          "macroruntimescanscope": 2
+        },
+        {
+          "scope": "machine",
+          "app": "access",
+          "blockcontentexecutionfrominternet": 1,
+          "gpo_delivered": true,
+          "vbawarnings": 4,
+          "macroruntimescanscope": 2
+        },
+        {
+          "scope": "machine",
+          "app": "publisher",
+          "blockcontentexecutionfrominternet": 1,
+          "gpo_delivered": true,
+          "vbawarnings": 4,
+          "macroruntimescanscope": 2
+        },
+        {
+          "scope": "machine",
+          "app": "visio",
+          "blockcontentexecutionfrominternet": 1,
+          "gpo_delivered": true,
+          "vbawarnings": 4,
+          "macroruntimescanscope": 2
+        },
+        {
+          "scope": "machine",
+          "app": "project",
+          "blockcontentexecutionfrominternet": 1,
+          "gpo_delivered": true,
+          "vbawarnings": 4,
+          "macroruntimescanscope": 2
+        }
       ]
+    },
+    "windows.os.optional_features": {
+      "collected": "2026-09-20T02:14:06+10:00",
+      "source": "Get-WindowsOptionalFeature",
+      "value": [
+        {
+          "name": "Internet-Explorer-Optional-amd64",
+          "state": "Enabled"
+        }
+      ]
+    },
+    "windows.browser.ie_policy": {
+      "collected": "2026-09-20T02:14:06+10:00",
+      "source": "registry:HKLM\\SOFTWARE\\Policies\\Microsoft\\Internet Explorer",
+      "value": {}
     }
   }
 }

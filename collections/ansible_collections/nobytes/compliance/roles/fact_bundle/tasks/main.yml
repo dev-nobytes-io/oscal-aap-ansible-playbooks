@@ -1,0 +1,11 @@
+---
+- name: Fail fast when the redaction salt was never changed
+  ansible.builtin.assert:
+    that:
+      - fact_bundle_redaction_salt != 'CHANGE-ME-PER-DEPLOYMENT'
+    fail_msg: >-
+      fact_bundle_redaction_salt is still the shipped default. Hashed
+      identifiers would be trivially reversible and correlatable across
+      organisations. Set it from a vault before collecting anything.
+    success_msg: Redaction salt is set.
+  when: fact_bundle_redaction_default == 'hash'

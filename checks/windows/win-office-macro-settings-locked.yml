@@ -1,0 +1,44 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-office-macro-settings-locked
+version: 1.0.0
+title: Office macro security settings are enforced by policy and not user-writable
+platform_family: windows
+component: microsoft-office-windows
+
+controls:
+  - id: ism-1489
+    statement_id: ism-1489_smt
+    control_revision: "1"
+    statement_sha256: a243ad25e88818219c561afe399c934a66369e3f39bd8f6d54325944648352b0
+    coverage: partial
+    rationale: >-
+      Verifies that macro security values live under the Policies hive and are
+      GPO-delivered, which makes them read-only to a standard user. It does NOT
+      prove a user cannot change them by other means: a local administrator, an
+      MDM policy conflict, or a user with registry write access to the Policies
+      key would still be able to, and none of that is visible from the value
+      itself.
+
+method: TEST
+confidence: proxy
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_office
+  facts:
+    required:
+      - windows.office.install
+      - windows.office.macro_policy
+
+evaluator: nobytes_cca.checks.windows.office:macro_settings_locked
+
+parameters:
+  in_scope_apps: [word, excel, powerpoint, access, publisher, visio, project]
+
+not_applicable_when: >-
+  windows.office.install reports no Microsoft Office or Microsoft 365 Apps
+  installation on the subject.

@@ -1,0 +1,7 @@
+---
+# collect -> evaluate -> emit, end to end. Read-only throughout.
+- name: Import the collection play
+  ansible.builtin.import_playbook: collect.yml
+
+- name: Import the evaluation play
+  ansible.builtin.import_playbook: evaluate.yml

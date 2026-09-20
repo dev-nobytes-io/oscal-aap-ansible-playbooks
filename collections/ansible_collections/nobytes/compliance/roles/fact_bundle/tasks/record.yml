@@ -1,0 +1,29 @@
+---
+# Record one or more facts into this host's bundle.
+#
+# Callers set `fact_records` to a mapping of fact key -> {source, value, partial,
+# meta}. Facts are RAW observations; a collector must never record a verdict.
+
+- name: Validate the fact records supplied by the collector
+  ansible.builtin.assert:
+    that:
+      - fact_records is mapping
+      - fact_records | length > 0
+    fail_msg: "fact_records must be a non-empty mapping of fact key to record."
+    success_msg: "{{ fact_records | length }} fact record(s) accepted."
+
+- name: Merge the records into this host's accumulating bundle
+  ansible.builtin.set_fact:
+    fact_bundle_facts: >-
+      {{ fact_bundle_facts | default({}) | combine({
+           item.key: {
+             'collected': '%Y-%m-%dT%H:%M:%S+00:00' | ansible.builtin.strftime(ansible_date_time.epoch | int),
+             'source': item.value.source | default(''),
+             'partial': item.value.partial | default(false) | bool,
+             'meta': item.value.meta | default({}),
+             'value': item.value.value,
+           }
+         }) }}
+  loop: "{{ fact_records | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"

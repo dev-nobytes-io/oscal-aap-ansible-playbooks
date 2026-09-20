@@ -1,0 +1,44 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-office-macro-av-scanning
+version: 1.0.0
+title: Office macro antivirus (AMSI) scanning is enabled
+platform_family: windows
+component: microsoft-office-windows
+
+controls:
+  - id: ism-1672
+    statement_id: ism-1672_smt
+    control_revision: "0"
+    statement_sha256: 88b546621c325fa9ff12754ba995c0cb16dc32afa620b3ed82606a340c1c6b42
+    coverage: partial
+    rationale: >-
+      Verifies MacroRuntimeScanScope is set to scan macros, which is how Office
+      hands macro content to AMSI. It does not verify that an AMSI provider is
+      actually registered and healthy, nor that the antivirus behind it is
+      running with current signatures -- so a pass means Office is configured to
+      offer macros for scanning, not that scanning is effective.
+
+method: TEST
+confidence: proxy
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_office
+  facts:
+    required:
+      - windows.office.install
+      - windows.office.macro_policy
+
+evaluator: nobytes_cca.checks.windows.office:macro_antivirus_scanning
+
+parameters:
+  # 2 = "Enable for all documents" (scan macros in all files).
+  required_scan_scope: 2
+
+not_applicable_when: >-
+  windows.office.install reports no Microsoft Office or Microsoft 365 Apps
+  installation on the subject.

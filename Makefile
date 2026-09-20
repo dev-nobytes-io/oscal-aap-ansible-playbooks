@@ -26,7 +26,7 @@ ISM_MIRROR  ?= https://github.com/AustralianCyberSecurityCentre/ism-oscal
 # Default baseline for coverage and local assessment runs.
 BASELINE    ?= E8_ML1
 
-.PHONY: help bootstrap deps lint docs validate test assess-local coverage fetch clean
+.PHONY: help bootstrap deps lint docs generate validate test assess-local coverage fetch clean
 
 help: ## Show this help
 	@awk 'BEGIN{FS=":.*?## "} /^[a-zA-Z_-]+:.*?## /{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -48,6 +48,9 @@ lint: ## Lint YAML, Ansible (production profile) and Python
 
 docs: ## Check that every relative documentation link resolves
 	$(BIN)python tools/check_doc_links.py
+
+generate: ## Regenerate derived OSCAL artefacts (component-definitions)
+	$(BIN)python tools/cca.py generate
 
 validate: ## Validate vendored data, OSCAL artefacts and the check registry
 	$(BIN)python tools/fetch_ism_oscal.py --verify --release $(ISM_RELEASE)

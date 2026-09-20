@@ -1,0 +1,10 @@
+---
+collect_windows_office_versions: ["14.0", "15.0", "16.0"]
+collect_windows_office_apps:
+  - word
+  - excel
+  - powerpoint
+  - access
+  - publisher
+  - visio
+  - project

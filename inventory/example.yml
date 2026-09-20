@@ -1,0 +1,36 @@
+---
+# Example inventory. Real estate inventories do not belong in this repository --
+# they are sensitive, and in AAP they come from an inventory source or dynamic
+# plugin.
+#
+# Two group variables drive behaviour:
+#
+#   ism_baseline  which OSCAL profile applies
+#   estate_tier   `current` or `legacy`, selecting the execution environment
+#
+# estate_tier exists because ansible-core dropped Windows Server 2012/2012 R2
+# after 2.16, dropped managed-node Python 2.7/3.6 in 2.17, and does not support
+# RHEL 8 as a managed node in 2.20. Tier is derived from CMDB/AD/vCenter OS
+# data, NOT from gathered facts -- the right execution environment has to be
+# chosen before anything can be gathered.
+
+all:
+  vars:
+    ism_baseline: E8_ML1
+  children:
+    ee_current:
+      vars:
+        estate_tier: current
+      children:
+        windows_current:
+          hosts:
+            wks-0042.example.invalid:
+              cca_asset_id: corp.example.invalid/WKS-0042
+    ee_legacy:
+      vars:
+        estate_tier: legacy
+      children:
+        windows_legacy:
+          hosts:
+            srv-2012-01.example.invalid:
+              cca_asset_id: corp.example.invalid/SRV-2012-01

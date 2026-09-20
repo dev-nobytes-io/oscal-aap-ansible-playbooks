@@ -1,0 +1,38 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-ie11-disabled
+version: 1.0.0
+title: Internet Explorer 11 is disabled or removed
+platform_family: windows
+component: windows-operating-system
+
+controls:
+  - id: ism-1654
+    statement_id: ism-1654_smt
+    control_revision: "0"
+    statement_sha256: ca8690c945288792ff4e9caf1012b75deafde026969b56f778141e121343f2d6
+    coverage: full
+    rationale: >-
+      The control is a binary state and both halves are directly observable:
+      whether the optional feature is present, and whether policy disables the
+      IE11 application. The one residual gap is IE mode inside Microsoft Edge,
+      which is a deliberately supported configuration and is reported in the
+      facts rather than judged, since the control speaks to Internet Explorer 11
+      as a browser rather than to the MSHTML engine.
+
+method: TEST
+confidence: direct
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_base
+  facts:
+    required:
+      - windows.os.optional_features
+    optional:
+      - windows.browser.ie_policy
+
+evaluator: nobytes_cca.checks.windows.os_state:ie11_disabled_or_removed

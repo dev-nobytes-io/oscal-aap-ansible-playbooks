@@ -1,0 +1,3 @@
+---
+# Empty by design: this role takes no tuning. Facts are raw.
+collect_windows_base_enabled: true

@@ -65,6 +65,147 @@
             "finding-uuid": "27bfe796-81f7-5075-9771-d681abaa54c2"
           }
         ]
+      },
+      {
+        "uuid": "dc2f609f-bc9e-5be6-9485-6972e02cb574",
+        "title": "ism-1489 not satisfied",
+        "description": "1 of 2 assessed subjects do not satisfy this control.",
+        "props": [
+          {
+            "name": "control-id",
+            "value": "ism-1489",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "baseline",
+            "value": "E8_ML1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "poam-status",
+            "value": "open",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "confidence",
+            "value": "proxy",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-failing",
+            "value": "1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-assessed",
+            "value": "2",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "marking",
+            "value": "OFFICIAL: Sensitive",
+            "class": "pspf"
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "15be50a6-2457-5c78-809a-576eb0a0b41d"
+          }
+        ]
+      },
+      {
+        "uuid": "e321dabe-19f9-548a-b386-fa1984801a16",
+        "title": "ism-1654 not satisfied",
+        "description": "1 of 2 assessed subjects do not satisfy this control.",
+        "props": [
+          {
+            "name": "control-id",
+            "value": "ism-1654",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "baseline",
+            "value": "E8_ML1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "poam-status",
+            "value": "open",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "confidence",
+            "value": "direct",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-failing",
+            "value": "1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-assessed",
+            "value": "2",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "marking",
+            "value": "OFFICIAL: Sensitive",
+            "class": "pspf"
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "7be794e8-1339-52a7-8345-95f289d006b1"
+          }
+        ]
+      },
+      {
+        "uuid": "530728ff-a0f0-55f5-bd0d-8155f81146d7",
+        "title": "ism-1671 not satisfied",
+        "description": "1 of 2 assessed subjects do not satisfy this control.",
+        "props": [
+          {
+            "name": "control-id",
+            "value": "ism-1671",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "baseline",
+            "value": "E8_ML1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "poam-status",
+            "value": "open",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "confidence",
+            "value": "partial",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-failing",
+            "value": "1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-assessed",
+            "value": "2",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "marking",
+            "value": "OFFICIAL: Sensitive",
+            "class": "pspf"
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "9d2db1be-a953-51c7-b905-5ef82c43c4a6"
+          }
+        ]
       }
     ]
   }

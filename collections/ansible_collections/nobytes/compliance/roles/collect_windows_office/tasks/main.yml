@@ -1,0 +1,53 @@
+---
+# READ-ONLY. This role has no mutating module surface at all, which makes
+# "assessment never changes a host" visible in review rather than promised in
+# a comment. The guarantee that survives adversarial review is the credential
+# these tasks run under -- see docs/13-security-model.md.
+
+- name: Detect Microsoft Office installations
+  ansible.windows.win_powershell:
+    script: |
+      $ErrorActionPreference = 'Stop'
+      $found = @()
+      $c2r = 'HKLM:\SOFTWARE\Microsoft\Office\ClickToRun\Configuration'
+      if (Test-Path $c2r) {
+        $k = Get-Item $c2r
+        $found += [pscustomobject]@{
+          product        = $k.GetValue('ProductReleaseIds', '')
+          office_version = '16.0'
+          channel        = $k.GetValue('CDNBaseUrl', '')
+          build          = $k.GetValue('VersionToReport', '')
+        }
+      }
+      ,$found | ConvertTo-Json -Depth 4 -Compress
+  register: collect_windows_office_install
+  changed_when: false
+  check_mode: false
+
+- name: Enumerate Office macro policy across machine and user scopes
+  ansible.windows.win_powershell:
+    parameters:
+      OfficeVersions: "{{ collect_windows_office_versions }}"
+      Apps: "{{ collect_windows_office_apps }}"
+    script: "{{ lookup('ansible.builtin.file', role_path ~ '/files/Get-OfficeMacroPolicy.ps1') }}"
+  register: collect_windows_office_macro_policy
+  changed_when: false
+  check_mode: false
+  when: (collect_windows_office_install.output | default([]) | length) > 0
+
+- name: Record Office facts into this host's bundle
+  ansible.builtin.include_role:
+    name: nobytes.compliance.fact_bundle
+    tasks_from: record
+  vars:
+    fact_records:
+      windows.office.install:
+        source: "registry:HKLM\\SOFTWARE\\Microsoft\\Office\\ClickToRun"
+        value: "{{ collect_windows_office_install.output | default([]) }}"
+      windows.office.macro_policy:
+        source: "registry:HKLM+HKU\\*\\SOFTWARE\\Policies\\Microsoft\\office"
+        partial: >-
+          {{ (collect_windows_office_macro_policy.output | default([]) | length) == 0
+             and (collect_windows_office_install.output | default([]) | length) > 0 }}
+        meta: "{{ (collect_windows_office_macro_policy.output | default([{}]))[0].meta | default({}) }}"
+        value: "{{ (collect_windows_office_macro_policy.output | default([{}]))[0].rows | default([]) }}"

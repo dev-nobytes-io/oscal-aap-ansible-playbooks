@@ -1,0 +1,36 @@
+---
+# Where bundles are written. In AAP this is an artefact store path mounted into
+# the execution environment, not a path on the managed node.
+fact_bundle_dir: >-
+  {{ lookup('ansible.builtin.env', 'CCA_BUNDLE_DIR')
+     | default(playbook_dir ~ '/../out/bundles', true) }}
+
+fact_bundle_run_id: >-
+  {{ lookup('ansible.builtin.env', 'CCA_RUN_ID') | default('local', true) }}
+
+# Classification marking applied to every bundle. Set per deployment.
+fact_bundle_marking: "OFFICIAL: Sensitive"
+
+# Redaction policy. Policy-driven per deployment (ADR 0008): the trade-off
+# between forensic value and blast radius belongs to each organisation's risk
+# owner, not to this project. Applied BETWEEN collection and persistence --
+# you cannot retroactively un-collect.
+#   retain   - store as collected
+#   hash     - salted hash; correlation survives, the identifier does not
+#   truncate - keep structure, drop the identifying portion
+#   drop     - remove entirely
+fact_bundle_redaction_policy_version: "1.0"
+fact_bundle_redaction_default: hash
+fact_bundle_redaction_keys:
+  sid: hash
+  username: hash
+  upn: hash
+  email: hash
+
+# Salt for hashed identifiers. MUST be set per deployment and kept secret:
+# rotating it breaks longitudinal correlation, and leaving it at the default
+# makes hashes trivially reversible across organisations.
+fact_bundle_redaction_salt: "CHANGE-ME-PER-DEPLOYMENT"
+
+# Accumulator. Not set by users.
+fact_bundle_facts: {}
