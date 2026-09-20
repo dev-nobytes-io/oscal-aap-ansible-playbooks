@@ -28,6 +28,10 @@ from nobytes_cca.evaluate import evaluate_bundle, evaluate_check, unassessed_con
 from nobytes_cca.oscal import emit
 from nobytes_cca.registry import Registry
 
+
+def by_reason_count(undetermined: dict, reason) -> int:
+    return sum(1 for r in undetermined.values() if r is reason)
+
 FIXTURES = ROOT / "tests" / "fixtures" / "bundles"
 NOW = dt.datetime(2026, 9, 20, 3, 5, 12, tzinfo=dt.timezone(dt.timedelta(hours=10)))
 
@@ -96,14 +100,16 @@ def test_unassessed_distinguishes_no_check_from_could_not_tell(registry, ism) ->
     evaluations = evaluate_bundle(registry, bundle, baseline)
     undetermined = unassessed_controls(baseline, registry, evaluations)
 
-    assert len(undetermined) == 46
+    covered = registry.covered_controls()
+    # Controls with no check at all.
+    assert by_reason_count(undetermined, UnassessedReason.NOT_IMPLEMENTED) == len(
+        [c for c in baseline if c not in covered]
+    )
     assert all(isinstance(r, UnassessedReason) for r in undetermined.values())
-
-    by_reason: dict = {}
-    for reason in undetermined.values():
-        by_reason[reason] = by_reason.get(reason, 0) + 1
-    assert by_reason[UnassessedReason.NOT_IMPLEMENTED] == 45
+    # ism-1488 HAS a check; on this bundle it ran and could not conclude.
     assert undetermined["ism-1488"] is UnassessedReason.PARTIAL_POPULATION
+    # ism-1654 HAS a check and DID conclude, so it is not undetermined at all.
+    assert "ism-1654" not in undetermined
 
 
 # --- Principle 2: an operational failure is not a compliance failure -----
@@ -249,7 +255,9 @@ def test_plan_marks_uncovered_controls_as_unassessed(registry, ism) -> None:
         if any(p["value"] == "unassessed" for p in s.get("props", []))
     ]
     assert unassessed_sel, "controls without a check must be explicitly marked unassessed"
-    assert len(unassessed_sel[0]["include-controls"]) == 45
+    covered = registry.covered_controls()
+    expected = len([c for c in baseline if c not in covered])
+    assert len(unassessed_sel[0]["include-controls"]) == expected
 
 
 # --- Determinism ---------------------------------------------------------

@@ -1,0 +1,54 @@
+---
+# READ-ONLY.
+
+- name: Enumerate Windows optional features
+  ansible.windows.win_powershell:
+    script: |
+      $ErrorActionPreference = 'Stop'
+      $features = @()
+      try {
+        $features = Get-WindowsOptionalFeature -Online |
+          Select-Object @{n='name';e={$_.FeatureName}}, @{n='state';e={"$($_.State)"}}
+      } catch {
+        # Server SKUs without DISM cmdlets, or insufficient privilege. Emit
+        # nothing rather than guessing; the evaluator reports unassessed.
+        $features = @()
+      }
+      ,$features | ConvertTo-Json -Depth 4 -Compress
+  register: collect_windows_base_features
+  changed_when: false
+  check_mode: false
+
+- name: Read Internet Explorer policy state
+  ansible.windows.win_powershell:
+    script: |
+      $ErrorActionPreference = 'Stop'
+      $out = @{}
+      $p = 'HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Main'
+      if (Test-Path $p) {
+        $k = Get-Item $p
+        $out['NotifyDisableIEOptions'] = $k.GetValue('NotifyDisableIEOptions', $null)
+      }
+      $edge = 'HKLM:\SOFTWARE\Policies\Microsoft\Edge'
+      if (Test-Path $edge) {
+        $k = Get-Item $edge
+        $out['InternetExplorerIntegrationLevel'] = $k.GetValue('InternetExplorerIntegrationLevel', $null)
+      }
+      $out | ConvertTo-Json -Depth 4 -Compress
+  register: collect_windows_base_ie_policy
+  changed_when: false
+  check_mode: false
+
+- name: Record baseline Windows facts into this host's bundle
+  ansible.builtin.include_role:
+    name: nobytes.compliance.fact_bundle
+    tasks_from: record
+  vars:
+    fact_records:
+      windows.os.optional_features:
+        source: Get-WindowsOptionalFeature
+        partial: "{{ (collect_windows_base_features.output | default([]) | length) == 0 }}"
+        value: "{{ collect_windows_base_features.output | default([]) }}"
+      windows.browser.ie_policy:
+        source: "registry:HKLM\\SOFTWARE\\Policies\\Microsoft\\Internet Explorer"
+        value: "{{ (collect_windows_base_ie_policy.output | default([{}]))[0] | default({}) }}"

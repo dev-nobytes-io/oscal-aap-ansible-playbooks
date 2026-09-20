@@ -143,3 +143,228 @@ def macro_internet_blocked(
         facts=facts,
         confidence=Confidence.PROXY,
     )
+
+
+def _office_guard(bundle: FactBundle):
+    """Shared preamble: is Office here, and did policy collection work?
+
+    Returns (policy_fact, None) to continue, or (None, CheckResult) to stop.
+    """
+    install = bundle.fact("windows.office.install")
+    if install is None:
+        return None, CheckResult.unassessed(
+            reason=UnassessedReason.COLLECTION_ERROR,
+            detail="fact `windows.office.install` absent from the bundle",
+        )
+    if not install.value:
+        return None, CheckResult.not_applicable(
+            detail="No Microsoft Office or Microsoft 365 Apps installation detected.",
+            facts={"office_installed": False},
+        )
+    policy = bundle.fact("windows.office.macro_policy")
+    if policy is None or policy.partial:
+        return None, CheckResult.unassessed(
+            reason=UnassessedReason.COLLECTION_ERROR,
+            detail="Office is installed but macro policy enumeration returned nothing.",
+        )
+    return policy, None
+
+
+def _coverage_gap(policy, apps_without_evidence: list) -> list:
+    """Reasons the picture may be incomplete, in reporting order."""
+    gaps = []
+    unloaded = list(policy.meta.get("profiles_unloaded", []))
+    if unloaded:
+        gaps.append(f"{len(unloaded)} user profile hive(s) not loaded")
+    if apps_without_evidence:
+        gaps.append(f"{len(apps_without_evidence)} application(s) with no policy evidence")
+    return gaps
+
+
+def macro_settings_locked(
+    bundle: FactBundle, params: dict, history: FactHistory
+) -> CheckResult:
+    """ism-1489 — Office macro security settings cannot be changed by human users.
+
+    Approximated by "the value lives under Policies and is GPO-delivered", which
+    makes it read-only to a standard user. That is a proxy, not the control: a
+    local administrator can still change it, and nothing in the value says
+    whether the user holds administrator rights.
+    """
+    del history
+    policy, stop = _office_guard(bundle)
+    if stop is not None:
+        return stop
+
+    apps = set(params.get("in_scope_apps", []))
+    rows = [r for r in policy.value if r.get("app") in apps]
+
+    unlocked = [
+        {"app": r.get("app"), "scope": r.get("scope"), "sid": r.get("sid")}
+        for r in rows
+        if not r.get("gpo_delivered")
+    ]
+    apps_seen = {r.get("app") for r in rows}
+    no_evidence = sorted(apps - apps_seen)
+
+    facts = {
+        "apps_with_policy": sorted(apps_seen),
+        "not_gpo_delivered": unlocked,
+        "apps_without_evidence": no_evidence,
+        "profiles_unloaded": list(policy.meta.get("profiles_unloaded", [])),
+    }
+
+    if unlocked:
+        return CheckResult.not_satisfied(
+            detail=(
+                f"{len(unlocked)} macro security value(s) are not GPO-delivered and "
+                f"are therefore writable by the user they apply to."
+            ),
+            facts=facts,
+            confidence=Confidence.PROXY,
+        )
+
+    gaps = _coverage_gap(policy, no_evidence)
+    if gaps:
+        return CheckResult.unassessed(
+            reason=UnassessedReason.PARTIAL_POPULATION,
+            detail="No unlocked settings observed, but " + "; ".join(gaps) + ".",
+            facts=facts,
+        )
+
+    return CheckResult.satisfied(
+        detail="All in-scope Office macro security settings are GPO-delivered policy values.",
+        facts=facts,
+        confidence=Confidence.PROXY,
+    )
+
+
+def macros_disabled_without_business_need(
+    bundle: FactBundle, params: dict, history: FactHistory
+) -> CheckResult:
+    """ism-1671 — macros disabled for users without a demonstrated business requirement.
+
+    Only the first half of this control is observable on a host. Whether a user
+    with macros enabled has a demonstrated business requirement is an
+    organisational fact held in an approval register, not in the registry.
+
+    So confidence is `partial` and the detail says so explicitly: a failure here
+    may be a legitimately approved exemption, and a pass says nothing about
+    whether the exemption process exists.
+    """
+    del history
+    policy, stop = _office_guard(bundle)
+    if stop is not None:
+        return stop
+
+    apps = set(params.get("in_scope_apps", []))
+    required = params.get("required_vbawarnings", 4)
+    rows = [r for r in policy.value if r.get("app") in apps]
+
+    enabled = [
+        {
+            "app": r.get("app"),
+            "scope": r.get("scope"),
+            "sid": r.get("sid"),
+            "vbawarnings": r.get("vbawarnings"),
+        }
+        for r in rows
+        if r.get("vbawarnings") is not None and r.get("vbawarnings") != required
+    ]
+    with_value = {r.get("app") for r in rows if r.get("vbawarnings") is not None}
+    no_evidence = sorted(apps - with_value)
+
+    facts = {
+        "required_vbawarnings": required,
+        "not_disabled": enabled,
+        "apps_without_evidence": no_evidence,
+        "note": (
+            "Whether any user with macros enabled has a demonstrated business "
+            "requirement is not observable on the host and is not assessed."
+        ),
+    }
+
+    if enabled:
+        return CheckResult.not_satisfied(
+            detail=(
+                f"{len(enabled)} application/profile combination(s) do not disable "
+                f"macros (VBAWarnings != {required}). Each may or may not be an "
+                f"approved exemption; that is not observable here."
+            ),
+            facts=facts,
+            confidence=Confidence.PARTIAL,
+        )
+
+    gaps = _coverage_gap(policy, no_evidence)
+    if gaps:
+        return CheckResult.unassessed(
+            reason=UnassessedReason.PARTIAL_POPULATION,
+            detail="No enabled macros observed, but " + "; ".join(gaps) + ".",
+            facts=facts,
+        )
+
+    return CheckResult.satisfied(
+        detail=(
+            f"All in-scope Office applications disable macros (VBAWarnings={required}). "
+            f"The business-requirement exemption process is not assessed."
+        ),
+        facts=facts,
+        confidence=Confidence.PARTIAL,
+    )
+
+
+def macro_antivirus_scanning(
+    bundle: FactBundle, params: dict, history: FactHistory
+) -> CheckResult:
+    """ism-1672 — Office macro antivirus scanning is enabled.
+
+    Observes that Office is configured to hand macro content to AMSI. It does
+    not observe that an AMSI provider is registered, healthy, or backed by an
+    antivirus with current signatures -- so a pass means "configured to offer",
+    not "effectively scanned".
+    """
+    del history
+    policy, stop = _office_guard(bundle)
+    if stop is not None:
+        return stop
+
+    required = params.get("required_scan_scope", 2)
+    scopes = [r for r in policy.value if r.get("macroruntimescanscope") is not None]
+
+    if not scopes:
+        return CheckResult.unassessed(
+            reason=UnassessedReason.PARTIAL_POPULATION,
+            detail=(
+                "No MacroRuntimeScanScope value was observed in any scope. Absence "
+                "of the value is not evidence that scanning is disabled -- the "
+                "default varies by Office build."
+            ),
+            facts={"observed": []},
+        )
+
+    wrong = [
+        {"scope": r.get("scope"), "sid": r.get("sid"), "value": r.get("macroruntimescanscope")}
+        for r in scopes
+        if r.get("macroruntimescanscope") != required
+    ]
+    facts = {
+        "required_scan_scope": required,
+        "observed": [r.get("macroruntimescanscope") for r in scopes],
+        "misconfigured": wrong,
+    }
+
+    if wrong:
+        return CheckResult.not_satisfied(
+            detail=f"{len(wrong)} scope(s) do not set MacroRuntimeScanScope={required}.",
+            facts=facts,
+            confidence=Confidence.PROXY,
+        )
+
+    return CheckResult.satisfied(
+        detail=(
+            f"MacroRuntimeScanScope={required} in every observed scope. AMSI provider "
+            f"health and antivirus currency are not assessed."
+        ),
+        facts=facts,
+        confidence=Confidence.PROXY,
+    )

@@ -162,9 +162,9 @@ content, gradually.
 | 01 | Repository skeleton, licensing, lint + CI | merged |
 | 02 | Governance, assurance principles, regulatory scope, ADRs | open |
 | 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | open |
-| 04 | Check contract, evaluator, assessment-results + POA&M emitters | **this PR** |
-| 05 | Component-definition model + Windows collectors | next |
-| 06 | Linux collectors + end-of-life dataset | planned |
+| 04 | Check contract, evaluator, assessment-results + POA&M emitters | merged |
+| 05 | Component-definition model + Windows collectors | **this PR** |
+| 06 | Linux collectors + end-of-life dataset | next |
 | 07 | Dual execution environments + AAP/AWX configuration-as-code | planned |
 | 08 | Identity collectors — Entra ID, ADFS, Keycloak | planned |
 | 09 | Evidence providers — Splunk, Change Auditor | planned |

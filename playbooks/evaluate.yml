@@ -1,0 +1,73 @@
+---
+# Apply control assertions to collected facts and emit OSCAL.
+#
+# Runs on the controller only. The evaluator is a pure function: no network,
+# no subprocess, no clock -- so the same facts always produce identical OSCAL,
+# which is what lets an auditor re-derive a published document from evidence.
+#
+# The evaluator is invoked as a plain Python package rather than an Ansible
+# plugin (ADR 0007): plugins version-couple it to ansible-core and are the
+# wrong place to evaluate a thousand controls across thousands of hosts.
+
+- name: Evaluate collected evidence and emit OSCAL
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    cca_baseline: E8_ML1
+    cca_system_id: "{{ lookup('ansible.builtin.env', 'CCA_SYSTEM_ID') | default('UNSET', true) }}"
+    cca_run_id: "{{ lookup('ansible.builtin.env', 'CCA_RUN_ID') | default('local', true) }}"
+    cca_bundle_dir: >-
+      {{ lookup('ansible.builtin.env', 'CCA_BUNDLE_DIR')
+         | default(playbook_dir ~ '/../out/bundles', true) }}
+    cca_out_dir: >-
+      {{ lookup('ansible.builtin.env', 'CCA_OUT_DIR')
+         | default(playbook_dir ~ '/../out', true) }}
+    # The population denominator comes from INVENTORY, never from the results.
+    # Omitting it lets an unreachable-host sample render as full coverage.
+    cca_population_total: "{{ groups[cca_target | default('all')] | default([]) | length }}"
+
+  tasks:
+    - name: Require a system identifier
+      ansible.builtin.assert:
+        that:
+          - cca_system_id != 'UNSET'
+        fail_msg: >-
+          Set CCA_SYSTEM_ID (or -e cca_system_id=...) to the authorisation
+          boundary this run belongs to. Results without one cannot be attributed.
+        success_msg: "Assessing {{ cca_system_id }}."
+
+    - name: Find the fact bundles for this run
+      ansible.builtin.find:
+        paths: "{{ cca_bundle_dir }}/{{ cca_run_id | replace(':', '-') }}"
+        patterns: "*.json"
+      register: cca_bundles
+
+    - name: Fail when no evidence was collected
+      ansible.builtin.assert:
+        that:
+          - cca_bundles.files | length > 0
+        fail_msg: >-
+          No fact bundles found under
+          {{ cca_bundle_dir }}/{{ cca_run_id | replace(':', '-') }}.
+          Emitting an empty assessment would report every control as
+          undetermined, which is true but useless -- run collect.yml first.
+        success_msg: "{{ cca_bundles.files | length }} fact bundle(s) found."
+
+    - name: Evaluate and emit OSCAL
+      ansible.builtin.command:
+        argv: >-
+          {{ ['python3', playbook_dir ~ '/../tools/cca.py', 'evaluate']
+             + (cca_bundles.files | map(attribute='path') | list)
+             + ['--baseline', cca_baseline,
+                '--system-id', cca_system_id,
+                '--run-id', cca_run_id,
+                '--population-total', cca_population_total | string,
+                '--out', cca_out_dir] }}
+      register: cca_evaluate
+      changed_when: true
+
+    - name: Show the assessment summary
+      ansible.builtin.debug:
+        msg: "{{ cca_evaluate.stdout_lines }}"

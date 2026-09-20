@@ -1,0 +1,46 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-office-macros-disabled
+version: 1.0.0
+title: Office macros are disabled for users without a demonstrated business requirement
+platform_family: windows
+component: microsoft-office-windows
+
+controls:
+  - id: ism-1671
+    statement_id: ism-1671_smt
+    control_revision: "1"
+    statement_sha256: 34faf595d86d1deaa61db25f7c9f1105514b8b100e3c6e6fd12862e567cc4e23
+    coverage: proxy-only
+    rationale: >-
+      Checks that VBAWarnings is set to 4 (disable all macros without
+      notification) by policy. It CANNOT assess the "demonstrated business
+      requirement" half of the control at all -- whether a user who has macros
+      enabled is authorised is an organisational fact held outside the host.
+      A pass here means macros are disabled, not that the exemption process
+      is sound; a fail may be a legitimately approved exemption.
+
+method: TEST
+confidence: partial
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_office
+  facts:
+    required:
+      - windows.office.install
+      - windows.office.macro_policy
+
+evaluator: nobytes_cca.checks.windows.office:macros_disabled_without_business_need
+
+parameters:
+  in_scope_apps: [word, excel, powerpoint, access, publisher, visio, project]
+  # 4 = "Disable all macros without notification" (the ASD-recommended value).
+  required_vbawarnings: 4
+
+not_applicable_when: >-
+  windows.office.install reports no Microsoft Office or Microsoft 365 Apps
+  installation on the subject.

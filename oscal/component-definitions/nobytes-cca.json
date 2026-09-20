@@ -1,0 +1,493 @@
+{
+  "component-definition": {
+    "uuid": "83173b2d-a6c4-5091-97a7-ff505ec6de14",
+    "metadata": {
+      "title": "Continuous compliance assessment coverage",
+      "last-modified": "2000-01-01T00:00:00+00:00",
+      "version": "2026.09.4",
+      "oscal-version": "1.1.2",
+      "props": [
+        {
+          "name": "catalog-version",
+          "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+          "value": "2026.09.4"
+        },
+        {
+          "name": "generated-by",
+          "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+          "value": "nobytes_cca.generate.component_definitions"
+        }
+      ]
+    },
+    "components": [
+      {
+        "uuid": "6f3a1ab5-c7a8-5b40-9ccc-67f45691fdc1",
+        "type": "software",
+        "title": "Microsoft Office Windows",
+        "description": "Assessment coverage provided by nobytes.compliance collectors and nobytes_cca evaluators for microsoft-office-windows. This document asserts what is ASSESSED, not what is implemented.",
+        "props": [
+          {
+            "name": "platform-family",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "windows"
+          },
+          {
+            "name": "component-key",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "microsoft-office-windows"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "b40621d4-a2ca-57d2-b549-1e5709cd52f6",
+            "source": "../upstream/ism/v2026.09.4/ISM_catalog.json",
+            "description": "Controls this component can produce evidence for. A control absent from this list is not assessed on this platform.",
+            "props": [
+              {
+                "name": "implementation-kind",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                "value": "assessment"
+              }
+            ],
+            "implemented-requirements": [
+              {
+                "uuid": "38fb56cc-0e5d-509d-8f1a-c7b2f92bd776",
+                "control-id": "ism-1672",
+                "description": "Verifies MacroRuntimeScanScope is set to scan macros, which is how Office hands macro content to AMSI. It does not verify that an AMSI provider is actually registered and healthy, nor that the antivirus behind it is running with current signatures -- so a pass means Office is configured to offer macros for scanning, not that scanning is effective.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-office-macro-av-scanning"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_office"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.office:macro_antivirus_scanning"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "88b546621c325fa9ff12754ba995c0cb16dc32afa620b3ed82606a340c1c6b42"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1672_smt",
+                    "uuid": "49f133a5-8a2c-51aa-8940-ed15dc7b3008",
+                    "description": "Microsoft Office macro antivirus scanning is enabled."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Verifies MacroRuntimeScanScope is set to scan macros, which is how Office hands macro content to AMSI. It does not verify that an AMSI provider is actually registered and healthy, nor that the antivirus behind it is running with current signatures -- so a pass means Office is configured to offer macros for scanning, not that scanning is effective."
+              },
+              {
+                "uuid": "959a6b91-628d-5c8c-b216-dcb96bcae457",
+                "control-id": "ism-1488",
+                "description": "Verifies the ADMX policy state that implements the block, in machine scope and in every loaded user policy hive. It does NOT observe runtime blocking behaviour, does not detect Mark-of-the-Web being stripped by an upstream mail or file gateway, does not cover Office applications outside in_scope_apps, and cannot assess user profile hives that were not loaded at collection time.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-office-macro-internet-blocked"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_office"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.office:macro_internet_blocked"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "c3572b760aff789e46a4008f5f4f5f2bd7c56aec4b4089c3df881dbfa6a1503e"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1488_smt",
+                    "uuid": "4e5a4adb-9f97-5bee-be10-18b86e394f1c",
+                    "description": "Microsoft Office macros in files originating from the internet are blocked."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Verifies the ADMX policy state that implements the block, in machine scope and in every loaded user policy hive. It does NOT observe runtime blocking behaviour, does not detect Mark-of-the-Web being stripped by an upstream mail or file gateway, does not cover Office applications outside in_scope_apps, and cannot assess user profile hives that were not loaded at collection time."
+              },
+              {
+                "uuid": "3554734f-bd54-584d-9616-04875a76118e",
+                "control-id": "ism-1489",
+                "description": "Verifies that macro security values live under the Policies hive and are GPO-delivered, which makes them read-only to a standard user. It does NOT prove a user cannot change them by other means: a local administrator, an MDM policy conflict, or a user with registry write access to the Policies key would still be able to, and none of that is visible from the value itself.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-office-macro-settings-locked"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_office"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.office:macro_settings_locked"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "a243ad25e88818219c561afe399c934a66369e3f39bd8f6d54325944648352b0"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1489_smt",
+                    "uuid": "5ab67bb4-cd93-51ff-b372-94c6187c2ccf",
+                    "description": "Microsoft Office macro security settings cannot be changed by human users."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Verifies that macro security values live under the Policies hive and are GPO-delivered, which makes them read-only to a standard user. It does NOT prove a user cannot change them by other means: a local administrator, an MDM policy conflict, or a user with registry write access to the Policies key would still be able to, and none of that is visible from the value itself."
+              },
+              {
+                "uuid": "aff52f09-23a7-5bfd-9330-a67585f9edb3",
+                "control-id": "ism-1671",
+                "description": "Checks that VBAWarnings is set to 4 (disable all macros without notification) by policy. It CANNOT assess the \"demonstrated business requirement\" half of the control at all -- whether a user who has macros enabled is authorised is an organisational fact held outside the host. A pass here means macros are disabled, not that the exemption process is sound; a fail may be a legitimately approved exemption.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-office-macros-disabled"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_office"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.office:macros_disabled_without_business_need"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy-only"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "34faf595d86d1deaa61db25f7c9f1105514b8b100e3c6e6fd12862e567cc4e23"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1671_smt",
+                    "uuid": "e5d047d0-d5f4-5b00-ba6c-33c21be29240",
+                    "description": "Microsoft Office macros are disabled for human users that do not have a demonstrated business requirement."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Checks that VBAWarnings is set to 4 (disable all macros without notification) by policy. It CANNOT assess the \"demonstrated business requirement\" half of the control at all -- whether a user who has macros enabled is authorised is an organisational fact held outside the host. A pass here means macros are disabled, not that the exemption process is sound; a fail may be a legitimately approved exemption."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "6f692ed9-e75a-5ec9-a014-f37f8288556a",
+        "type": "software",
+        "title": "Windows Operating System",
+        "description": "Assessment coverage provided by nobytes.compliance collectors and nobytes_cca evaluators for windows-operating-system. This document asserts what is ASSESSED, not what is implemented.",
+        "props": [
+          {
+            "name": "platform-family",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "windows"
+          },
+          {
+            "name": "component-key",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "windows-operating-system"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "b74eb8d0-d9fd-5920-9684-a83a16d92a3a",
+            "source": "../upstream/ism/v2026.09.4/ISM_catalog.json",
+            "description": "Controls this component can produce evidence for. A control absent from this list is not assessed on this platform.",
+            "props": [
+              {
+                "name": "implementation-kind",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                "value": "assessment"
+              }
+            ],
+            "implemented-requirements": [
+              {
+                "uuid": "15712fff-336c-5466-b7c3-d4f2feb1df26",
+                "control-id": "ism-1654",
+                "description": "The control is a binary state and both halves are directly observable: whether the optional feature is present, and whether policy disables the IE11 application. The one residual gap is IE mode inside Microsoft Edge, which is a deliberately supported configuration and is reported in the facts rather than judged, since the control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-ie11-disabled"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_base"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.os_state:ie11_disabled_or_removed"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "direct"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "full"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "ca8690c945288792ff4e9caf1012b75deafde026969b56f778141e121343f2d6"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1654_smt",
+                    "uuid": "b23c8137-4099-52c3-b08e-d19f21f491ce",
+                    "description": "Internet Explorer 11 is disabled or removed."
+                  }
+                ],
+                "remarks": "Residual assessment gap: The control is a binary state and both halves are directly observable: whether the optional feature is present, and whether policy disables the IE11 application. The one residual gap is IE mode inside Microsoft Edge, which is a deliberately supported configuration and is reported in the facts rather than judged, since the control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

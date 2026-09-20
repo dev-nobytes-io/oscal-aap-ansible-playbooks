@@ -1,0 +1,26 @@
+---
+namespace: nobytes
+name: compliance
+version: 0.1.0
+readme: README.md
+authors:
+  - nobytes.io
+description: >-
+  Read-only evidence collection for continuous compliance assessment against
+  the ACSC Information Security Manual. Collectors gather raw facts; verdicts
+  are produced off-host by the nobytes_cca evaluator.
+license:
+  - Apache-2.0
+tags:
+  - compliance
+  - oscal
+  - ism
+  - security
+dependencies:
+  ansible.windows: ">=2.5.0,<4.0.0"
+  ansible.posix: ">=1.5.4,<3.0.0"
+repository: https://github.com/dev-nobytes-io/oscal-aap-ansible-playbooks
+documentation: https://github.com/dev-nobytes-io/oscal-aap-ansible-playbooks/tree/main/docs
+issues: https://github.com/dev-nobytes-io/oscal-aap-ansible-playbooks/issues
+build_ignore:
+  - "*.tar.gz"

@@ -1,0 +1,10 @@
+---
+galaxy_info:
+  author: nobytes.io
+  description: >-
+    The only sanctioned way to add a fact to a bundle. Applies provenance,
+    redaction and classification marking uniformly.
+  license: Apache-2.0
+  min_ansible_version: "2.16"
+  galaxy_tags: [compliance, oscal, evidence]
+dependencies: []

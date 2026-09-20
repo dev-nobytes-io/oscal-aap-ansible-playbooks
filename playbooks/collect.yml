@@ -1,0 +1,36 @@
+---
+# Gather raw facts. READ-ONLY: nothing in this play or the roles it calls can
+# modify a managed node. Verdicts are not produced here -- collectors gather
+# facts and never judge, so evidence can be re-evaluated later without
+# touching production again.
+#
+#   ansible-playbook playbooks/collect.yml -i inventory/example.yml
+
+- name: Collect compliance evidence
+  hosts: "{{ cca_target | default('all') }}"
+  gather_facts: true
+  # Assessment must never mutate. Any task that would is a bug, not a setting.
+  any_errors_fatal: false
+  vars:
+    cca_platform_family: "{{ 'windows' if ansible_facts.os_family | default('') == 'Windows' else 'linux' }}"
+
+  tasks:
+    - name: Guard the redaction policy before anything is collected
+      ansible.builtin.include_role:
+        name: nobytes.compliance.fact_bundle
+
+    - name: Collect Windows evidence
+      when: ansible_facts.os_family | default('') == 'Windows'
+      block:
+        - name: Collect baseline Windows state
+          ansible.builtin.include_role:
+            name: nobytes.compliance.collect_windows_base
+
+        - name: Collect Microsoft Office policy state
+          ansible.builtin.include_role:
+            name: nobytes.compliance.collect_windows_office
+
+    - name: Write this host's fact bundle
+      ansible.builtin.include_role:
+        name: nobytes.compliance.fact_bundle
+        tasks_from: finalise
