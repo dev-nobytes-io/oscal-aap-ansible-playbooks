@@ -151,9 +151,9 @@ content, gradually.
 
 | PR | Chunk | State |
 |---|---|---|
-| 01 | Repository skeleton, licensing, lint + CI | **this PR** |
-| 02 | Governance, assurance principles, regulatory scope, ADRs | next |
-| 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | planned |
+| 01 | Repository skeleton, licensing, lint + CI | merged |
+| 02 | Governance, assurance principles, regulatory scope, ADRs | **this PR** |
+| 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | next |
 | 04 | Check contract, evaluator, assessment-results + POA&M emitters | planned |
 | 05 | Component-definition model + Windows collectors | planned |
 | 06 | Linux collectors + end-of-life dataset | planned |
@@ -169,10 +169,13 @@ never invoked by an assessment run.
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) (lands in PR 02). The one rule worth
-stating up front: **a wrong verdict is worse than a missing one**, because
-someone acts on it. Coverage gaps are acceptable and tracked; confident
-incorrectness is not.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). The one rule worth stating up front:
+**a wrong verdict is worse than a missing one**, because someone acts on it.
+Coverage gaps are acceptable and tracked; confident incorrectness is not.
+
+Start with [`docs/ASSURANCE-PRINCIPLES.md`](docs/ASSURANCE-PRINCIPLES.md) — it is
+the binding document, and most review feedback traces back to it. Decisions are
+recorded as [ADRs](docs/adr/).
 
 ## Licence
 
