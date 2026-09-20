@@ -1,0 +1,52 @@
+---
+name: Incorrect assessment result
+description: A control was reported satisfied/not-satisfied and the verdict is wrong
+labels: ["correctness", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        This is the most important issue type in the repository. A wrong verdict
+        is worse than a missing one, because it is acted upon.
+  - type: input
+    id: control
+    attributes:
+      label: ISM control ID
+      placeholder: ism-1488
+    validations:
+      required: true
+  - type: dropdown
+    id: direction
+    attributes:
+      label: Failure direction
+      options:
+        - False PASS - reported satisfied but the control is NOT met
+        - False FAIL - reported not-satisfied but the control IS met
+        - Wrong confidence - verdict right, confidence rating wrong
+        - Wrong applicability - control should be not-applicable here
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform / component
+      placeholder: windows-server-2019, rhel9, entra-id
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Actual system state
+      description: What is genuinely configured on the target, and how did you confirm it?
+    validations:
+      required: true
+  - type: textarea
+    id: facts
+    attributes:
+      label: Fact bundle / observation
+      description: >-
+        Paste the relevant fact bundle or OSCAL observation.
+        REDACT hostnames, IPs, account names and anything else identifying.
+      render: json
+    validations:
+      required: true

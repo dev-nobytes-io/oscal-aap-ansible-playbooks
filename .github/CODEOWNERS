@@ -1,0 +1,15 @@
+# Default owners for everything in the repository.
+*       @dev-nobytes-io/maintainers
+
+# Control interpretation is the highest-risk change surface in this repo: a
+# wrong mapping produces confident, well-formatted, incorrect compliance
+# reporting. These paths warrant deliberate review.
+/oscal/mappings/                @dev-nobytes-io/maintainers
+/oscal/catalogs/                @dev-nobytes-io/maintainers
+/oscal/component-definitions/   @dev-nobytes-io/maintainers
+/docs/04-regulatory-scope.md    @dev-nobytes-io/maintainers
+/docs/ASSURANCE-PRINCIPLES.md   @dev-nobytes-io/maintainers
+
+# Vendored Commonwealth data. Changes here should only ever come from the
+# automated release-watch workflow.
+/oscal/upstream/                @dev-nobytes-io/maintainers

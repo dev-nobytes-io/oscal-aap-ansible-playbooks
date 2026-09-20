@@ -1,0 +1,58 @@
+oscal-aap-ansible-playbooks
+Copyright 2026 nobytes.io
+
+This product includes software developed by nobytes.io, licensed under the
+Apache License, Version 2.0 (see LICENSE).
+
+================================================================================
+THIRD-PARTY DATA: Australian Government Information Security Manual (ISM)
+================================================================================
+
+This repository vendors and redistributes control catalogue data from the
+Australian Government Information Security Manual (ISM), published in Open
+Security Controls Assessment Language (OSCAL) format by the Australian Signals
+Directorate (ASD) / Australian Cyber Security Centre (ACSC).
+
+  Title      : Information security manual (ISM), OSCAL release
+  Author     : Australian Signals Directorate, Commonwealth of Australia
+  Source     : https://www.cyber.gov.au/ism/oscal
+  Mirror     : https://github.com/AustralianCyberSecurityCentre/ism-oscal
+  Copyright  : (C) Commonwealth of Australia
+  Licence    : Creative Commons Attribution 4.0 International (CC BY 4.0)
+               https://creativecommons.org/licenses/by/4.0/
+
+Vendored copies live under `oscal/upstream/ism/<release-tag>/` and record the
+exact upstream git tag and SHA-256 checksum of every file.
+
+CHANGES MADE TO THE LICENSED MATERIAL
+-------------------------------------
+CC BY 4.0 requires that modifications be indicated. This project:
+
+  * Redistributes the ISM OSCAL catalogue and profile documents BYTE-FOR-BYTE
+    UNMODIFIED under `oscal/upstream/`. No ISM control text is altered.
+  * Produces SEPARATE derived artefacts (OSCAL profiles, component-definitions,
+    crosswalk mappings and assessment results) that REFERENCE ISM control
+    identifiers. These derived artefacts are the work of this project and are
+    NOT part of the licensed ISM material.
+
+Derived artefacts and any interpretation of ISM controls expressed in this
+repository are NOT endorsed by, affiliated with, or approved by the Australian
+Signals Directorate, the Australian Cyber Security Centre, or the Commonwealth
+of Australia. Where this repository's interpretation of a control differs from
+the ISM, THE ISM IS AUTHORITATIVE.
+
+The Commonwealth Coat of Arms and the ASD logo are excluded from the CC BY 4.0
+licence and are NOT reproduced in this repository.
+  https://www.pmc.gov.au/government/commonwealth-coat-arms
+
+================================================================================
+THIRD-PARTY DATA: NIST OSCAL schemas
+================================================================================
+
+  Title   : OSCAL JSON Schemas, version 1.1.2
+  Author  : National Institute of Standards and Technology (NIST)
+  Source  : https://github.com/usnistgov/OSCAL
+  Status  : US Government work; see the upstream repository's LICENSE.md
+
+Vendored unmodified under `oscal/schemas/` to permit fully offline, air-gapped
+validation.

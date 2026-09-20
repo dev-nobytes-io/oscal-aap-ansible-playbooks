@@ -1,0 +1,40 @@
+---
+name: New control check
+description: Propose automated evidence collection for an ISM control
+labels: ["enhancement", "control-coverage"]
+body:
+  - type: input
+    id: control
+    attributes:
+      label: ISM control ID
+      placeholder: ism-1654
+    validations:
+      required: true
+  - type: dropdown
+    id: assessability
+    attributes:
+      label: How can this control be evidenced?
+      options:
+        - Host-testable (SSH/WinRM can determine the answer)
+        - API-only (needs Entra ID, vSphere, CyberArk, Splunk, etc.)
+        - Partially testable (a proxy signal only - state which)
+        - Not technically assessable (procedural; needs human attestation)
+    validations:
+      required: true
+  - type: textarea
+    id: assertion
+    attributes:
+      label: Proposed testable assertion
+      description: >-
+        The ISM gives one prose sentence per control and no assessment
+        objective. State precisely what would be collected and what
+        condition makes it satisfied.
+    validations:
+      required: true
+  - type: dropdown
+    id: confidence
+    attributes:
+      label: Confidence if implemented
+      options: [direct, proxy, partial]
+    validations:
+      required: true

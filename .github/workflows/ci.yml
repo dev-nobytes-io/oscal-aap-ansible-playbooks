@@ -1,0 +1,83 @@
+---
+name: CI
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Matches the requirements.txt pin rationale: ansible-core 2.20+ needs
+  # Python >= 3.12, so the control node stays on 3.11 with core 2.19.x.
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  lint:
+    name: Lint (yaml, ansible production profile, python)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install pinned tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: yamllint
+        run: yamllint --strict .
+
+      - name: ansible-lint (production profile)
+        run: ansible-lint
+
+      - name: ruff
+        run: ruff check tools tests
+
+  oscal:
+    name: OSCAL schema validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install pinned tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      # Prints an explicit SKIP until PR 03 lands. It does not fabricate a pass.
+      - name: Validate OSCAL artefacts
+        run: make validate
+
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install pinned tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      # Prints an explicit SKIP until PR 04 lands.
+      - name: Run tests
+        run: make test

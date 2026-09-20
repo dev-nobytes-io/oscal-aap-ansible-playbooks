@@ -1,0 +1,11 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: ISM control content question
+    url: https://www.cyber.gov.au/ism
+    about: >-
+      Questions about what an ISM control MEANS belong with ASD, not here.
+      The ISM is authoritative; this repository only automates evidence for it.
+  - name: Security vulnerability
+    url: https://github.com/dev-nobytes-io/oscal-aap-ansible-playbooks/security/advisories/new
+    about: Report privately. Do not open a public issue.
