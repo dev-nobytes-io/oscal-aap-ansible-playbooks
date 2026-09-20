@@ -1,0 +1,35 @@
+{
+  "schema": "https://nobytes.io/schema/oscal-cca/fact-bundle/1.0",
+  "run_id": "fixture:partial",
+  "collected": "2026-09-20T02:14:07+10:00",
+  "subject": {
+    "asset_id": "corp.example.gov.au/WKS-0042",
+    "description": "Windows 11 workstation WKS-0042",
+    "platform_family": "windows",
+    "estate_tier": "current"
+  },
+  "collector": {"collection": "nobytes.compliance", "version": "0.1.0"},
+  "marking": {"system": "pspf", "value": "OFFICIAL: Sensitive"},
+  "facts": {
+    "windows.office.install": {
+      "collected": "2026-09-20T02:14:05+10:00",
+      "source": "registry:HKLM\\SOFTWARE\\Microsoft\\Office\\ClickToRun",
+      "value": [{"product": "Microsoft 365 Apps for enterprise", "office_version": "16.0"}]
+    },
+    "windows.office.macro_policy": {
+      "collected": "2026-09-20T02:14:07+10:00",
+      "source": "registry:HKLM+HKU\\*\\SOFTWARE\\Policies\\Microsoft\\office",
+      "meta": {"profiles_total": 3, "profiles_loaded": 2,
+               "profiles_unloaded": ["S-1-5-21-1234567890-1234567890-1234567890-1290"]},
+      "value": [
+        {"scope": "machine", "app": "word",       "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
+        {"scope": "machine", "app": "excel",      "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
+        {"scope": "machine", "app": "powerpoint", "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
+        {"scope": "machine", "app": "access",     "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
+        {"scope": "machine", "app": "publisher",  "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
+        {"scope": "machine", "app": "visio",      "blockcontentexecutionfrominternet": 1, "gpo_delivered": true},
+        {"scope": "machine", "app": "project",    "blockcontentexecutionfrominternet": 1, "gpo_delivered": true}
+      ]
+    }
+  }
+}

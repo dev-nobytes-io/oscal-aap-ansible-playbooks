@@ -1,0 +1,59 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-office-macro-internet-blocked
+version: 1.0.0
+title: Office policy blocks macros in files originating from the internet
+platform_family: windows
+component: microsoft-office-windows
+
+controls:
+  - id: ism-1488
+    statement_id: ism-1488_smt
+    control_revision: "1"
+    statement_sha256: c3572b760aff789e46a4008f5f4f5f2bd7c56aec4b4089c3df881dbfa6a1503e
+    coverage: partial
+    rationale: >-
+      Verifies the ADMX policy state that implements the block, in machine scope
+      and in every loaded user policy hive. It does NOT observe runtime blocking
+      behaviour, does not detect Mark-of-the-Web being stripped by an upstream
+      mail or file gateway, does not cover Office applications outside
+      in_scope_apps, and cannot assess user profile hives that were not loaded
+      at collection time.
+
+method: TEST
+# Ceiling, not a claim. Reading the policy that implements the control is not
+# the same as observing macros actually being blocked.
+confidence: proxy
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_office
+  facts:
+    required:
+      - windows.office.install
+      - windows.office.macro_policy
+    optional:
+      - windows.gpo.applied_computer
+
+evaluator: nobytes_cca.checks.windows.office:macro_internet_blocked
+
+parameters:
+  in_scope_apps: [word, excel, powerpoint, access, publisher, visio, project]
+  require_gpo_delivery: true
+
+not_applicable_when: >-
+  windows.office.install reports no Microsoft Office or Microsoft 365 Apps
+  installation on the subject.
+
+remediation:
+  role: nobytes.compliance.remediate_windows_office
+  tasks_from: block_internet_macros
+  risk: low
+  reboot_required: false
+  user_impact: >-
+    Macros in files carrying Mark-of-the-Web will no longer run. Users with a
+    demonstrated business requirement must use a Trusted Location or signed
+    macros.

@@ -136,8 +136,10 @@ make help         # everything else
 
 ```bash
 make fetch        # vendor the pinned ISM OSCAL release + NIST schemas (needs network)
-make validate     # verify checksums, validate against pinned schemas (fully offline)
-make test         # canary tests over the vendored catalog
+make validate     # checksums, OSCAL schemas, check registry (fully offline)
+make test         # canary, invariant, purity and golden-OSCAL tests
+make coverage     # honest control coverage for a baseline
+make assess-local # end-to-end evaluate -> OSCAL against fixture bundles
 ```
 
 Targets for work that has not landed yet print an explicit `SKIP` naming the
@@ -159,9 +161,9 @@ content, gradually.
 |---|---|---|
 | 01 | Repository skeleton, licensing, lint + CI | merged |
 | 02 | Governance, assurance principles, regulatory scope, ADRs | open |
-| 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | **this PR** |
-| 04 | Check contract, evaluator, assessment-results + POA&M emitters | next |
-| 05 | Component-definition model + Windows collectors | planned |
+| 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | open |
+| 04 | Check contract, evaluator, assessment-results + POA&M emitters | **this PR** |
+| 05 | Component-definition model + Windows collectors | next |
 | 06 | Linux collectors + end-of-life dataset | planned |
 | 07 | Dual execution environments + AAP/AWX configuration-as-code | planned |
 | 08 | Identity collectors — Entra ID, ADFS, Keycloak | planned |

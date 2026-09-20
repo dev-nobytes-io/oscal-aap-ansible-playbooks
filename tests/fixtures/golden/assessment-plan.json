@@ -1,0 +1,408 @@
+{
+  "assessment-plan": {
+    "uuid": "2da2619a-610a-5395-b844-cabd0c7e32ae",
+    "metadata": {
+      "title": "Continuous assessment plan \u2014 E8_ML1 \u2014 SYSTEM-GOVDESK",
+      "last-modified": "2026-09-20T03:05:12+10:00",
+      "version": "2026.09.4",
+      "oscal-version": "1.1.2",
+      "props": [
+        {
+          "name": "marking",
+          "value": "OFFICIAL: Sensitive",
+          "class": "pspf"
+        }
+      ]
+    },
+    "import-ssp": {
+      "href": "#65b97958-a60c-5c98-bd9f-c505a653ed1f"
+    },
+    "local-definitions": {
+      "activities": [
+        {
+          "uuid": "de54e675-16e5-5c81-8b22-2aab9d985f5d",
+          "title": "Office policy blocks macros in files originating from the internet",
+          "description": "Verifies the ADMX policy state that implements the block, in machine scope and in every loaded user policy hive. It does NOT observe runtime blocking behaviour, does not detect Mark-of-the-Web being stripped by an upstream mail or file gateway, does not cover Office applications outside in_scope_apps, and cannot assess user profile hives that were not loaded at collection time.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "win-office-macro-internet-blocked",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "TEST",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "proxy",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "subject",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "168",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "collect-role",
+              "value": "nobytes.compliance.collect_windows_office",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evaluator",
+              "value": "nobytes_cca.checks.windows.office:macro_internet_blocked",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1488",
+                    "statement-ids": [
+                      "ism-1488_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "reviewed-controls": {
+      "description": "Every control in the E8_ML1 baseline at ISM catalog 2026.09.4 is in scope, including those for which no determination can be made.",
+      "control-selections": [
+        {
+          "description": "Controls in the E8_ML1 baseline with an implemented automated check in this release.",
+          "include-controls": [
+            {
+              "control-id": "ism-1488",
+              "statement-ids": [
+                "ism-1488_smt"
+              ]
+            }
+          ]
+        },
+        {
+          "description": "Controls in the E8_ML1 baseline with NO automated check in this release. They are in scope and no determination is made for them. Their absence from findings means undetermined, not compliant.",
+          "props": [
+            {
+              "name": "assessment-status",
+              "value": "unassessed",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "unassessed-reason",
+              "value": "not-implemented",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "include-controls": [
+            {
+              "control-id": "ism-0445",
+              "statement-ids": [
+                "ism-0445_smt"
+              ]
+            },
+            {
+              "control-id": "ism-0843",
+              "statement-ids": [
+                "ism-0843_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1175",
+              "statement-ids": [
+                "ism-1175_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1380",
+              "statement-ids": [
+                "ism-1380_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1401",
+              "statement-ids": [
+                "ism-1401_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1485",
+              "statement-ids": [
+                "ism-1485_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1486",
+              "statement-ids": [
+                "ism-1486_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1489",
+              "statement-ids": [
+                "ism-1489_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1501",
+              "statement-ids": [
+                "ism-1501_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1504",
+              "statement-ids": [
+                "ism-1504_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1507",
+              "statement-ids": [
+                "ism-1507_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1511",
+              "statement-ids": [
+                "ism-1511_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1515",
+              "statement-ids": [
+                "ism-1515_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1585",
+              "statement-ids": [
+                "ism-1585_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1654",
+              "statement-ids": [
+                "ism-1654_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1657",
+              "statement-ids": [
+                "ism-1657_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1671",
+              "statement-ids": [
+                "ism-1671_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1672",
+              "statement-ids": [
+                "ism-1672_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1679",
+              "statement-ids": [
+                "ism-1679_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1680",
+              "statement-ids": [
+                "ism-1680_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1681",
+              "statement-ids": [
+                "ism-1681_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1688",
+              "statement-ids": [
+                "ism-1688_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1689",
+              "statement-ids": [
+                "ism-1689_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1690",
+              "statement-ids": [
+                "ism-1690_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1691",
+              "statement-ids": [
+                "ism-1691_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1694",
+              "statement-ids": [
+                "ism-1694_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1695",
+              "statement-ids": [
+                "ism-1695_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1698",
+              "statement-ids": [
+                "ism-1698_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1699",
+              "statement-ids": [
+                "ism-1699_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1701",
+              "statement-ids": [
+                "ism-1701_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1702",
+              "statement-ids": [
+                "ism-1702_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1704",
+              "statement-ids": [
+                "ism-1704_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1807",
+              "statement-ids": [
+                "ism-1807_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1808",
+              "statement-ids": [
+                "ism-1808_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1810",
+              "statement-ids": [
+                "ism-1810_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1811",
+              "statement-ids": [
+                "ism-1811_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1812",
+              "statement-ids": [
+                "ism-1812_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1814",
+              "statement-ids": [
+                "ism-1814_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1870",
+              "statement-ids": [
+                "ism-1870_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1876",
+              "statement-ids": [
+                "ism-1876_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1877",
+              "statement-ids": [
+                "ism-1877_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1883",
+              "statement-ids": [
+                "ism-1883_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1892",
+              "statement-ids": [
+                "ism-1892_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1893",
+              "statement-ids": [
+                "ism-1893_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1905",
+              "statement-ids": [
+                "ism-1905_smt"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "back-matter": {
+      "resources": [
+        {
+          "uuid": "65b97958-a60c-5c98-bd9f-c505a653ed1f",
+          "title": "System security plan placeholder for SYSTEM-GOVDESK",
+          "description": "This project assesses; it does not author SSPs. The reference exists because import-ssp is part of the assessment-plan model."
+        }
+      ]
+    }
+  }
+}

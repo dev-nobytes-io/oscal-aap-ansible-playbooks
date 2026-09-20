@@ -1,0 +1,71 @@
+{
+  "plan-of-action-and-milestones": {
+    "uuid": "0f1971ce-cc91-523a-8c4d-37ae514bc474",
+    "metadata": {
+      "title": "Plan of action and milestones \u2014 SYSTEM-GOVDESK",
+      "last-modified": "2026-09-20T03:05:12+10:00",
+      "version": "E8_ML1",
+      "oscal-version": "1.1.2",
+      "props": [
+        {
+          "name": "marking",
+          "value": "OFFICIAL: Sensitive",
+          "class": "pspf"
+        }
+      ]
+    },
+    "system-id": {
+      "identifier-type": "https://nobytes.io/ns/oscal/cca/1.0/system-id",
+      "id": "SYSTEM-GOVDESK"
+    },
+    "poam-items": [
+      {
+        "uuid": "b2d64925-4439-5a14-afd3-147fd06a81aa",
+        "title": "ism-1488 not satisfied",
+        "description": "1 of 2 assessed subjects do not satisfy this control.",
+        "props": [
+          {
+            "name": "control-id",
+            "value": "ism-1488",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "baseline",
+            "value": "E8_ML1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "poam-status",
+            "value": "open",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "confidence",
+            "value": "proxy",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-failing",
+            "value": "1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-assessed",
+            "value": "2",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "marking",
+            "value": "OFFICIAL: Sensitive",
+            "class": "pspf"
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "27bfe796-81f7-5075-9771-d681abaa54c2"
+          }
+        ]
+      }
+    ]
+  }
+}
