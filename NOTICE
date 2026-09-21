@@ -46,6 +46,41 @@ licence and are NOT reproduced in this repository.
   https://www.pmc.gov.au/government/commonwealth-coat-arms
 
 ================================================================================
+COMMONWEALTH DATA: ASD's Blueprint for Secure Cloud
+================================================================================
+
+This repository vendors selected pages and document templates from ASD's
+Blueprint for Secure Cloud.
+
+  Title      : ASD's Blueprint for Secure Cloud
+  Author     : Australian Signals Directorate, Commonwealth of Australia
+  Source     : https://blueprint.asd.gov.au
+  Repository : https://github.com/ASD-Blueprint/ASD-Blueprint-for-Secure-Cloud
+  Copyright  : (C) Commonwealth of Australia
+  Licence    : Creative Commons Attribution 4.0 International (CC BY 4.0)
+               https://creativecommons.org/licenses/by/4.0/
+
+Vendored copies live under `blueprint/`, pinned to an upstream git tag and
+commit, with a SHA-256 checksum for every file in `blueprint/MANIFEST.json`.
+
+WHAT IS VENDORED, AND WHAT IS NOT
+  * The System Security Plan Annex, System Security Plan and Essential Eight
+    document TEMPLATES, redistributed byte-for-byte unmodified. This project
+    populates copies of them; the templates themselves are not altered.
+  * ONLY those Blueprint pages a check explicitly cites. The Blueprint is a
+    529-page corpus and a full mirror would vendor 7.7 MB, most of it website
+    styling. Pages are vendored byte-for-byte unmodified and checksummed, so a
+    citation can be verified offline and an upstream rewording is detected
+    rather than silently invalidating the objective it supports.
+
+The Blueprint's own guidance states that implementing it does not certify or
+endorse a system as suitable to handle OFFICIAL, OFFICIAL: Sensitive or
+PROTECTED information, and that assessment is a matter for an IRAP assessor.
+Nothing in this repository changes that. Check objectives that cite Blueprint
+pages are THIS PROJECT'S reading of that guidance and are not endorsed by,
+affiliated with, or approved by ASD or the Commonwealth.
+
+================================================================================
 THIRD-PARTY DATA: operating-system end-of-life dates
 ================================================================================
 

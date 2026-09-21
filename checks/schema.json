@@ -232,6 +232,11 @@
           },
           "note": {
             "type": "string"
+          },
+          "blueprint_page": {
+            "type": "string",
+            "pattern": "^content/en/[a-z0-9/_-]+\\.md$",
+            "description": "Repository-relative path of an ASD Blueprint page this check's objective rests on. The page is vendored and hashed at the pinned tag, so a reword by ASD fails CI instead of silently invalidating the objective -- the same drift guard `statement_sha256` gives for ISM prose."
           }
         }
       }

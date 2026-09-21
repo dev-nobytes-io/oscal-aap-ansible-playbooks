@@ -23,6 +23,10 @@ OUT         ?= out
 ISM_RELEASE ?= v2026.09.4
 ISM_MIRROR  ?= https://github.com/AustralianCyberSecurityCentre/ism-oscal
 
+# Pinned ASD Blueprint for Secure Cloud release. Only the cited pages and the
+# submission templates are vendored -- see tools/fetch_blueprint.py.
+BLUEPRINT_RELEASE ?= v1.4.0
+
 # Default baseline for coverage and local assessment runs.
 BASELINE    ?= E8_ML1
 
@@ -58,12 +62,14 @@ generate: ## Regenerate derived OSCAL artefacts (component-definitions)
 validate: ## Validate vendored data, OSCAL artefacts and the check registry
 	$(BIN)python tools/fetch_ism_oscal.py --verify --release $(ISM_RELEASE)
 	$(BIN)python tools/fetch_eol_data.py --verify
+	$(BIN)python tools/fetch_blueprint.py --verify
 	$(BIN)python tools/oscal_validate.py
 	$(BIN)python tools/cca.py validate-registry
 
-fetch: ## Download + checksum the ISM OSCAL release, NIST schemas and EOL data
+fetch: ## Download + checksum the ISM OSCAL release, NIST schemas, EOL and Blueprint data
 	$(BIN)python tools/fetch_ism_oscal.py --release $(ISM_RELEASE)
 	$(BIN)python tools/fetch_eol_data.py
+	$(BIN)python tools/fetch_blueprint.py --release $(BLUEPRINT_RELEASE)
 
 test: ## Run the Python unit test suite
 	$(BIN)python -m pytest tests/ -q
