@@ -61,13 +61,27 @@ So redaction is a **configurable policy with a conservative default**, applied
 **between collection and persistence** — never after. You cannot retroactively
 un-collect.
 
+It is applied by `nobytes.compliance.redact_facts`, and the test that matters
+is the one asserting `finalise.yml` **calls** it. From PR 04 to PR 15 this
+policy was fully specified and ran nowhere: `fact_bundle_redaction_keys` was
+referenced only in `defaults/main.yml`, no hashing existed in the collection,
+and the bundle stamped `redaction_policy` beside facts written verbatim. A
+correct filter nobody calls is indistinguishable, in the written bundle, from
+no filter at all — see [ADR 0016](adr/0016-apply-the-redaction-policy.md).
+
+**Scope**: redaction applies to a bundle's `facts`. `subject.asset_id` is
+deliberately not redacted — it is the correlation key giving a POA&M item
+continuity across runs, and hashing it would break that while protecting
+nothing, since the inventory it came from holds the same value in clear. A
+deployment needing it pseudonymous sets `cca_asset_id` accordingly.
+
 Each fact key declares how its sensitive elements are handled:
 
 | Mode | Behaviour |
 |---|---|
 | `retain` | Stored as collected |
 | `hash` | Replaced by a salted hash — correlation across runs survives, the identifier does not |
-| `truncate` | Structure kept, identifying portion removed (e.g. a SID's RID) |
+| `truncate` | Structure kept, identifying portion removed — a SID's RID, a UPN's local part. **Well-known RIDs below 1000 are kept**: `500` names the built-in Administrator and `512` Domain Admins on every Windows domain, so they identify a role rather than a person, and masking them would leave the bundle unable to answer the privileged-access controls it was collected for. |
 | `drop` | Removed entirely |
 
 The default policy hashes user identifiers and drops free-text fields that

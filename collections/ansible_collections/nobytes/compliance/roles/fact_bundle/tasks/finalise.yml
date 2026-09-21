@@ -39,4 +39,12 @@
         system: pspf
         value: "{{ fact_bundle_marking }}"
       redaction_policy: "{{ fact_bundle_redaction_policy_version }}"
-      facts: "{{ fact_bundle_facts | default({}) }}"
+      # Redaction is APPLIED here, not merely declared. Until PR 16 this line
+      # wrote the facts verbatim while the bundle stamped redaction_policy
+      # above it -- a protection asserted and never performed.
+      facts: >-
+        {{ fact_bundle_facts | default({})
+           | nobytes.compliance.redact_facts(
+               keys=fact_bundle_redaction_keys,
+               default=fact_bundle_redaction_default,
+               salt=fact_bundle_redaction_salt) }}
