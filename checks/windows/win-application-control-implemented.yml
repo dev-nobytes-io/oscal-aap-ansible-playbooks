@@ -1,0 +1,40 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-application-control-implemented
+version: 1.0.0
+title: Application control is enforcing on this workstation
+platform_family: windows
+component: windows-operating-system
+
+controls:
+  - id: ism-0843
+    statement_id: ism-0843_smt
+    control_revision: "9"
+    statement_sha256: d57ccb91e7a619c97dc5b72462e3605140c892a49ca7996bfd4dd1b924431c0d
+    coverage: partial
+    rationale: >-
+      Observes that an application control mechanism is in ENFORCING mode --
+      AppLocker with at least one rule collection set to Enabled, or App
+      Control for Business running a code integrity policy. Two gaps are
+      stated rather than hidden. "Implemented" is a judgement about an
+      operational control, and a policy can enforce while permitting
+      everything, so what is observed is enforcement mode rather than efficacy.
+      And AuditOnly is deliberately not counted as implemented: an audit-mode
+      collection writes an event and blocks nothing, which is the most likely
+      way a workstation looks protected and is not.
+
+method: TEST
+confidence: proxy
+assessability: automated
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_appcontrol
+  facts:
+    required:
+      - windows.appcontrol.state
+
+evaluator: nobytes_cca.checks.windows.appcontrol:application_control_implemented

@@ -181,10 +181,11 @@ content, gradually.
 | 07 | Dual execution environments + AAP/AWX configuration-as-code | merged |
 | 08 | Attestation model — declare what no tool can observe | open |
 | 09 | Entra ID collectors + Blueprint vendoring | open |
-| 10 | Reporting — human-readable report + ASD SSP Annex | **this PR** |
-| 11 | Evidence providers — Splunk, Change Auditor | planned |
-| 12 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
-| 13+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| 10 | Reporting — human-readable report + ASD SSP Annex | open |
+| 11 | Windows application control — AppLocker / WDAC | **this PR** |
+| 12 | Evidence providers — Splunk, Change Auditor | planned |
+| 13 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
+| 14+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
 | last | Remediation scaffolding — opt-in, separated | planned |
 
 Assessment comes first throughout. Remediation is deliberately last, opt-in and
