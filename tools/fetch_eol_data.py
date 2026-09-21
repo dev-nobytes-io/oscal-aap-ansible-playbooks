@@ -39,10 +39,45 @@ EOL_DIR = ROOT / "data" / "eol"
 API = "https://endoflife.date/api"
 TIMEOUT = 45
 
-#: endoflife.date product slugs we consume. Keep this list to platforms the
+#: endoflife.date product slugs we consume. Keep this list to things the
 #: repository actually has collectors for -- vendoring data nothing reads is
 #: just weight.
-PRODUCTS = ("rhel", "ubuntu", "windows", "windows-server", "rocky-linux", "debian")
+#:
+#: Slugs are not guessable and were confirmed against the API index: the
+#: obvious `microsoft-office`, `google-chrome` and `adobe-flash-player` all
+#: 404. What exists is `office`, `chrome`, `firefox`, `libreoffice`,
+#: `oracle-jdk`.
+PRODUCTS = (
+    # Operating systems -- ism-1501, ism-1905.
+    "rhel",
+    "ubuntu",
+    "windows",
+    "windows-server",
+    "rocky-linux",
+    "debian",
+    # Applications -- ism-1704.
+    "office",
+    "chrome",
+    "firefox",
+    "libreoffice",
+    "oracle-jdk",
+)
+
+#: Application families ism-1704 names that endoflife.date does NOT carry,
+#: confirmed by searching its 477-product index: Microsoft Edge, PDF
+#: applications, email clients, security products and browser extensions.
+#:
+#: This is recorded rather than quietly omitted, because the difference between
+#: "checked and supported" and "not checked at all" is the whole point. The
+#: ism-1704 evaluator reports these families as uncovered and caps its
+#: confidence accordingly.
+UNCOVERED_FAMILIES = (
+    "Microsoft Edge",
+    "PDF applications",
+    "email clients",
+    "security products",
+    "web browser extensions",
+)
 
 
 def fetch(url: str) -> bytes:

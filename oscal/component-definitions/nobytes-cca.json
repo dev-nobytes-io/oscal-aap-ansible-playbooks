@@ -1578,6 +1578,91 @@
                   }
                 ],
                 "remarks": "Residual assessment gap: The control is a binary state and both halves are directly observable: whether the optional feature is present, and whether policy disables the IE11 application. The one residual gap is IE mode inside Microsoft Edge, which is a deliberately supported configuration and is reported in the facts rather than judged, since the control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine."
+              },
+              {
+                "uuid": "6b4254da-df73-56c5-9bf5-e7d332c2810f",
+                "control-id": "ism-1704",
+                "description": "The control names six application families. The vendored end-of-life dataset covers Office productivity suites, two web browsers and Java; searching endoflife.date's 477-product index confirms it carries no entry for Microsoft Edge, any PDF reader, email clients or security products, and browser extensions are not an installed-application concept at all. Those gaps are named in every result rather than omitted, because \"checked and supported\" and \"not checked at all\" must not render the same way. Adobe Flash Player is judged from public record instead of a feed -- the control names it explicitly, Adobe ended support on 2020-12-31 and began blocking content on 2021-01-12, so any installation is unsupported without argument. An application that cannot be mapped to a support timeline is reported as unmapped and is neither passed nor failed; and where NOTHING could be mapped the result is unassessed rather than a vacuous pass. Support is judged as of the fact's collection date, so re-running over archived evidence reproduces the verdict that was true when it was gathered.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-unsupported-applications-removed"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_applications"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.app_support:unsupported_applications_removed"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "3"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "b3fc6b6b27b7a35fa2c51596044f801fcca63401ef99c4db6cb8cc59f5c8cb07"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1704_smt",
+                    "uuid": "67dafb9a-1814-5e26-9f69-2b5f8f15a1bc",
+                    "description": "Office productivity suites, web browsers and their extensions, email clients, PDF applications, Adobe Flash Player, and security products that are no longer supported by vendors are removed."
+                  }
+                ],
+                "remarks": "Residual assessment gap: The control names six application families. The vendored end-of-life dataset covers Office productivity suites, two web browsers and Java; searching endoflife.date's 477-product index confirms it carries no entry for Microsoft Edge, any PDF reader, email clients or security products, and browser extensions are not an installed-application concept at all. Those gaps are named in every result rather than omitted, because \"checked and supported\" and \"not checked at all\" must not render the same way. Adobe Flash Player is judged from public record instead of a feed -- the control names it explicitly, Adobe ended support on 2020-12-31 and began blocking content on 2021-01-12, so any installation is unsupported without argument. An application that cannot be mapped to a support timeline is reported as unmapped and is neither passed nor failed; and where NOTHING could be mapped the result is unassessed rather than a vacuous pass. Support is judged as of the fact's collection date, so re-running over archived evidence reproduces the verdict that was true when it was gathered."
               }
             ]
           }

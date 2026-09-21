@@ -31,6 +31,13 @@ PRODUCT_FILES = {
     "debian": "debian.json",
     "windows": "windows.json",
     "windows-server": "windows-server.json",
+    # Applications -- ism-1704. Slugs confirmed against the endoflife.date
+    # index rather than guessed: `microsoft-office` and `google-chrome` 404.
+    "office": "office.json",
+    "chrome": "chrome.json",
+    "firefox": "firefox.json",
+    "libreoffice": "libreoffice.json",
+    "oracle-jdk": "oracle-jdk.json",
 }
 
 

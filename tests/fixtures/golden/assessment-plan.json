@@ -1208,6 +1208,82 @@
               }
             ]
           }
+        },
+        {
+          "uuid": "0cf6d455-a423-5eb2-a692-6cdee91bc37b",
+          "title": "Unsupported applications are removed",
+          "description": "The control names six application families. The vendored end-of-life dataset covers Office productivity suites, two web browsers and Java; searching endoflife.date's 477-product index confirms it carries no entry for Microsoft Edge, any PDF reader, email clients or security products, and browser extensions are not an installed-application concept at all. Those gaps are named in every result rather than omitted, because \"checked and supported\" and \"not checked at all\" must not render the same way. Adobe Flash Player is judged from public record instead of a feed -- the control names it explicitly, Adobe ended support on 2020-12-31 and began blocking content on 2021-01-12, so any installation is unsupported without argument. An application that cannot be mapped to a support timeline is reported as unmapped and is neither passed nor failed; and where NOTHING could be mapped the result is unassessed rather than a vacuous pass. Support is judged as of the fact's collection date, so re-running over archived evidence reproduces the verdict that was true when it was gathered.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "win-unsupported-applications-removed",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "TEST",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "partial",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "subject",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "168",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "collect-role",
+              "value": "nobytes.compliance.collect_windows_applications",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evaluator",
+              "value": "nobytes_cca.checks.windows.app_support:unsupported_applications_removed",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1704",
+                    "statement-ids": [
+                      "ism-1704_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         }
       ]
     },
@@ -1275,6 +1351,12 @@
               "control-id": "ism-1672",
               "statement-ids": [
                 "ism-1672_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1704",
+              "statement-ids": [
+                "ism-1704_smt"
               ]
             }
           ]
@@ -1447,12 +1529,6 @@
               "control-id": "ism-1702",
               "statement-ids": [
                 "ism-1702_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1704",
-              "statement-ids": [
-                "ism-1704_smt"
               ]
             },
             {

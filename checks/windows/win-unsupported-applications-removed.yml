@@ -1,0 +1,67 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-unsupported-applications-removed
+version: 1.0.0
+title: Unsupported applications are removed
+platform_family: windows
+component: windows-operating-system
+
+controls:
+  - id: ism-1704
+    statement_id: ism-1704_smt
+    control_revision: "3"
+    statement_sha256: b3fc6b6b27b7a35fa2c51596044f801fcca63401ef99c4db6cb8cc59f5c8cb07
+    coverage: partial
+    rationale: >-
+      The control names six application families. The vendored end-of-life
+      dataset covers Office productivity suites, two web browsers and Java;
+      searching endoflife.date's 477-product index confirms it carries no entry
+      for Microsoft Edge, any PDF reader, email clients or security products,
+      and browser extensions are not an installed-application concept at all.
+      Those gaps are named in every result rather than omitted, because
+      "checked and supported" and "not checked at all" must not render the
+      same way. Adobe Flash Player is judged from public record instead of a
+      feed -- the control names it explicitly, Adobe ended support on
+      2020-12-31 and began blocking content on 2021-01-12, so any installation
+      is unsupported without argument. An application that cannot be mapped to
+      a support timeline is reported as unmapped and is neither passed nor
+      failed; and where NOTHING could be mapped the result is unassessed
+      rather than a vacuous pass. Support is judged as of the fact's
+      collection date, so re-running over archived evidence reproduces the
+      verdict that was true when it was gathered.
+
+method: TEST
+confidence: partial
+assessability: automated
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_applications
+  facts:
+    required:
+      - windows.applications.installed
+
+evaluator: nobytes_cca.checks.windows.app_support:unsupported_applications_removed
+parameters:
+  # Matches ism-1501's treatment: under extended support the vendor IS still
+  # issuing patches, so the control's literal wording is met. Defensible but
+  # lawyerly, so it is a parameter and the end date stays in the evidence.
+  extended_support_counts: true
+
+references:
+  - source: endoflife.date
+    url: https://endoflife.date
+    note: >-
+      Community-maintained, not vendor-authoritative, which is part of why this
+      check never reports `direct`. Product slugs were confirmed against the
+      API index: `microsoft-office` and `google-chrome` both 404; the real
+      slugs are `office` and `chrome`.
+  - source: Adobe — Flash Player end of life
+    url: https://www.adobe.com/products/flashplayer/end-of-life.html
+    note: >-
+      Support ended 2020-12-31; Adobe began blocking Flash content from running
+      on 2021-01-12. The basis for treating any Flash installation as
+      unsupported without consulting a feed.

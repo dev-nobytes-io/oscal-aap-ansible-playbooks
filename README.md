@@ -179,13 +179,14 @@ content, gradually.
 | 05 | Component-definition model + Windows collectors | merged |
 | 06 | Linux collectors + end-of-life dataset | merged |
 | 07 | Dual execution environments + AAP/AWX configuration-as-code | merged |
-| 08 | Attestation model — declare what no tool can observe | open |
-| 09 | Entra ID collectors + Blueprint vendoring | open |
-| 10 | Reporting — human-readable report + ASD SSP Annex | open |
-| 11 | Windows application control — AppLocker / WDAC | **this PR** |
-| 12 | Evidence providers — Splunk, Change Auditor | planned |
-| 13 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
-| 14+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| 08 | Attestation model — declare what no tool can observe | merged |
+| 09 | Entra ID collectors + Blueprint vendoring | merged |
+| 10 | Reporting — human-readable report + ASD SSP Annex | merged |
+| 11 | Windows application control — AppLocker / WDAC | merged |
+| 12 | User application hardening — unsupported applications | **this PR** |
+| 13 | Evidence providers — Splunk, Change Auditor | planned |
+| 14 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
+| 15+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
 | last | Remediation scaffolding — opt-in, separated | planned |
 
 Assessment comes first throughout. Remediation is deliberately last, opt-in and

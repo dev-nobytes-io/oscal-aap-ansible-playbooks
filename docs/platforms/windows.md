@@ -118,6 +118,59 @@ It is counted as **not** implemented, for the same reason a report-only
 conditional access policy is not counted as requiring MFA: it is the most
 likely way a workstation looks protected and is not.
 
+## Unsupported applications — `ism-1704`, and what it cannot see
+
+The control names six families: *Office productivity suites, web browsers and
+their extensions, email clients, PDF applications, Adobe Flash Player, and
+security products.*
+
+The vendored end-of-life dataset covers three and a half of them. Searching
+endoflife.date's 477-product index confirms there is **no entry** for Microsoft
+Edge, any PDF reader, email clients or security products — and browser
+extensions are not an installed-application concept at all.
+
+| Family | Covered | How |
+|---|---|---|
+| Office productivity suites | yes | `office`, `libreoffice` |
+| Web browsers | partly | `chrome`, `firefox` — **not Edge** |
+| Java | yes | `oracle-jdk` |
+| Adobe Flash Player | yes | public record, no feed needed |
+| PDF applications | **no** | not in the dataset |
+| Email clients | **no** | not in the dataset |
+| Security products | **no** | not in the dataset |
+| Browser extensions | **no** | not an installed application |
+
+Those gaps are named in **every** result, satisfied or not. Silence would imply
+coverage.
+
+### Three ways this check refuses to flatter
+
+- **Nothing mappable is `unassessed`, not a pass.** A workstation full of
+  line-of-business software that maps to no support timeline has not been
+  shown to satisfy the control. Reporting `satisfied` because nothing was
+  recognised would put a green tick against a control that was never evaluated.
+- **Unmapped applications are never counted as supported.** They are reported
+  separately and are neither passed nor failed.
+- **An unreadable profile hive makes the whole result partial.** The hive that
+  could not be read may hold the unsupported application.
+
+### Adobe Flash is judged from public record
+
+The control names Flash explicitly, endoflife.date does not carry it, and its
+end of life is not a judgement: Adobe ended support on **2020-12-31** and began
+**blocking Flash content from running on 2021-01-12**. Any installation found
+is unsupported, with no feed consulted and no room for argument.
+
+### A mapping bug worth recording
+
+Office's end-of-life cycles are **release years** (`2016`, `2019`, `2021`,
+`2024`) while every modern Office reports a version of `16.0.x`. Deriving the
+cycle from the version yields `16`, which matches nothing — so the check
+silently learned nothing about the first product family the control names. The
+year comes from the display name instead. An Office with no year in its name is
+a subscription build, which is evergreen and correctly reports as unknown
+rather than as supported.
+
 ## Verification status
 
 | Path | Status |

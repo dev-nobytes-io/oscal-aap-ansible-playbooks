@@ -1,0 +1,88 @@
+[
+  {
+    "cycle": "2024",
+    "eol": "2029-10-09",
+    "link": "https://learn.microsoft.com/lifecycle/products/office-2024",
+    "lts": false,
+    "releaseDate": "2024-10-01",
+    "support": "2029-10-09"
+  },
+  {
+    "cycle": "2024-ltsc",
+    "eol": "2029-10-09",
+    "link": "https://learn.microsoft.com/en-us/lifecycle/products/office-ltsc-2024",
+    "lts": true,
+    "releaseDate": "2024-09-18",
+    "releaseLabel": "2024 LTSC",
+    "support": "2029-10-09"
+  },
+  {
+    "cycle": "2021",
+    "eol": "2026-10-13",
+    "link": "https://learn.microsoft.com/lifecycle/products/office-2021",
+    "lts": false,
+    "releaseDate": "2021-10-05",
+    "support": "2026-10-13"
+  },
+  {
+    "cycle": "2019",
+    "eol": "2025-10-14",
+    "link": "https://learn.microsoft.com/lifecycle/products/microsoft-office-2019",
+    "lts": false,
+    "releaseDate": "2018-09-24",
+    "support": "2023-10-10"
+  },
+  {
+    "cycle": "2016",
+    "eol": "2025-10-14",
+    "link": "https://learn.microsoft.com/lifecycle/products/microsoft-office-2016",
+    "lts": false,
+    "releaseDate": "2015-09-22",
+    "support": "2020-10-13"
+  },
+  {
+    "cycle": "2013",
+    "eol": "2023-04-11",
+    "link": "https://learn.microsoft.com/lifecycle/products/microsoft-office-2013",
+    "lts": false,
+    "releaseDate": "2013-01-09",
+    "releaseLabel": "2013 SP1",
+    "support": "2018-04-10"
+  },
+  {
+    "cycle": "2011-for-mac",
+    "eol": "2017-10-10",
+    "link": "https://learn.microsoft.com/lifecycle/products/microsoft-office-for-mac-2011",
+    "lts": false,
+    "releaseDate": "2010-12-09",
+    "releaseLabel": "2011 for Mac SP3",
+    "support": "2017-10-10"
+  },
+  {
+    "cycle": "2010",
+    "eol": "2020-10-13",
+    "link": "https://learn.microsoft.com/lifecycle/products/microsoft-office-2010",
+    "lts": false,
+    "releaseDate": "2010-07-15",
+    "releaseLabel": "2010 SP2",
+    "support": "2015-10-13"
+  },
+  {
+    "cycle": "2008-for-mac",
+    "eol": "2013-04-09",
+    "link": "https://learn.microsoft.com/lifecycle/products/microsoft-office-2008-for-mac",
+    "lts": false,
+    "releaseDate": "2008-01-15",
+    "releaseLabel": "2008 for Mac SP2",
+    "support": "2013-04-09"
+  },
+  {
+    "cycle": "2007",
+    "eol": "2017-10-10",
+    "link": "https://learn.microsoft.com/lifecycle/products/microsoft-office-2007",
+    "lts": false,
+    "releaseDate": "2007-01-27",
+    "releaseLabel": "2007 SP3",
+    "support": "2012-10-09"
+  }
+]

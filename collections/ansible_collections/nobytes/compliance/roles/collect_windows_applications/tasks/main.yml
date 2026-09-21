@@ -1,0 +1,27 @@
+---
+# READ-ONLY. Registry reads only; unloaded profile hives are reported, never
+# loaded, because loading one changes the host.
+
+- name: Enumerate installed applications across machine and user scopes
+  ansible.windows.win_powershell:
+    script: "{{ lookup('ansible.builtin.file', role_path ~ '/files/Get-InstalledApplications.ps1') }}"
+  register: collect_windows_applications_inventory
+  changed_when: false
+  check_mode: false
+
+- name: Record the application inventory into this host's bundle
+  ansible.builtin.include_role:
+    name: nobytes.compliance.fact_bundle
+    tasks_from: record
+  vars:
+    _cca_inv: "{{ (collect_windows_applications_inventory.output | default([{}]))[0] | default({}) }}"
+    fact_records:
+      windows.applications.installed:
+        source: "registry:HKLM+HKU\\*\\...\\CurrentVersion\\Uninstall"
+        # A profile hive we could not read may hold the unsupported
+        # application. The evaluator reports partial-population rather than
+        # claiming a clean inventory.
+        partial: >-
+          {{ (_cca_inv.meta.unloaded_hives | default([]) | length) > 0 }}
+        meta: "{{ _cca_inv.meta | default({}) }}"
+        value: "{{ _cca_inv.applications | default([]) }}"
