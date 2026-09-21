@@ -20,8 +20,8 @@ use — one implementation, two entrypoints.
 
 Two runtime constraints:
 
-- **Standard library only.** `jsonschema` and `pytest` are test-time
-  dependencies.
+- **Standard library only.** `jsonschema`, `regex` and `pytest` are test-time
+  dependencies and never enter the evaluator's runtime import graph.
 - **Python 3.9 syntax.** RHEL 9 and CentOS Stream 9 ship Python 3.9 as
   `/usr/bin/python3`, and the evaluator is invoked via `command` with whatever
   `python3` the environment hands it — which is not necessarily the interpreter

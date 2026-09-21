@@ -173,7 +173,23 @@ def test_evaluator_runtime_imports_stay_within_the_allowed_set() -> None:
     import sys
 
     allowed_third_party = {"yaml"}
-    stdlib = set(getattr(sys, "stdlib_module_names", set()))
+
+    # `sys.stdlib_module_names` arrived in Python 3.10. The previous
+    # `getattr(sys, "stdlib_module_names", set())` silently fell back to an
+    # EMPTY set, which makes every `import json` look like a third-party
+    # dependency -- a check against silent degradation, silently degrading.
+    # Running the suite on ee-legacy's real 3.9 interpreter is what exposed it.
+    #
+    # This is a STATIC check: it reads source with `ast` and never imports the
+    # package, so its answer does not depend on which interpreter runs it. CI
+    # runs it on the 3.11 control node, where the stdlib set is real.
+    if not hasattr(sys, "stdlib_module_names"):
+        pytest.skip(
+            "needs sys.stdlib_module_names (Python 3.10+); this static check is "
+            "run on the control node, and guessing the stdlib set would be worse "
+            "than not running it here"
+        )
+    stdlib = set(sys.stdlib_module_names)
     package = ROOT / "tools" / "nobytes_cca"
 
     offenders = []

@@ -133,7 +133,7 @@ jobs:
           FROM nobytes-cca/${{ matrix.tier }}:ci
           USER root
           RUN dnf install -y python3-pip && dnf clean all \
-           && /usr/bin/python3 -m pip install --no-cache-dir pytest jsonschema
+           && /usr/bin/python3 -m pip install --no-cache-dir pytest jsonschema regex
           EOF
           docker build -t nobytes-cca/${{ matrix.tier }}:test /tmp/ee-test-ctx
           docker run --rm --network none \
@@ -141,4 +141,5 @@ jobs:
             -e CCA_PROJECT_ROOT=/project \
             nobytes-cca/${{ matrix.tier }}:test \
             /usr/bin/python3 -m pytest tests/ -q \
+              -p no:cacheprovider \
               --ignore=tests/test_collectors_are_read_only.py
