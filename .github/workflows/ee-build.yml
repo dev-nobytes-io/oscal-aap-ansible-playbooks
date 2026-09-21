@@ -74,8 +74,26 @@ jobs:
       # make passes --build-arg PYCMD, which is not optional: the CentOS
       # Stream 9 base ships Python 3.9 as /usr/bin/python3, and ansible-core
       # 2.16/2.19 require >= 3.10/3.11 on the controller.
+      #
+      # Retried, because the image build runs `ansible-galaxy collection
+      # install` INSIDE the Containerfile and galaxy.ansible.com has been
+      # resetting connections. That fetch cannot be made offline: an execution
+      # environment exists to carry those collections, so they have to be
+      # fetched once at build time. Air-gapped operation is a property of
+      # ASSESSMENT, which runs from the built image and touches no registry.
+      # Docker caches the layers before the failing one, so a retry is cheap.
       - name: Build the image
-        run: make ee-build EE=${{ matrix.tier }} EE_TAG=nobytes-cca/${{ matrix.tier }}:ci
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if make ee-build EE=${{ matrix.tier }} EE_TAG=nobytes-cca/${{ matrix.tier }}:ci; then
+              exit 0
+            fi
+            echo "::warning::${{ matrix.tier }} build attempt $attempt failed; retrying"
+            sleep $((attempt * 10))
+          done
+          echo "::error::${{ matrix.tier }} image build failed after 3 attempts"
+          exit 1
 
       - name: Assert the image carries the expected ansible-core
         run: |
