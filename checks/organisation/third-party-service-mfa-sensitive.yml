@@ -1,0 +1,42 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: org-third-party-mfa-sensitive
+version: 1.0.0
+title: Multi-factor authentication on third-party services holding sensitive data
+platform_family: organisation
+component: third-party-online-services
+
+controls:
+  - id: ism-1679
+    statement_id: ism-1679_smt
+    control_revision: "2"
+    statement_sha256: 649a5377b301a61a10799b09c82f0dc01e426e689213705b49edd33b01d48ed4
+    coverage: full
+    rationale: >-
+      The control is fully addressed by the attestation, but only a human can
+      make it. The subject is another organisation's identity system, and
+      nothing in our estate holds its configuration. Reading our own tenant
+      tells us how OUR staff authenticate to US, which is a different control
+      (ism-1504) and must never be substituted for this one.
+
+method: EXAMINE
+confidence: attested
+assessability: attested
+scope: aggregate
+evidence_tier: passive
+freshness_hours: 8760
+history_window_days: 0
+
+attestation:
+  source: >-
+    The register of third-party online services that process, store or
+    communicate the organisation's sensitive data, recording the authentication
+    arrangement agreed with each provider and the contractual clause requiring
+    it.
+  owner: Service owner for each third-party arrangement, consolidated by the CISO function
+  renewal_days: 365
+  why_not_observable: >-
+    Multi-factor authentication here is enforced by a provider we do not
+    operate, in a tenant we cannot query. There is no API, agent or log we
+    could be entitled to that would reveal another organisation's
+    authentication policy, so this is not a gap that engineering effort closes.

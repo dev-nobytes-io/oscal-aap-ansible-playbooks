@@ -1,0 +1,39 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: org-third-party-customer-mfa
+version: 1.0.0
+title: Multi-factor authentication on third-party online customer services
+platform_family: organisation
+component: third-party-online-services
+
+controls:
+  - id: ism-1893
+    statement_id: ism-1893_smt
+    control_revision: "1"
+    statement_sha256: cb95e6eacaad78cf094142e007b450568c3a16898e3781842c9602ef5c09fbe3
+    coverage: full
+    rationale: >-
+      Combines both barriers at once: the service belongs to a third party, and
+      the people being authenticated are customers rather than staff. Neither
+      the configuration nor the population appears anywhere in the estate this
+      project can reach.
+
+method: EXAMINE
+confidence: attested
+assessability: attested
+scope: aggregate
+evidence_tier: passive
+freshness_hours: 8760
+history_window_days: 0
+
+attestation:
+  source: >-
+    The third-party service register, for entries that handle sensitive
+    customer data, recording the customer authentication arrangement agreed
+    with the provider.
+  owner: Product owner for each customer-facing service, consolidated by the CISO function
+  renewal_days: 365
+  why_not_observable: >-
+    The service is operated by a provider we do not control and authenticates a
+    population of people who hold no account in our directory. There is no
+    system of ours that could be queried to produce this evidence.

@@ -65,6 +65,33 @@ class Confidence(str, Enum):
         return self if self.rank >= ceiling.rank else ceiling
 
 
+class Assessability(str, Enum):
+    """Whether a control can be judged by a tool AT ALL.
+
+    This is a different axis from `Confidence`, and conflating them is how a
+    coverage figure starts lying. Confidence asks "how closely does our
+    observation match the control?"; assessability asks "is there anything
+    observable here in the first place?"
+
+    `ATTESTED` is for controls where the answer is structurally no -- not "not
+    yet", not "hard". ism-1679 requires multi-factor authentication on
+    THIRD-PARTY online services: an organisation cannot see another
+    organisation's authentication configuration from its own tenant, and no
+    amount of engineering changes that. ism-1507 requires that privileged
+    access requests were validated when first made, which lives in an approval
+    record, not in any system's state.
+
+    Declaring those explicitly is worth more than leaving them in the
+    undifferentiated "no check" pile, because "nobody has built this yet" and
+    "this is not observable by any tool" call for completely different
+    responses from the person reading the report. They are deliberately NOT
+    counted as automated coverage -- see `coverage_summary`.
+    """
+
+    AUTOMATED = "automated"
+    ATTESTED = "attested"
+
+
 class Method(str, Enum):
     """OSCAL assessment method."""
 
@@ -105,6 +132,7 @@ class UnassessedReason(str, Enum):
     PARTIAL_POPULATION = "partial-population"
     UNSUPPORTED_PLATFORM = "unsupported-platform"
     COLLECTION_ERROR = "collection-error"
+    REQUIRES_ATTESTATION = "requires-attestation"
     EVALUATION_ERROR = "evaluation-error"
     REQUIRES_INTERVIEW = "requires-interview"
     REQUIRES_EXTERNAL_SYSTEM = "requires-external-system"

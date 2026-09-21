@@ -60,6 +60,37 @@ A registry entry declares a ceiling. An evaluator may **lower** it at runtime
 and may **never raise** it — enforced in `evaluate_check`, so no evaluator can
 opt out. Headline compliance figures count `direct` only.
 
+## Assessability: can a tool answer this *at all*?
+
+A separate axis from confidence, and conflating the two is how a coverage
+figure starts lying (ADR 0013). Confidence asks *how closely does the
+observation match the control?* Assessability asks *is there anything
+observable here in the first place?*
+
+| Assessability | Meaning |
+|---|---|
+| `automated` | Something in the estate can be read, and an evaluator judges it |
+| `attested` | **No tool can ever observe this.** A third party's system, a customer identity estate, an approval record |
+
+`attested` is not "not yet". It is structural. `ism-1679` requires multi-factor
+authentication on third-party online services: we cannot query another
+organisation's identity system, and no engineering effort changes that.
+`ism-1507` requires that a privileged access request *was validated when first
+made* — a directory shows that an account holds privilege, never that anyone
+approved it.
+
+An attested entry has **no collector and no evaluator** (the schema forbids
+both) and carries an `attestation` block naming its source, owner, renewal
+period and why structure rather than effort puts it out of reach.
+`evaluate_check` returns `unassessed / requires-attestation`; it cannot return
+a verdict, and `resolve()` raises rather than importing anything.
+
+**Attested controls are excluded from the automated coverage percentage.** The
+three buckets — automated, attested, nothing-yet — partition the baseline
+exactly, which a test enforces. Without that exclusion the headline number
+could be raised by writing a YAML file, and every figure this project publishes
+would stop meaning anything.
+
 ## The three guards
 
 Run before the evaluator is even called, so authors need not remember them:

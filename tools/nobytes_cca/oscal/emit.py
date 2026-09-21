@@ -83,9 +83,13 @@ def emit_assessment_plan(
     instead would make "we could not tell" indistinguishable from "out of
     scope", and the honesty mechanism would collapse silently.
     """
-    covered = registry.covered_controls()
-    with_check = [c for c in baseline_controls if c in covered]
-    without_check = [c for c in baseline_controls if c not in covered]
+    automated = registry.automated_controls()
+    attested = registry.attested_controls()
+    with_check = [c for c in baseline_controls if c in automated]
+    attested_only = [c for c in baseline_controls if c in attested and c not in automated]
+    without_check = [
+        c for c in baseline_controls if c not in automated and c not in attested
+    ]
 
     selections = [
         {
@@ -99,6 +103,30 @@ def emit_assessment_plan(
             ],
         }
     ]
+    if attested_only:
+        # Kept as its own selection rather than folded into either neighbour.
+        # An assessor reading the plan needs to know these are in scope and
+        # will be answered -- by examining an attestation, not by a tool -- and
+        # that no amount of automation is coming for them.
+        selections.append(
+            {
+                "description": (
+                    f"Controls in the {baseline} baseline that NO tool can observe: "
+                    f"they concern third-party systems, customer identity estates, "
+                    f"or approval records. They are in scope and are determined by "
+                    f"EXAMINATION of an attestation, never by automated test. "
+                    f"Each names where its evidence is held and who owns it."
+                ),
+                "props": [
+                    _prop("assessment-status", "requires-attestation"),
+                    _prop("assessability", "attested"),
+                ],
+                "include-controls": [
+                    {"control-id": cid, "statement-ids": [catalog.require(cid).statement_id]}
+                    for cid in attested_only
+                ],
+            }
+        )
     if without_check:
         selections.append(
             {
@@ -137,9 +165,21 @@ def emit_assessment_plan(
                     _prop("evidence-tier", check.evidence_tier.value),
                     _prop("freshness-hours", str(check.freshness_hours)),
                     _prop("history-window-days", str(check.history_window_days)),
-                    _prop("collect-role", check.collect_role),
-                    _prop("evaluator", check.evaluator),
-                ],
+                    _prop("assessability", check.assessability.value),
+                ]
+                + (
+                    [
+                        _prop("collect-role", check.collect_role),
+                        _prop("evaluator", check.evaluator),
+                    ]
+                    if check.is_automated
+                    else [
+                        _prop("attestation-source", check.attestation.source),
+                        _prop("attestation-owner", check.attestation.owner),
+                        _prop("attestation-renewal-days", str(check.attestation.renewal_days)),
+                        _prop("why-not-observable", check.attestation.why_not_observable),
+                    ]
+                ),
                 "related-controls": {
                     "control-selections": [
                         {

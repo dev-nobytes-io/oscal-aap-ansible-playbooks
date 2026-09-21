@@ -1,0 +1,42 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: org-customer-mfa-offered
+version: 1.0.0
+title: Multi-factor authentication offered to customers of online customer services
+platform_family: organisation
+component: customer-identity-services
+
+controls:
+  - id: ism-1681
+    statement_id: ism-1681_smt
+    control_revision: "3"
+    statement_sha256: 693ed7264f17c32735627f051150cca02c3b09a23543aea268b71d370291e9be
+    coverage: full
+    rationale: >-
+      Customers are not authenticated by the corporate directory. Customer
+      identity almost always lives in a separate estate -- a B2C tenant, a
+      bespoke portal, or a provider's platform -- which is outside the
+      inventory this project assesses. Answering it from the corporate tenant
+      would describe staff, not customers, and would be wrong in the direction
+      that matters: it would report a pass.
+
+method: EXAMINE
+confidence: attested
+assessability: attested
+scope: aggregate
+evidence_tier: passive
+freshness_hours: 8760
+history_window_days: 0
+
+attestation:
+  source: >-
+    The service catalogue entry for each online customer service handling
+    sensitive customer data, recording the customer authentication design and
+    the date it was last reviewed.
+  owner: Product owner for each customer-facing service
+  renewal_days: 365
+  why_not_observable: >-
+    Customer identity is a separate estate from the corporate directory this
+    project inventories, and is frequently operated by a provider. Deriving a
+    verdict from corporate identity data would answer a different question
+    about a different population of people.

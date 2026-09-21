@@ -24,3 +24,4 @@ audit evidence.
 | [0010](0010-do-not-depend-on-compliance-trestle.md) | Do not take compliance-trestle as a dependency | Accepted |
 | [0011](0011-permit-pyyaml-in-the-evaluator-runtime.md) | Permit PyYAML in the evaluator runtime | Accepted |
 | [0012](0012-mine-ansible-lockdown-tags-do-not-execute-its-roles.md) | Mine ansible-lockdown's tags; do not execute its roles | Accepted |
+| [0013](0013-declare-unobservable-controls-as-attested.md) | Declare structurally unobservable controls as `attested` | Accepted |

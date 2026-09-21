@@ -20,6 +20,436 @@
     "local-definitions": {
       "activities": [
         {
+          "uuid": "f3ee636c-3d1e-590b-9f4c-376aa02470d2",
+          "title": "Multi-factor authentication offered to customers of online customer services",
+          "description": "Customers are not authenticated by the corporate directory. Customer identity almost always lives in a separate estate -- a B2C tenant, a bespoke portal, or a provider's platform -- which is outside the inventory this project assesses. Answering it from the corporate tenant would describe staff, not customers, and would be wrong in the direction that matters: it would report a pass.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "org-customer-mfa-offered",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "EXAMINE",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "aggregate",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "8760",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-source",
+              "value": "The service catalogue entry for each online customer service handling sensitive customer data, recording the customer authentication design and the date it was last reviewed.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-owner",
+              "value": "Product owner for each customer-facing service",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-renewal-days",
+              "value": "365",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "why-not-observable",
+              "value": "Customer identity is a separate estate from the corporate directory this project inventories, and is frequently operated by a provider. Deriving a verdict from corporate identity data would answer a different question about a different population of people.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1681",
+                    "statement-ids": [
+                      "ism-1681_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "61771076-5d05-57c3-a672-f7225ba3b21a",
+          "title": "Requests for privileged access are validated when first requested",
+          "description": "The control is about an act of validation at a moment in the past, not about a system's current state. A directory can show that an account holds privilege; it cannot show that the request for it was validated, by whom, or against what criteria. Group membership is not evidence of approval -- treating it as such is precisely how an unapproved administrator comes to be reported as compliant.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "org-privileged-access-request-validated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "EXAMINE",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "aggregate",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "2160",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-source",
+              "value": "Privileged access request records in the service management system, showing for each grant the requester, the validating authority and the date, held for the retention period required by the agency's record-keeping policy.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-owner",
+              "value": "Privileged access management process owner",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-renewal-days",
+              "value": "90",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "why-not-observable",
+              "value": "The evidence is an approval record, not a system state. Even a perfectly instrumented directory records only the resulting membership, and a membership that exists today says nothing about whether its request was validated when it was first made.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1507",
+                    "statement-ids": [
+                      "ism-1507_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "677800d2-0848-54c1-b86d-32904800aea9",
+          "title": "Multi-factor authentication on third-party online customer services",
+          "description": "Combines both barriers at once: the service belongs to a third party, and the people being authenticated are customers rather than staff. Neither the configuration nor the population appears anywhere in the estate this project can reach.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "org-third-party-customer-mfa",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "EXAMINE",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "aggregate",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "8760",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-source",
+              "value": "The third-party service register, for entries that handle sensitive customer data, recording the customer authentication arrangement agreed with the provider.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-owner",
+              "value": "Product owner for each customer-facing service, consolidated by the CISO function",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-renewal-days",
+              "value": "365",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "why-not-observable",
+              "value": "The service is operated by a provider we do not control and authenticates a population of people who hold no account in our directory. There is no system of ours that could be queried to produce this evidence.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1893",
+                    "statement-ids": [
+                      "ism-1893_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "bb9cdd1b-5a79-50c9-ac17-02ca8d8a8c52",
+          "title": "Multi-factor authentication, where available, on third-party services holding non-sensitive data",
+          "description": "Same structural barrier as ism-1679, with an extra judgement no tool can make: \"where available\" requires establishing that a provider offers no multi-factor option at all. That is a statement about a product's feature set at a point in time, evidenced by the provider, not by our estate.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "org-third-party-mfa-non-sensitive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "EXAMINE",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "aggregate",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "8760",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-source",
+              "value": "The third-party service register, recording for each non-sensitive-data service whether multi-factor authentication is offered by the provider and, where offered, that it is enabled.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-owner",
+              "value": "Service owner for each third-party arrangement, consolidated by the CISO function",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-renewal-days",
+              "value": "365",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "why-not-observable",
+              "value": "The authentication configuration belongs to a provider we do not operate, and the \"where available\" qualifier additionally requires evidence about what a third-party product offers. Neither is present anywhere in our own systems, so no collector could be written that would answer this honestly.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1680",
+                    "statement-ids": [
+                      "ism-1680_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "f0a0c06c-bce6-5dc6-8237-9141c8c639cc",
+          "title": "Multi-factor authentication on third-party services holding sensitive data",
+          "description": "The control is fully addressed by the attestation, but only a human can make it. The subject is another organisation's identity system, and nothing in our estate holds its configuration. Reading our own tenant tells us how OUR staff authenticate to US, which is a different control (ism-1504) and must never be substituted for this one.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "org-third-party-mfa-sensitive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "EXAMINE",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "aggregate",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "8760",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-source",
+              "value": "The register of third-party online services that process, store or communicate the organisation's sensitive data, recording the authentication arrangement agreed with each provider and the contractual clause requiring it.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-owner",
+              "value": "Service owner for each third-party arrangement, consolidated by the CISO function",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-renewal-days",
+              "value": "365",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "why-not-observable",
+              "value": "Multi-factor authentication here is enforced by a provider we do not operate, in a tenant we cannot query. There is no API, agent or log we could be entitled to that would reveal another organisation's authentication policy, so this is not a gap that engineering effort closes.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1679",
+                    "statement-ids": [
+                      "ism-1679_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "uuid": "57fd81a9-c998-55d3-8199-0be19462e3d3",
           "title": "The operating system is still supported by its vendor",
           "description": "Compares the observed OS release against a vendored end-of-life dataset. Two limits matter. The dataset (endoflife.date) is COMMUNITY-MAINTAINED, not vendor-authoritative, so a date may lag or differ from the vendor's own lifecycle page. And the control says \"are replaced\" -- this observes whether a system IS supported, not whether an unsupported one is being replaced, which is a project state held outside the host.",
@@ -62,6 +492,11 @@
             {
               "name": "history-window-days",
               "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
             },
             {
@@ -136,6 +571,11 @@
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
             },
             {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
               "name": "collect-role",
               "value": "nobytes.compliance.collect_windows_base",
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
@@ -204,6 +644,11 @@
             {
               "name": "history-window-days",
               "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
             },
             {
@@ -278,6 +723,11 @@
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
             },
             {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
               "name": "collect-role",
               "value": "nobytes.compliance.collect_windows_office",
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
@@ -349,6 +799,11 @@
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
             },
             {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
               "name": "collect-role",
               "value": "nobytes.compliance.collect_windows_office",
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
@@ -417,6 +872,11 @@
             {
               "name": "history-window-days",
               "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
               "ns": "https://nobytes.io/ns/oscal/cca/1.0"
             },
             {
@@ -492,6 +952,53 @@
           ]
         },
         {
+          "description": "Controls in the E8_ML1 baseline that NO tool can observe: they concern third-party systems, customer identity estates, or approval records. They are in scope and are determined by EXAMINATION of an attestation, never by automated test. Each names where its evidence is held and who owns it.",
+          "props": [
+            {
+              "name": "assessment-status",
+              "value": "requires-attestation",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "include-controls": [
+            {
+              "control-id": "ism-1507",
+              "statement-ids": [
+                "ism-1507_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1679",
+              "statement-ids": [
+                "ism-1679_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1680",
+              "statement-ids": [
+                "ism-1680_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1681",
+              "statement-ids": [
+                "ism-1681_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1893",
+              "statement-ids": [
+                "ism-1893_smt"
+              ]
+            }
+          ]
+        },
+        {
           "description": "Controls in the E8_ML1 baseline with NO automated check in this release. They are in scope and no determination is made for them. Their absence from findings means undetermined, not compliant.",
           "props": [
             {
@@ -555,12 +1062,6 @@
               ]
             },
             {
-              "control-id": "ism-1507",
-              "statement-ids": [
-                "ism-1507_smt"
-              ]
-            },
-            {
               "control-id": "ism-1511",
               "statement-ids": [
                 "ism-1511_smt"
@@ -582,24 +1083,6 @@
               "control-id": "ism-1657",
               "statement-ids": [
                 "ism-1657_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1679",
-              "statement-ids": [
-                "ism-1679_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1680",
-              "statement-ids": [
-                "ism-1680_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1681",
-              "statement-ids": [
-                "ism-1681_smt"
               ]
             },
             {
@@ -732,12 +1215,6 @@
               "control-id": "ism-1892",
               "statement-ids": [
                 "ism-1892_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1893",
-              "statement-ids": [
-                "ism-1893_smt"
               ]
             },
             {

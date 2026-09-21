@@ -4,6 +4,33 @@ Two files. You never write OSCAL — component-definitions, assessment-plan
 activities, the coverage ledger and the docs are generated from the registry
 entry.
 
+## 0. First decide whether a tool can answer this at all
+
+Before anything else, answer one question: **is there anything observable
+here?** That is `assessability`, and it is a different axis from `confidence`
+(ADR 0013).
+
+- **`automated`** — something in the estate can be read, and an evaluator can
+  reach a verdict from it. Write the two files below.
+- **`attested`** — no tool can ever observe this. The subject is a third
+  party's system, a customer identity estate we do not operate, or an approval
+  record that exists only as a document. Write a declaration instead: no
+  `collect`, no `evaluator`, and an `attestation` block naming where the
+  evidence lives, who owns it, how often it is renewed, and **why structure
+  rather than effort** puts it out of reach.
+
+The distinction is not bureaucratic. `ism-1679` asks for multi-factor
+authentication on **third-party** services. Answering it from our own tenant's
+conditional access policy would produce a **pass** — for a control about
+systems we cannot see, from evidence about a different population of people.
+That is the most dangerous output this project can produce, and the honest
+alternative is to say so in the report.
+
+Attested entries earn **no coverage credit**, deliberately, so there is nothing
+to gain by reaching for the label when a collector would be merely
+inconvenient. A test rejects `why_not_observable` text that reads like a
+backlog item.
+
 ## 1. The registry entry — `checks/<platform>/<check-id>.yml`
 
 Validated against [`../checks/schema.json`](../checks/schema.json). Every
@@ -30,6 +57,7 @@ controls:
 
 method: TEST
 confidence: proxy                        # a CEILING, not a claim
+assessability: automated                 # or `attested` -- see section 0
 scope: subject
 evidence_tier: passive
 freshness_hours: 168

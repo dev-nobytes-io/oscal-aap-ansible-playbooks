@@ -58,6 +58,25 @@ def evaluate_check(
     """
     history = history or FactHistory.empty()
 
+    if not check.is_automated:
+        # Reached only if a caller asks explicitly; evaluate_bundle skips these.
+        # Returns a determination-free result rather than raising, so an
+        # attested control appears in the report as "a human must answer this"
+        # -- never as a pass, never as a failure.
+        why = check.attestation.why_not_observable if check.attestation else ""
+        where = check.attestation.source if check.attestation else "unspecified"
+        collected = bundle.collected
+        return Evaluation(
+            check=check,
+            subject=bundle.subject,
+            result=CheckResult.unassessed(
+                reason=UnassessedReason.REQUIRES_ATTESTATION,
+                detail=f"{check.id} is declared attested. {why} Evidence is held at: {where}",
+            ).with_confidence_ceiling(check.confidence),
+            collected=collected,
+            expires=collected + dt.timedelta(hours=check.freshness_hours),
+        )
+
     guard = bundle.require(*check.required_facts)
     if guard is not None:
         result = guard
@@ -102,6 +121,11 @@ def evaluate_bundle(
     """Run every applicable check against one subject's facts."""
     evaluations = []
     for check in registry:
+        # Attested entries are never run against a host's facts. They are not
+        # silently dropped either: unassessed_controls() reports them with
+        # REQUIRES_ATTESTATION, so they surface in the report with a reason.
+        if not check.is_automated:
+            continue
         if baseline_controls is not None and not any(
             b.control_id in baseline_controls for b in check.controls
         ):
@@ -127,13 +151,19 @@ def unassessed_controls(
         if ev.status.emits_finding
         for binding in ev.check.controls
     }
-    attempted = registry.covered_controls()
+    attempted = registry.automated_controls()
+    attested = registry.attested_controls()
 
     out = {}
     for control_id in baseline_controls:
         if control_id in determined:
             continue
-        if control_id not in attempted:
+        if control_id in attested and control_id not in attempted:
+            # Distinct from NOT_IMPLEMENTED on purpose: nobody is going to
+            # build this one, and the report should say so rather than imply
+            # a backlog item.
+            out[control_id] = UnassessedReason.REQUIRES_ATTESTATION
+        elif control_id not in attempted:
             out[control_id] = UnassessedReason.NOT_IMPLEMENTED
         else:
             reasons = [
@@ -152,21 +182,34 @@ def coverage_summary(catalog: Catalog, registry: Registry, baseline: list) -> di
     Counts intent, not outcome: a control with a check is "covered" even if the
     last run could not reach the host. Outcome belongs in assessment results.
     """
-    covered = registry.covered_controls()
+    automated = registry.automated_controls()
+    attested = registry.attested_controls()
     by_confidence: dict = {}
     for check in registry:
+        if not check.is_automated:
+            continue
         for binding in check.controls:
             if binding.control_id in baseline:
                 key = check.confidence.value
                 by_confidence[key] = by_confidence.get(key, 0) + 1
 
-    in_baseline_covered = sorted(c for c in baseline if c in covered)
+    in_baseline_automated = sorted(c for c in baseline if c in automated)
+    in_baseline_attested = sorted(
+        c for c in baseline if c in attested and c not in automated
+    )
+    accounted = set(in_baseline_automated) | set(in_baseline_attested)
     return {
         "catalog_version": catalog.version,
         "baseline_size": len(baseline),
-        "controls_with_a_check": len(in_baseline_covered),
-        "controls_without_a_check": len(baseline) - len(in_baseline_covered),
+        "controls_with_a_check": len(in_baseline_automated),
+        "controls_without_a_check": len(baseline) - len(in_baseline_automated),
+        # Declared unobservable by any tool -- counted separately, ON PURPOSE.
+        # Rolling these into the headline would let the number grow by writing
+        # prose, which is the exact dishonesty this project exists to avoid.
+        "controls_attested": len(in_baseline_attested),
+        "controls_unaccounted": len(baseline) - len(accounted),
         "by_confidence": dict(sorted(by_confidence.items())),
-        "covered": in_baseline_covered,
-        "uncovered": sorted(c for c in baseline if c not in covered),
+        "covered": in_baseline_automated,
+        "attested": in_baseline_attested,
+        "uncovered": sorted(c for c in baseline if c not in accounted),
     }

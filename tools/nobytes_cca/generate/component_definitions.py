@@ -41,6 +41,11 @@ COMPONENT_TYPES = {
     "kubernetes": "service",
     "network": "hardware",
     "cloud": "service",
+    # Not a system we run. Controls about a third party's tenant, a customer
+    # identity estate or an approval record have no technical component to
+    # bind to, so they bind to the organisation itself and are only ever
+    # attested.
+    "organisation": "policy",
 }
 
 
@@ -71,8 +76,28 @@ def generate(registry: Registry, catalog: Catalog, now: dt.datetime) -> dict:
                         "props": [
                             _prop("check-id", check.id),
                             _prop("check-version", check.version),
-                            _prop("collect-role", check.collect_role),
-                            _prop("evaluator", check.evaluator),
+                            _prop("assessability", check.assessability.value),
+                        ]
+                        + (
+                            [
+                                _prop("collect-role", check.collect_role),
+                                _prop("evaluator", check.evaluator),
+                            ]
+                            if check.is_automated
+                            else [
+                                _prop("attestation-source", check.attestation.source),
+                                _prop("attestation-owner", check.attestation.owner),
+                                _prop(
+                                    "attestation-renewal-days",
+                                    str(check.attestation.renewal_days),
+                                ),
+                                _prop(
+                                    "why-not-observable",
+                                    check.attestation.why_not_observable,
+                                ),
+                            ]
+                        )
+                        + [
                             _prop("method", check.method.value),
                             _prop("confidence", check.confidence.value),
                             _prop("coverage", binding.coverage),
