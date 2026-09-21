@@ -15,6 +15,7 @@ offline: true
 exclude_paths:
   - .github/
   - .venv/
+  - blueprint/                        # vendored Commonwealth data; never modified
   - collections/ansible_collections/  # third-party; not ours to lint
   - oscal/upstream/                   # vendored Commonwealth data; never modified
   - tests/fixtures/

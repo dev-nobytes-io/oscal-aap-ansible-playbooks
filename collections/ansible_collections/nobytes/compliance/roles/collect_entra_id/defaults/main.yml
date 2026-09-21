@@ -1,0 +1,15 @@
+---
+# Microsoft Graph endpoints. Overridable for sovereign clouds -- an Australian
+# government tenant may sit in a cloud whose endpoints differ, and hardcoding
+# the commercial ones would silently fail there.
+collect_entra_id_graph_base: https://graph.microsoft.com/v1.0
+collect_entra_id_login_base: https://login.microsoftonline.com
+
+# Graph caps most collections at 999 per page. Where a response still carries
+# an @odata.nextLink the fact is marked partial, and the evaluator reports
+# unassessed/partial-population rather than judging a set it only partly read.
+collect_entra_id_page_size: 999
+
+# Seconds. Graph is an external dependency and a hung request must not stall an
+# estate-wide assessment run.
+collect_entra_id_timeout: 60

@@ -26,3 +26,4 @@ ignore: |
   collections/ansible_collections/
   oscal/upstream/
   oscal/schemas/
+  blueprint/

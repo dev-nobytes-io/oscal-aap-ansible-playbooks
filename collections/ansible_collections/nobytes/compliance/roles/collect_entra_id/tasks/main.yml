@@ -1,0 +1,119 @@
+---
+# READ-ONLY. Every request below is an explicit `method: GET`. The method is
+# stated rather than left to Ansible's default so that a later edit changing it
+# reads as what it is -- breaking the read-only guarantee -- instead of as a
+# small change. The only non-GET is the token request in authenticate.yml.
+#
+# Unlike the host collectors, the subject here is a TENANT, not a machine. The
+# role runs once per tenant from the control node; nothing is executed on any
+# endpoint.
+
+- name: Fail early when the tenant credentials are not supplied
+  ansible.builtin.assert:
+    that:
+      - collect_entra_id_tenant_id | default('') | length > 0
+      - collect_entra_id_client_id | default('') | length > 0
+      - collect_entra_id_client_secret | default('') | length > 0
+    fail_msg: >-
+      collect_entra_id requires collect_entra_id_tenant_id, _client_id and
+      _client_secret. Refusing to run: a half-configured identity collector
+      produces an empty fact set, and an empty fact set evaluates to
+      "unassessed" for every control, which reads as though the tenant were
+      assessed and found undetermined.
+    quiet: true
+
+- name: Obtain a Graph access token
+  ansible.builtin.include_tasks: authenticate.yml
+
+- name: Read the tenant organisation record
+  ansible.builtin.uri:
+    url: "{{ collect_entra_id_graph_base }}/organization"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ collect_entra_id_token_response.json.access_token }}"
+    status_code: [200]
+    timeout: "{{ collect_entra_id_timeout }}"
+  register: collect_entra_id_org
+  no_log: true
+  changed_when: false
+  check_mode: false
+  failed_when: false
+
+- name: Read the tenant authentication methods policy
+  ansible.builtin.uri:
+    url: "{{ collect_entra_id_graph_base }}/policies/authenticationMethodsPolicy"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ collect_entra_id_token_response.json.access_token }}"
+    status_code: [200]
+    timeout: "{{ collect_entra_id_timeout }}"
+  register: collect_entra_id_auth_methods
+  no_log: true
+  changed_when: false
+  check_mode: false
+  failed_when: false
+
+- name: Read conditional access policies
+  ansible.builtin.uri:
+    url: >-
+      {{ collect_entra_id_graph_base }}/identity/conditionalAccess/policies?$top={{
+      collect_entra_id_page_size }}
+    method: GET
+    headers:
+      Authorization: "Bearer {{ collect_entra_id_token_response.json.access_token }}"
+    status_code: [200]
+    timeout: "{{ collect_entra_id_timeout }}"
+  register: collect_entra_id_ca_policies
+  no_log: true
+  changed_when: false
+  check_mode: false
+  failed_when: false
+
+- name: Read conditional access authentication strength policies
+  ansible.builtin.uri:
+    url: >-
+      {{ collect_entra_id_graph_base }}/identity/conditionalAccess/authenticationStrength/policies
+    method: GET
+    headers:
+      Authorization: "Bearer {{ collect_entra_id_token_response.json.access_token }}"
+    status_code: [200]
+    timeout: "{{ collect_entra_id_timeout }}"
+  register: collect_entra_id_auth_strengths
+  no_log: true
+  changed_when: false
+  check_mode: false
+  failed_when: false
+
+- name: Record Entra ID tenant facts into this subject's bundle
+  ansible.builtin.include_role:
+    name: nobytes.compliance.fact_bundle
+    tasks_from: record
+  vars:
+    # A response that still carries @odata.nextLink means we read only part of
+    # the set. The fact is marked partial and the evaluator reports
+    # unassessed/partial-population -- the page we could not read might be the
+    # one holding the policy that changes the answer.
+    _cca_ca_body: "{{ collect_entra_id_ca_policies.json | default({}) }}"
+    _cca_as_body: "{{ collect_entra_id_auth_strengths.json | default({}) }}"
+    fact_records:
+      entra.tenant:
+        source: "GET /organization"
+        partial: "{{ collect_entra_id_org.json is not defined }}"
+        value:
+          tenant_id: "{{ (collect_entra_id_org.json | default({})).get('value', [{}]) | first | default({}) | ansible.builtin.combine({}) }}"
+      entra.authentication_methods_policy:
+        source: "GET /policies/authenticationMethodsPolicy"
+        partial: "{{ collect_entra_id_auth_methods.json is not defined }}"
+        value: "{{ collect_entra_id_auth_methods.json | default({}) }}"
+      entra.conditional_access_policies:
+        source: "GET /identity/conditionalAccess/policies"
+        partial: >-
+          {{ collect_entra_id_ca_policies.json is not defined
+             or '@odata.nextLink' in _cca_ca_body }}
+        value: "{{ _cca_ca_body.get('value', []) }}"
+      entra.authentication_strength_policies:
+        source: "GET /identity/conditionalAccess/authenticationStrength/policies"
+        partial: >-
+          {{ collect_entra_id_auth_strengths.json is not defined
+             or '@odata.nextLink' in _cca_as_body }}
+        value: "{{ _cca_as_body.get('value', []) }}"

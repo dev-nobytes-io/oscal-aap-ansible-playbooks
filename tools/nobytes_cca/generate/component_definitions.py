@@ -22,6 +22,9 @@ from ..registry import Registry
 #: components that hold evidence ABOUT a control rather than being constrained
 #: by it.
 COMPONENT_TYPES = {
+    # A check whose evaluator handles several platforms -- operating-system
+    # support dates are read the same way everywhere.
+    "common": "software",
     "windows": "software",
     "linux": "software",
     "entra-id": "service",

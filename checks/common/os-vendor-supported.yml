@@ -3,7 +3,7 @@
 id: os-vendor-supported
 version: 1.0.0
 title: The operating system is still supported by its vendor
-platform_family: linux
+platform_family: common
 component: operating-system
 
 controls:

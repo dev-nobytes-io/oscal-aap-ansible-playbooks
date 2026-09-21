@@ -126,6 +126,20 @@ def evaluate_bundle(
         # REQUIRES_ATTESTATION, so they surface in the report with a reason.
         if not check.is_automated:
             continue
+        # A tenant-scoped check has nothing to say about a workstation. Running
+        # it anyway yields `collection-error` -- which is both the wrong reason
+        # (nothing failed to collect; the check simply does not apply) and, at
+        # estate scale, one spurious observation per check per host. The
+        # control still appears in the plan's reviewed-controls and still
+        # reports as undetermined if nothing else answers it, so skipping here
+        # hides nothing.
+        subject_platform = str(bundle.subject.get("platform_family", "")).strip()
+        if (
+            subject_platform
+            and check.platform_family != "common"
+            and check.platform_family != subject_platform
+        ):
+            continue
         if baseline_controls is not None and not any(
             b.control_id in baseline_controls for b in check.controls
         ):
@@ -166,12 +180,20 @@ def unassessed_controls(
         elif control_id not in attempted:
             out[control_id] = UnassessedReason.NOT_IMPLEMENTED
         else:
-            reasons = [
-                ev.result.reason
+            relevant = [
+                ev
                 for ev in evaluations
                 if any(b.control_id == control_id for b in ev.check.controls)
-                and ev.result.reason is not None
             ]
+            if not relevant:
+                # A check exists but never ran, because no subject it applies
+                # to was in the assessed set. Falling through to
+                # EVALUATION_ERROR here blamed our own code for what is really
+                # a fact about scope, and sent the reader debugging a tool that
+                # is working correctly.
+                out[control_id] = UnassessedReason.NO_SUBJECT_IN_SCOPE
+                continue
+            reasons = [ev.result.reason for ev in relevant if ev.result.reason is not None]
             out[control_id] = reasons[0] if reasons else UnassessedReason.EVALUATION_ERROR
     return out
 
