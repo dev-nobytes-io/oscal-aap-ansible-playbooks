@@ -29,25 +29,14 @@
       ansible.builtin.set_fact:
         cca_in_scope: "{{ groups[cca_scope_group] | default([]) | length }}"
 
-    - name: Count the fact bundles that were actually collected
-      ansible.builtin.find:
-        paths: "{{ cca_bundle_dir }}/{{ cca_run_id | replace(':', '-') }}"
-        patterns: "*.json"
-      register: cca_found
-
-    - name: Compute coverage
-      ansible.builtin.set_fact:
-        cca_collected: "{{ cca_found.files | length }}"
-        cca_coverage_pct: >-
-          {{ 0 if (cca_in_scope | int) == 0
-             else (100 * (cca_found.files | length) / (cca_in_scope | int)) | round(1) }}
-
-    - name: Report coverage
-      ansible.builtin.debug:
-        msg: >-
-          {{ cca_collected }} of {{ cca_in_scope }} in-scope subjects collected
-          ({{ cca_coverage_pct }}%); threshold {{ cca_min_coverage }}%.
-
+    # BEFORE any coverage arithmetic, not after. This assertion used to sit
+    # below "Report coverage", which meant an empty scope group first logged
+    # "1 of 0 in-scope subjects collected (0%)" and only then refused. Two
+    # adjacent tasks then disagreed about what empty means: the computation
+    # asserted it was 0%, the assertion called it undefined. Reorder or delete
+    # the assertion and the playbook ships "0% coverage" instead of a failure,
+    # and a log reader or a downstream parser sees a number for a situation
+    # that has none. Found by RUNNING the playbook.
     - name: Refuse to assess an empty estate
       ansible.builtin.assert:
         that:
@@ -57,6 +46,27 @@
           undefined rather than 100%. An assessment over zero subjects would
           report every control undetermined -- true, but useless.
         success_msg: "{{ cca_in_scope }} subjects in scope."
+
+    - name: Count the fact bundles that were actually collected
+      ansible.builtin.find:
+        paths: "{{ cca_bundle_dir }}/{{ cca_run_id | replace(':', '-') }}"
+        patterns: "*.json"
+      register: cca_found
+
+    # No zero-denominator fallback: the assertion above has already made an
+    # empty estate impossible here, and a fallback that quietly returns 0%
+    # would be a second, contradictory answer to the same question.
+    - name: Compute coverage
+      ansible.builtin.set_fact:
+        cca_collected: "{{ cca_found.files | length }}"
+        cca_coverage_pct: >-
+          {{ (100 * (cca_found.files | length) / (cca_in_scope | int)) | round(1) }}
+
+    - name: Report coverage
+      ansible.builtin.debug:
+        msg: >-
+          {{ cca_collected }} of {{ cca_in_scope }} in-scope subjects collected
+          ({{ cca_coverage_pct }}%); threshold {{ cca_min_coverage }}%.
 
     - name: Fail the workflow when coverage is below the threshold
       ansible.builtin.assert:
