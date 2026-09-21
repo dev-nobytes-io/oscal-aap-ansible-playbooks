@@ -17,6 +17,15 @@ name: Execution environments
     paths:
       - 'aap/execution-environment/**'
       - 'tools/nobytes_cca/**'
+      # The in-image suite runs the whole tests/ directory on the EE's
+      # /usr/bin/python3 (3.9, no ansible-core -- that lives under 3.11 via
+      # PYCMD). It is the only thing that verifies that constraint, and until
+      # PR 16 it could not SEE the changes that break it: a filter plugin under
+      # collections/ and a test importing it both sat outside this list, so the
+      # job never ran on the pull request that broke it and fired on the next
+      # unrelated one instead.
+      - 'collections/ansible_collections/nobytes/**'
+      - 'tests/**'
       - 'pyproject.toml'
       - 'requirements.yml'
       - '.github/workflows/ee-build.yml'
@@ -24,6 +33,15 @@ name: Execution environments
     paths:
       - 'aap/execution-environment/**'
       - 'tools/nobytes_cca/**'
+      # The in-image suite runs the whole tests/ directory on the EE's
+      # /usr/bin/python3 (3.9, no ansible-core -- that lives under 3.11 via
+      # PYCMD). It is the only thing that verifies that constraint, and until
+      # PR 16 it could not SEE the changes that break it: a filter plugin under
+      # collections/ and a test importing it both sat outside this list, so the
+      # job never ran on the pull request that broke it and fired on the next
+      # unrelated one instead.
+      - 'collections/ansible_collections/nobytes/**'
+      - 'tests/**'
       - 'pyproject.toml'
       - 'requirements.yml'
       - '.github/workflows/ee-build.yml'

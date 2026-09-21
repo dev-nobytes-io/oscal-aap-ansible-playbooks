@@ -37,7 +37,7 @@ ROLE = (
 
 sys.path.insert(0, str(FILTER_DIR))
 
-from redact import redact_facts  # noqa: E402
+from redact import AnsibleFilterError, redact_facts  # noqa: E402
 
 SALT = "a-real-per-deployment-salt"
 SHIPPED_POLICY = {"sid": "hash", "username": "hash", "upn": "hash", "email": "hash"}
@@ -108,31 +108,23 @@ def test_the_salt_guard_fires_for_the_shipped_policy() -> None:
 # --------------------------------------------------------------------------
 
 def test_hashing_without_a_salt_is_refused() -> None:
-    from ansible.errors import AnsibleFilterError
-
     with pytest.raises(AnsibleFilterError, match="salt"):
         redact_facts({"a": {"sid": "S-1-5-21-1-2-3-1104"}}, keys=SHIPPED_POLICY, salt="")
 
 
 def test_hashing_with_the_shipped_placeholder_salt_is_refused() -> None:
     """A known salt is a reversible hash with extra steps."""
-    from ansible.errors import AnsibleFilterError
-
     with pytest.raises(AnsibleFilterError, match="salt"):
         redact_facts({"a": {"sid": "S-1-5-21-1"}}, keys=SHIPPED_POLICY,
                      salt="CHANGE-ME-PER-DEPLOYMENT")
 
 
 def test_an_unknown_action_is_refused_rather_than_ignored() -> None:
-    from ansible.errors import AnsibleFilterError
-
     with pytest.raises(AnsibleFilterError, match="unknown redaction action"):
         redact_facts({"a": {"sid": "x"}}, keys={"sid": "obfuscate"}, salt=SALT)
 
 
 def test_a_non_mapping_is_refused() -> None:
-    from ansible.errors import AnsibleFilterError
-
     with pytest.raises(AnsibleFilterError):
         redact_facts(["not", "a", "mapping"], keys=SHIPPED_POLICY, salt=SALT)
 
