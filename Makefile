@@ -30,7 +30,11 @@ BLUEPRINT_RELEASE ?= v1.4.0
 # Default baseline for coverage and local assessment runs.
 BASELINE    ?= E8_ML1
 
-.PHONY: help bootstrap deps lint docs generate validate test assess-local coverage report annex fetch clean ee-context ee-build
+# `make assess-self` runs the real playbook against the control node itself.
+SELF_RUN    ?= self
+SELF_SALT   ?= make-assess-self-not-for-production
+
+.PHONY: help bootstrap deps lint docs generate validate test assess-local coverage report annex assess-self fetch clean ee-context ee-build
 
 help: ## Show this help
 	@awk 'BEGIN{FS=":.*?## "} /^[a-zA-Z_-]+:.*?## /{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -85,6 +89,25 @@ report: ## Render the human-readable assessment report (markdown + html)
 
 annex: ## Populate ASD's SSP Annex from the assessment results
 	$(BIN)python tools/cca.py annex
+
+assess-self: ## Run the REAL collect playbook against this host, then evaluate it
+	# Lint and --syntax-check never execute a task. This does: it is the only
+	# target that proves the Ansible half works rather than merely parses.
+	$(BIN)ansible-playbook -i inventory/self.yml playbooks/collect.yml \
+	  -e fact_bundle_redaction_salt=$(SELF_SALT) \
+	  -e fact_bundle_run_id=$(SELF_RUN)
+	$(BIN)python tools/cca.py evaluate $(OUT)/bundles/$(SELF_RUN)/*.json \
+	  --baseline $(BASELINE) --system-id SELF --run-id $(SELF_RUN) \
+	  --population-total 1 --out $(OUT)/self
+	# Validate the freshly emitted documents, not the committed ones: a live
+	# run that produced schema-invalid OSCAL would otherwise pass silently.
+	$(BIN)python -c "import sys; sys.path.insert(0,'tools'); \
+	  from pathlib import Path; from oscal_validate import validate_document; \
+	  ds=sorted(Path('$(OUT)/self').glob('*.json')); \
+	  assert ds, 'no documents emitted by assess-self'; \
+	  bad={d.name:validate_document(d)[:2] for d in ds if validate_document(d)}; \
+	  print('\n'.join(f'ok   {d.name}' for d in ds if d.name not in bad)); \
+	  sys.exit(print(bad) or 1) if bad else print(f'{len(ds)} live OSCAL documents valid')"
 
 coverage: ## Report control coverage for a baseline (honest, not flattering)
 	$(BIN)python tools/cca.py coverage --baseline $(BASELINE)

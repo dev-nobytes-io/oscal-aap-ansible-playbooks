@@ -78,6 +78,57 @@ jobs:
       - name: Validate OSCAL artefacts
         run: make validate
 
+  assess-self:
+    name: Live playbook run (collect -> evaluate -> OSCAL)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install pinned tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Retried for the same reason the lint job's is: this is the only
+      # network fetch in the job and a Galaxy blip should cost seconds.
+      - name: Install Ansible collections
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4; do
+            if make deps; then exit 0; fi
+            echo "::warning::galaxy install attempt $attempt failed; retrying"
+            sleep $((attempt * 5))
+          done
+          echo "::error::could not install collections from Galaxy after 4 attempts"
+          exit 1
+
+      # ansible-lint and --syntax-check never execute a task, and neither
+      # resolves an include_role. Everything about the Ansible half was
+      # verified by those two until this job existed -- which is how the
+      # documented `ansible-playbook playbooks/collect.yml` invocation came to
+      # be broken from a clean checkout for want of an ansible.cfg.
+      - name: Collect from this runner, evaluate, validate the emitted OSCAL
+        run: make assess-self
+
+      - name: Assert the run produced real evidence, not an empty bundle
+        run: |
+          set -euo pipefail
+          bundle="$(find out/bundles -name '*.json' | head -1)"
+          test -n "$bundle" || { echo "::error::no fact bundle written"; exit 1; }
+          python - "$bundle" <<'PY'
+          import json, sys
+          bundle = json.load(open(sys.argv[1]))
+          facts = bundle.get("facts") or {}
+          assert facts, "fact bundle carries no facts; the collector silently did nothing"
+          release = facts.get("os.release", {}).get("value", {})
+          assert release.get("id"), f"os.release has no distribution id: {release}"
+          print(f"collected {len(facts)} fact(s) from {release.get('pretty_name')}")
+          PY
+
   test:
     name: Unit tests
     runs-on: ubuntu-latest
