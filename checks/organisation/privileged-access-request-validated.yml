@@ -1,0 +1,42 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: org-privileged-access-request-validated
+version: 1.0.0
+title: Requests for privileged access are validated when first requested
+platform_family: organisation
+component: privileged-access-process
+
+controls:
+  - id: ism-1507
+    statement_id: ism-1507_smt
+    control_revision: "4"
+    statement_sha256: 470ace9a3a109e8f6c6a51c5c8af967eb4db5189876df97d1006997db18143b3
+    coverage: full
+    rationale: >-
+      The control is about an act of validation at a moment in the past, not
+      about a system's current state. A directory can show that an account
+      holds privilege; it cannot show that the request for it was validated, by
+      whom, or against what criteria. Group membership is not evidence of
+      approval -- treating it as such is precisely how an unapproved
+      administrator comes to be reported as compliant.
+
+method: EXAMINE
+confidence: attested
+assessability: attested
+scope: aggregate
+evidence_tier: passive
+freshness_hours: 2160
+history_window_days: 0
+
+attestation:
+  source: >-
+    Privileged access request records in the service management system, showing
+    for each grant the requester, the validating authority and the date, held
+    for the retention period required by the agency's record-keeping policy.
+  owner: Privileged access management process owner
+  renewal_days: 90
+  why_not_observable: >-
+    The evidence is an approval record, not a system state. Even a perfectly
+    instrumented directory records only the resulting membership, and a
+    membership that exists today says nothing about whether its request was
+    validated when it was first made.

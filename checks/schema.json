@@ -6,9 +6,19 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "id", "version", "title", "platform_family", "component",
-    "controls", "method", "confidence", "scope", "evidence_tier",
-    "freshness_hours", "history_window_days", "collect", "evaluator"
+    "id",
+    "version",
+    "title",
+    "platform_family",
+    "component",
+    "controls",
+    "method",
+    "confidence",
+    "scope",
+    "evidence_tier",
+    "freshness_hours",
+    "history_window_days",
+    "assessability"
   ],
   "properties": {
     "id": {
@@ -21,15 +31,35 @@
       "pattern": "^\\d+\\.\\d+\\.\\d+$",
       "description": "Semantic version of the check. A change that alters the verdict for unchanged input is a MAJOR bump, even when the new verdict is more correct: someone holds a published result it contradicts."
     },
-    "title": {"type": "string", "minLength": 10},
+    "title": {
+      "type": "string",
+      "minLength": 10
+    },
     "platform_family": {
       "type": "string",
       "enum": [
-        "windows", "linux", "entra-id", "active-directory", "adcs", "adfs",
-        "keycloak", "exchange", "cyberark", "netapp", "splunk",
-        "change-auditor", "vmware", "proxmox", "xcp-ng", "containers",
-        "kubernetes", "network", "cloud"
-      ]
+        "windows",
+        "linux",
+        "entra-id",
+        "active-directory",
+        "adcs",
+        "adfs",
+        "keycloak",
+        "exchange",
+        "cyberark",
+        "netapp",
+        "splunk",
+        "change-auditor",
+        "vmware",
+        "proxmox",
+        "xcp-ng",
+        "containers",
+        "kubernetes",
+        "network",
+        "cloud",
+        "organisation"
+      ],
+      "description": "The platform the evidence comes from. `organisation` is for controls that belong to no system we operate -- a third party's authentication configuration, or an approval record. Those are only ever `attested`."
     },
     "component": {
       "type": "string",
@@ -42,7 +72,14 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "statement_id", "control_revision", "statement_sha256", "coverage", "rationale"],
+        "required": [
+          "id",
+          "statement_id",
+          "control_revision",
+          "statement_sha256",
+          "coverage",
+          "rationale"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -54,7 +91,9 @@
             "pattern": "^ism-.*_smt$",
             "description": "The OSCAL statement id, always <control-id>_smt. This is what findings target."
           },
-          "control_revision": {"type": "string"},
+          "control_revision": {
+            "type": "string"
+          },
           "statement_sha256": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$",
@@ -62,7 +101,12 @@
           },
           "coverage": {
             "type": "string",
-            "enum": ["full", "partial", "proxy-only", "none"],
+            "enum": [
+              "full",
+              "partial",
+              "proxy-only",
+              "none"
+            ],
             "description": "How much of the control this check actually covers."
           },
           "rationale": {
@@ -73,20 +117,38 @@
         }
       }
     },
-    "method": {"type": "string", "enum": ["TEST", "EXAMINE", "INTERVIEW"]},
+    "method": {
+      "type": "string",
+      "enum": [
+        "TEST",
+        "EXAMINE",
+        "INTERVIEW"
+      ]
+    },
     "confidence": {
       "type": "string",
-      "enum": ["direct", "proxy", "partial", "attested"],
+      "enum": [
+        "direct",
+        "proxy",
+        "partial",
+        "attested"
+      ],
       "description": "Ceiling, not a claim. An evaluator may lower it at runtime; it may never raise it. Headline compliance figures count `direct` only."
     },
     "scope": {
       "type": "string",
-      "enum": ["subject", "aggregate"],
+      "enum": [
+        "subject",
+        "aggregate"
+      ],
       "description": "`aggregate` for controls that are statements about a population rather than about one host."
     },
     "evidence_tier": {
       "type": "string",
-      "enum": ["passive", "active"],
+      "enum": [
+        "passive",
+        "active"
+      ],
       "description": "`passive` observes only. `active` probes with side effects: opt-in, separate credential, results marked non-reproducible. `mutating` is never valid for a check."
     },
     "freshness_hours": {
@@ -103,16 +165,35 @@
     "collect": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["role", "facts"],
+      "required": [
+        "role",
+        "facts"
+      ],
       "properties": {
-        "role": {"type": "string", "pattern": "^[a-z0-9_]+\\.[a-z0-9_]+\\.[a-z0-9_]+$"},
+        "role": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+\\.[a-z0-9_]+\\.[a-z0-9_]+$"
+        },
         "facts": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["required"],
+          "required": [
+            "required"
+          ],
           "properties": {
-            "required": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-            "optional": {"type": "array", "items": {"type": "string"}}
+            "required": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            },
+            "optional": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         }
       }
@@ -122,43 +203,124 @@
       "pattern": "^[a-z0-9_.]+:[a-z0-9_]+$",
       "description": "Dotted path to a pure function, module:function. Resolved and imported during registry validation, so a typo fails CI rather than a production run."
     },
-    "parameters": {"type": "object"},
-    "not_applicable_when": {"type": "string", "minLength": 20},
+    "parameters": {
+      "type": "object"
+    },
+    "not_applicable_when": {
+      "type": "string",
+      "minLength": 20
+    },
     "references": {
       "type": "array",
       "description": "Citations supporting the check objective -- an ASD Blueprint page, a vendor doc. Required when the objective is not self-evident from the control statement.",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["source", "url"],
+        "required": [
+          "source",
+          "url"
+        ],
         "properties": {
-          "source": {"type": "string"},
-          "url": {"type": "string"},
-          "version": {"type": "string"},
-          "note": {"type": "string"}
+          "source": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
         }
       }
     },
     "remediation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["role", "risk", "user_impact"],
+      "required": [
+        "role",
+        "risk",
+        "user_impact"
+      ],
       "properties": {
-        "role": {"type": "string"},
-        "tasks_from": {"type": "string"},
-        "risk": {"type": "string", "enum": ["low", "medium", "high"]},
-        "reboot_required": {"type": "boolean"},
+        "role": {
+          "type": "string"
+        },
+        "tasks_from": {
+          "type": "string"
+        },
+        "risk": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "reboot_required": {
+          "type": "boolean"
+        },
         "user_impact": {
           "type": "string",
           "minLength": 20,
           "description": "What breaks for a user when this is applied. Remediation without a stated impact does not get approved in a change process, so it does not get written here either."
         }
       }
+    },
+    "assessability": {
+      "type": "string",
+      "enum": [
+        "automated",
+        "attested"
+      ],
+      "description": "Whether a tool can judge this control AT ALL -- a different axis from `confidence`, which asks how closely an observation matches the control. `attested` means structurally unobservable (a third party's tenant, an approval record), not merely unimplemented. Attested entries are NOT counted as automated coverage."
+    },
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "owner",
+        "renewal_days",
+        "why_not_observable"
+      ],
+      "description": "Required when assessability is `attested`. Names where the evidence actually lives and who is answerable for it, so the report points a reader somewhere real instead of shrugging.",
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Where the evidence lives -- a register, a system of record, a signed statement."
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 3,
+          "description": "The role answerable for keeping it current. A role, not a person."
+        },
+        "renewal_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1095,
+          "description": "How long an attestation stays credible. Evidence has a shelf life."
+        },
+        "why_not_observable": {
+          "type": "string",
+          "minLength": 60,
+          "description": "Why no tool can observe this. Must argue structure, not effort -- 'hard to build' is not a reason to stop measuring."
+        }
+      }
     }
   },
   "allOf": [
     {
-      "if": {"properties": {"coverageCheck": {"const": true}}},
+      "if": {
+        "properties": {
+          "coverageCheck": {
+            "const": true
+          }
+        }
+      },
       "then": {}
     },
     {
@@ -166,15 +328,97 @@
       "if": {
         "properties": {
           "controls": {
-            "contains": {"properties": {"coverage": {"enum": ["partial", "proxy-only"]}}}
+            "contains": {
+              "properties": {
+                "coverage": {
+                  "enum": [
+                    "partial",
+                    "proxy-only"
+                  ]
+                }
+              }
+            }
           }
         }
       },
       "then": {
         "properties": {
           "controls": {
-            "items": {"properties": {"rationale": {"minLength": 40}}}
+            "items": {
+              "properties": {
+                "rationale": {
+                  "minLength": 40
+                }
+              }
+            }
           }
+        }
+      }
+    },
+    {
+      "description": "An automated check must say what it collects and what judges it.",
+      "if": {
+        "properties": {
+          "assessability": {
+            "const": "automated"
+          }
+        },
+        "required": [
+          "assessability"
+        ]
+      },
+      "then": {
+        "required": [
+          "collect",
+          "evaluator"
+        ],
+        "not": {
+          "required": [
+            "attestation"
+          ]
+        }
+      }
+    },
+    {
+      "description": "An attested entry has nothing to collect and nothing to evaluate, and must carry its attestation block. Confidence is pinned to `attested` so it cannot claim more than a human statement supports.",
+      "if": {
+        "properties": {
+          "assessability": {
+            "const": "attested"
+          }
+        },
+        "required": [
+          "assessability"
+        ]
+      },
+      "then": {
+        "required": [
+          "attestation"
+        ],
+        "properties": {
+          "confidence": {
+            "const": "attested"
+          },
+          "method": {
+            "enum": [
+              "EXAMINE",
+              "INTERVIEW"
+            ]
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "collect"
+              ]
+            },
+            {
+              "required": [
+                "evaluator"
+              ]
+            }
+          ]
         }
       }
     }

@@ -21,6 +21,7 @@ controls:
 
 method: TEST
 confidence: proxy
+assessability: automated
 scope: subject
 evidence_tier: passive
 freshness_hours: 168

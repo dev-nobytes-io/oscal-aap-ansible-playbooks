@@ -62,10 +62,18 @@ def test_partial_coverage_is_never_claimed_as_direct(registry: Registry) -> None
 
 def test_check_ids_are_unique_and_evaluators_resolve(registry: Registry) -> None:
     seen = set()
+    resolved = 0
     for check in registry:
         assert check.id not in seen
         seen.add(check.id)
+        if not check.is_automated:
+            # An attested entry has no evaluator by design; resolve() raises
+            # rather than returning something callable. That contract is
+            # asserted in tests/test_attestation_model.py.
+            continue
         assert callable(check.resolve())
+        resolved += 1
+    assert resolved, "no automated evaluators were resolved; this test would pass vacuously"
 
 
 def test_generated_artefacts_are_up_to_date() -> None:

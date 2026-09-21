@@ -1,0 +1,40 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: org-third-party-mfa-non-sensitive
+version: 1.0.0
+title: Multi-factor authentication, where available, on third-party services holding non-sensitive data
+platform_family: organisation
+component: third-party-online-services
+
+controls:
+  - id: ism-1680
+    statement_id: ism-1680_smt
+    control_revision: "2"
+    statement_sha256: 1e2ea5906ec41b0259c093fe15030e99dc8a8c45c7bd574ae1919f38889387b0
+    coverage: full
+    rationale: >-
+      Same structural barrier as ism-1679, with an extra judgement no tool can
+      make: "where available" requires establishing that a provider offers no
+      multi-factor option at all. That is a statement about a product's feature
+      set at a point in time, evidenced by the provider, not by our estate.
+
+method: EXAMINE
+confidence: attested
+assessability: attested
+scope: aggregate
+evidence_tier: passive
+freshness_hours: 8760
+history_window_days: 0
+
+attestation:
+  source: >-
+    The third-party service register, recording for each non-sensitive-data
+    service whether multi-factor authentication is offered by the provider and,
+    where offered, that it is enabled.
+  owner: Service owner for each third-party arrangement, consolidated by the CISO function
+  renewal_days: 365
+  why_not_observable: >-
+    The authentication configuration belongs to a provider we do not operate,
+    and the "where available" qualifier additionally requires evidence about
+    what a third-party product offers. Neither is present anywhere in our own
+    systems, so no collector could be written that would answer this honestly.

@@ -70,13 +70,16 @@ def cmd_coverage(args: argparse.Namespace) -> int:
         print(f"Baseline {args.baseline} @ ISM {summary['catalog_version']}")
         print(f"  controls in baseline   : {summary['baseline_size']}")
         print(f"  with an automated check: {summary['controls_with_a_check']}")
-        print(f"  without                : {summary['controls_without_a_check']}")
+        print(f"  declared attested      : {summary['controls_attested']}")
+        print(f"  nothing yet            : {summary['controls_unaccounted']}")
         print(f"  by confidence          : {summary['by_confidence'] or '{}'}")
         pct = 100 * summary["controls_with_a_check"] / max(summary["baseline_size"], 1)
-        print(f"  coverage               : {pct:.1f}%")
+        print(f"  automated coverage     : {pct:.1f}%")
         print(
             "\n  Coverage counts intent, not outcome. A control with a check is "
             "\n  covered even if the last run could not reach the host."
+            "\n  Attested controls are NOT in the percentage: no tool can observe"
+            "\n  them, so counting them would let the number grow by writing prose."
         )
     return 0
 

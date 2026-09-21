@@ -23,6 +23,7 @@ controls:
 method: TEST
 # Community-sourced dates cannot support a `direct` claim about vendor support.
 confidence: proxy
+assessability: automated
 scope: subject
 evidence_tier: passive
 freshness_hours: 168

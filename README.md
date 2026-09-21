@@ -34,6 +34,13 @@ This matters more than the feature list, so it comes first.
   ML1 controls, roughly 20 are host-testable, about 10 need a system API rather
   than a host, and around 13 are procedural. The repository states which is
   which, per control, and never quietly counts an untested control as passing.
+- **It says out loud which controls no tool can ever answer.** Multi-factor
+  authentication on a *third party's* service, or whether a privileged access
+  request was validated when first made, are not backlog items — they are
+  outside what any collector can see. Those are declared `attested`, with the
+  evidence source and owner named, and are **excluded from the coverage
+  percentage** so the number cannot be raised by writing prose. See
+  [ADR 0013](docs/adr/0013-declare-unobservable-controls-as-attested.md).
 - **It does not interpret the law.** The PSPF, Privacy Act and SOCI Act
   catalogues here are this project's reading of published obligations, with
   citations so you can check them. They are not legal advice and carry no
@@ -164,16 +171,17 @@ content, gradually.
 | PR | Chunk | State |
 |---|---|---|
 | 01 | Repository skeleton, licensing, lint + CI | merged |
-| 02 | Governance, assurance principles, regulatory scope, ADRs | open |
-| 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | open |
+| 02 | Governance, assurance principles, regulatory scope, ADRs | merged |
+| 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | merged |
 | 04 | Check contract, evaluator, assessment-results + POA&M emitters | merged |
 | 05 | Component-definition model + Windows collectors | merged |
 | 06 | Linux collectors + end-of-life dataset | merged |
-| 07 | Dual execution environments + AAP/AWX configuration-as-code | **this PR** |
-| 08 | Identity collectors — Entra ID, ADFS, Keycloak | next |
-| 09 | Evidence providers — Splunk, Change Auditor | planned |
-| 10 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
-| 11+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| 07 | Dual execution environments + AAP/AWX configuration-as-code | merged |
+| 08 | Attestation model — declare what no tool can observe | **this PR** |
+| 09 | Identity collectors — Entra ID, ADFS, Keycloak | next |
+| 10 | Evidence providers — Splunk, Change Auditor | planned |
+| 11 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
+| 12+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
 | last | Remediation scaffolding — opt-in, separated | planned |
 
 Assessment comes first throughout. Remediation is deliberately last, opt-in and

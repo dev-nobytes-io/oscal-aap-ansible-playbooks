@@ -24,6 +24,7 @@ method: TEST
 # Ceiling, not a claim. Reading the policy that implements the control is not
 # the same as observing macros actually being blocked.
 confidence: proxy
+assessability: automated
 scope: subject
 evidence_tier: passive
 freshness_hours: 168

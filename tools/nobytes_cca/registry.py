@@ -16,7 +16,7 @@ from typing import Callable
 import yaml
 
 from .catalog import Catalog
-from .contract import Confidence, EvidenceTier, Method, Scope
+from .contract import Assessability, Confidence, EvidenceTier, Method, Scope
 from .paths import checks_dir, project_root
 
 # Deliberately NOT module-level constants derived from __file__. The package is
@@ -47,6 +47,16 @@ class ControlBinding:
 
 
 @dataclass(frozen=True)
+class Attestation:
+    """Where a human-supplied answer lives, and who is answerable for it."""
+
+    source: str
+    owner: str
+    renewal_days: int
+    why_not_observable: str
+
+
+@dataclass(frozen=True)
 class Check:
     id: str
     version: str
@@ -60,6 +70,7 @@ class Check:
     evidence_tier: EvidenceTier
     freshness_hours: int
     history_window_days: int
+    assessability: Assessability
     collect_role: str
     required_facts: tuple
     optional_facts: tuple
@@ -68,10 +79,20 @@ class Check:
     not_applicable_when: str
     references: tuple
     remediation: dict | None
+    attestation: Attestation | None
     source_file: Path
+
+    @property
+    def is_automated(self) -> bool:
+        return self.assessability is Assessability.AUTOMATED
 
     def resolve(self) -> Callable:
         """Import the evaluator function named by `evaluator`."""
+        if not self.is_automated:
+            raise ValueError(
+                f"{self.id} is declared `attested`: there is no evaluator to resolve. "
+                f"Calling one would invent a verdict for something no tool observes."
+            )
         module_name, _, func_name = self.evaluator.partition(":")
         module = importlib.import_module(module_name)
         func = getattr(module, func_name, None)
@@ -81,8 +102,11 @@ class Check:
 
 
 def _to_check(data: dict, path: Path) -> Check:
-    collect = data["collect"]
-    facts = collect["facts"]
+    # An attested entry has no `collect` block by schema, so these degrade to
+    # empty rather than raising -- the schema is what enforces the shape.
+    collect = data.get("collect") or {}
+    facts = collect.get("facts") or {}
+    attestation_data = data.get("attestation")
     return Check(
         id=data["id"],
         version=data["version"],
@@ -106,14 +130,16 @@ def _to_check(data: dict, path: Path) -> Check:
         evidence_tier=EvidenceTier(data["evidence_tier"]),
         freshness_hours=int(data["freshness_hours"]),
         history_window_days=int(data["history_window_days"]),
-        collect_role=collect["role"],
-        required_facts=tuple(facts["required"]),
+        assessability=Assessability(data["assessability"]),
+        collect_role=collect.get("role", ""),
+        required_facts=tuple(facts.get("required", [])),
         optional_facts=tuple(facts.get("optional", [])),
-        evaluator=data["evaluator"],
+        evaluator=data.get("evaluator", ""),
         parameters=data.get("parameters", {}),
         not_applicable_when=data.get("not_applicable_when", ""),
         references=tuple(data.get("references", [])),
         remediation=data.get("remediation"),
+        attestation=Attestation(**attestation_data) if attestation_data else None,
         source_file=path,
     )
 
@@ -164,7 +190,29 @@ class Registry:
         return [c for c in self if any(b.control_id == control_id for b in c.controls)]
 
     def covered_controls(self) -> set:
+        """Every control this registry has ANY entry for, automated or attested.
+
+        Use this to answer "has anyone considered this control?". For "can a
+        tool answer this control?", use `automated_controls()` -- the two are
+        deliberately different, and reporting the union as coverage would count
+        a human promise as automation.
+        """
         return {b.control_id for check in self for b in check.controls}
+
+    def automated_controls(self) -> set:
+        """Controls a tool can actually reach a verdict on."""
+        return {
+            b.control_id for check in self if check.is_automated for b in check.controls
+        }
+
+    def attested_controls(self) -> set:
+        """Controls declared structurally unobservable, and why, per entry."""
+        return {
+            b.control_id
+            for check in self
+            if not check.is_automated
+            for b in check.controls
+        }
 
 
 def validate(registry: Registry, catalog: Catalog) -> list:
@@ -178,6 +226,9 @@ def validate(registry: Registry, catalog: Catalog) -> list:
        prose-drift guard. ASD reworded 111 statements in one quarter; without
        it, a check silently keeps passing against text that changed.
     4. Every evaluator dotted path actually imports.
+    5. An attested entry's freshness matches its attestation renewal period --
+       otherwise a report can call an attestation current for a week while the
+       process that produces it runs yearly, or the reverse.
     """
     problems: list = []
     for check in registry:
@@ -202,10 +253,36 @@ def validate(registry: Registry, catalog: Catalog) -> list:
                     f"    now reads: {control.statement}\n"
                     f"    Re-affirm or revise this check, then update the hash."
                 )
-        try:
-            check.resolve()
-        except (ImportError, AttributeError) as exc:
-            problems.append(f"{check.id}: evaluator {check.evaluator!r} does not resolve: {exc}")
+        if check.is_automated:
+            try:
+                check.resolve()
+            except (ImportError, AttributeError) as exc:
+                problems.append(
+                    f"{check.id}: evaluator {check.evaluator!r} does not resolve: {exc}"
+                )
+        else:
+            problems.extend(_attestation_problems(check))
+    return problems
+
+
+def _attestation_problems(check: Check) -> list:
+    """Cross-field rules for an attested entry that the schema cannot express."""
+    problems: list = []
+    attestation = check.attestation
+    if attestation is None:
+        # Unreachable via the schema, which requires the block; kept so a
+        # hand-built Check cannot slip through with nothing behind it.
+        return [f"{check.id}: declared attested but carries no attestation block"]
+
+    expected_hours = attestation.renewal_days * 24
+    if check.freshness_hours != expected_hours:
+        problems.append(
+            f"{check.id}: freshness_hours is {check.freshness_hours} but the "
+            f"attestation renews every {attestation.renewal_days} days "
+            f"({expected_hours}h). An attestation cannot be fresher than the "
+            f"process that produces it, and calling it stale sooner is just as "
+            f"misleading."
+        )
     return problems
 
 
