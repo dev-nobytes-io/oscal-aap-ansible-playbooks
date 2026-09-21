@@ -1,0 +1,82 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-application-control-user-writable-paths
+version: 1.0.0
+title: Application control reaches user profiles and temporary folders
+platform_family: windows
+component: windows-operating-system
+
+controls:
+  - id: ism-1870
+    statement_id: ism-1870_smt
+    control_revision: "0"
+    statement_sha256: a466fb3938ae9427e7867815a863bedd495acccaa11a57d532ce63868b76c00e
+    coverage: partial
+    rationale: >-
+      This is the control AppLocker's default rules fail quietly. Those rules
+      allow Everyone to execute anything under %WINDIR% and %PROGRAMFILES%;
+      %WINDIR%\Temp is inside %WINDIR%, is the operating system's temporary
+      folder, and is writable by standard users on a default install. So a
+      host can enforce all five rule collections, report thousands of rules,
+      and still let a standard user drop an executable into a temporary folder
+      and run it. The check answers that by comparing the allow rules against
+      the directories THIS host reports as writable by a non-administrator,
+      rather than against a hardcoded list -- an estate that has hardened
+      C:\Windows\Temp is in a different position from one that has not.
+
+      What it does not prove, in three parts. It enumerates a defined set of
+      profile, operating-system, browser and email-client locations; a
+      temporary folder belonging to some other installed application is
+      outside what was probed, which is why confidence is partial and never
+      direct. It reads DACLs rather than performing an access check, so ace
+      ordering, inheritance and group nesting are simplified in the direction
+      that over-reports. And it judges only rule collections that are
+      ENFORCING: a collection left NotConfigured restricts nothing anywhere,
+      which is ism-0843 and ism-1657's finding, and repeating it under every
+      control it touches would bury the specific gap this check exists to
+      surface.
+
+      An allow rule scoped to administrative principals is recorded but not
+      counted as a failure here, because the control is about locations rather
+      than about whether privileged accounts are themselves subject to
+      application control. A deployment that reads it more strictly -- and at
+      ML2/ML3 it probably should -- sets fail_on_administrator_allow.
+
+method: TEST
+confidence: partial
+assessability: automated
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+parameters:
+  # Whether an allow rule scoped to BUILTIN\Administrators or an equivalent
+  # privileged principal counts as failing this control. Default false; see
+  # the rationale above for why, and why ML2/ML3 deployments may differ.
+  fail_on_administrator_allow: false
+
+collect:
+  role: nobytes.compliance.collect_windows_appcontrol
+  facts:
+    required:
+      - windows.appcontrol.state
+      - windows.appcontrol.writable_paths
+
+evaluator: >-
+  nobytes_cca.checks.windows.appcontrol_paths:application_control_covers_user_writable_paths
+
+references:
+  - source: Microsoft — Understanding the path rule condition in AppLocker
+    url: >-
+      https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/applocker/understanding-the-path-rule-condition-in-applocker
+    note: >-
+      States the problem in this control's own terms: "Because path rules
+      specify locations within the file system, you should ensure that there
+      are no subdirectories that are writable by nonadministrators. For
+      example, if you create a path rule using the allow action for C:\, any
+      file under that location can run, including file within users'
+      profiles." Also the authority for the AppLocker path variables the
+      evaluator expands -- %WINDIR%, %SYSTEM32%, %OSDRIVE%, %PROGRAMFILES%,
+      %REMOVABLE% and %HOT% -- which are interpreted by the AppLocker engine
+      and are NOT environment variables. Verified by fetching the page.

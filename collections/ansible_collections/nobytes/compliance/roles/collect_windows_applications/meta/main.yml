@@ -1,0 +1,8 @@
+---
+galaxy_info:
+  author: nobytes.io
+  description: Read-only inventory of installed Windows applications and their versions.
+  license: Apache-2.0
+  min_ansible_version: "2.16"
+  galaxy_tags: [compliance, windows, inventory]
+dependencies: []

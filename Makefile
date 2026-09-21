@@ -34,7 +34,7 @@ BASELINE    ?= E8_ML1
 SELF_RUN    ?= self
 SELF_SALT   ?= make-assess-self-not-for-production
 
-.PHONY: help bootstrap deps lint docs generate validate test assess-local coverage report annex assess-self fetch clean ee-context ee-build
+.PHONY: help bootstrap deps lint docs ps-lint generate validate test assess-local coverage report annex assess-self fetch clean ee-context ee-build
 
 help: ## Show this help
 	@awk 'BEGIN{FS=":.*?## "} /^[a-zA-Z_-]+:.*?## /{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -59,6 +59,12 @@ lint: ## Lint YAML, Ansible (production profile) and Python
 
 docs: ## Check that every relative documentation link resolves
 	$(BIN)python tools/check_doc_links.py
+
+# Not part of `lint`: PowerShell is not installed on a typical developer
+# laptop, and a target that silently no-ops when a tool is missing is exactly
+# the failure this project refuses. CI runs it on a runner that always has it.
+ps-lint: ## Parse every Windows collector with PowerShell's own parser
+	pwsh -NoProfile -NonInteractive -File tools/ps_parse_check.ps1
 
 generate: ## Regenerate derived OSCAL artefacts (component-definitions)
 	$(BIN)python tools/cca.py generate

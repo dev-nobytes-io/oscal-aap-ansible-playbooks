@@ -12,6 +12,10 @@ the largest cluster of host-testable ones are Windows/Office policy states.
 | `ism-1671` | `win-office-macros-disabled` | `partial` | The "demonstrated business requirement" half — not observable on a host |
 | `ism-1672` | `win-office-macro-av-scanning` | `proxy` | That an AMSI provider is registered, healthy and current |
 | `ism-1654` | `win-ie11-disabled` | `direct` | Nothing material — the control is a binary, directly observable state |
+| `ism-0843` | `win-application-control-implemented` | `proxy` | That an enforcing policy actually restricts anything — see below |
+| `ism-1657` | `win-application-control-file-types` | `partial` | Nothing: AppLocker *cannot* satisfy this control — see below |
+| `ism-1870` | `win-application-control-user-writable-paths` | `partial` | Temporary folders belonging to applications outside the probed set |
+| `ism-1704` | `win-unsupported-applications-removed` | `partial` | PDF applications, email clients and security products — not in the dataset |
 
 `ism-1654` is the only one of these at `direct` confidence, and that is not an
 accident: it is one of very few ML1 controls that is genuinely a binary state
@@ -118,6 +122,134 @@ It is counted as **not** implemented, for the same reason a report-only
 conditional access policy is not counted as requiring MFA: it is the most
 likely way a workstation looks protected and is not.
 
+## Application control: the default rules fail `ism-1870`
+
+`ism-1870` asks whether application control is **applied to user profiles and
+temporary folders used by operating systems, web browsers and email clients**.
+It is the control AppLocker's default rules fail, and they fail it quietly.
+
+The default rules allow `Everyone` to execute anything under `%PROGRAMFILES%`
+and `%WINDIR%`. `C:\Windows\Temp` is inside `%WINDIR%`, is the operating
+system's temporary folder, and is writable by standard users on a default
+install. So a workstation can enforce every rule collection, report thousands
+of rules, pass a rule-count checklist — and still let a standard user drop an
+executable into a temporary folder and run it.
+
+Microsoft states the problem in the control's own terms, on the page the check
+cites:
+
+> Because path rules specify locations within the file system, you should
+> ensure that there are no subdirectories that are writable by
+> nonadministrators. For example, if you create a path rule using the allow
+> action for `C:\`, any file under that location can run, including file
+> within users' profiles.
+
+Answering it needs **two** observations, and neither substitutes for the other:
+
+1. **The rule paths the policy allows.** `Get-ApplicationControlState.ps1` now
+   emits each `FilePathRule`'s paths, action, principal SID and exceptions, not
+   just a rule count. A count cannot answer a question about *where*.
+2. **Which of those locations this host reports as writable by a
+   non-administrator.** `Get-UserWritableExecutionPaths.ps1` reads the DACL of
+   the operating system temp folder, the profile root, each probed profile and
+   its browser and email-client temporary folders, plus the writable
+   subdirectories of `%WINDIR%` to a bounded depth.
+
+The second half is the reason there is no hardcoded list of "directories
+everyone knows are writable". An estate that hardened `C:\Windows\Temp` is in
+a different position from one that has not, and a fixed list would report both
+identically — reporting a false failure against a control someone had actually
+fixed.
+
+### Three deliberate asymmetries
+
+| Situation | Result | Why |
+|---|---|---|
+| Walk truncated or a path unreadable, **nothing found** | `unassessed` | An incomplete search finding nothing is not evidence that there is nothing |
+| Walk truncated, **something found** | `not-satisfied` | A writable directory that was found is writable whether or not the walk finished |
+| Allow rule carries no readable path condition | `unassessed` | A rule whose scope could not be determined is not a rule that allows nothing |
+
+A collection left `NotConfigured` restricts nothing anywhere, which is
+`ism-0843` and `ism-1657`'s finding. Repeating it under every control it
+touches would turn one problem into five and bury the specific gap this check
+exists to surface, so only **enforcing** collections are judged here.
+
+An allow rule scoped to `BUILTIN\Administrators` is recorded but not counted
+as a failure, because this control is about locations rather than about whether
+privileged accounts are themselves subject to application control. A deployment
+that reads it more strictly — and at ML2/ML3 it probably should — sets
+`fail_on_administrator_allow`.
+
+### AppLocker path variables are not environment variables
+
+The AppLocker engine interprets exactly six: `%WINDIR%`, `%SYSTEM32%`,
+`%OSDRIVE%`, `%PROGRAMFILES%`, `%REMOVABLE%` and `%HOT%`. `%TEMP%` in a rule is
+literal text matching no real directory. `%SYSTEM32%` and `%PROGRAMFILES%` each
+expand to **two** directories on a 64-bit host, and the evaluator expands both —
+collapsing them to one would silently drop half the paths a rule covers.
+
+### One collector bug this chunk fixed
+
+`RuleCollectionExtensions` is a sibling of the rules inside a `RuleCollection`,
+not a rule. The previous collector counted every element child, so a collection
+holding **no rules** could report `rule_count: 1` — and `rule_count > 0` is what
+`ism-0843` uses to decide a collection is enforcing. An empty enforcing
+collection restricts nothing while reading as implemented. Rules are now counted
+by element name.
+
+## Unsupported applications — `ism-1704`, and what it cannot see
+
+The control names six families: *Office productivity suites, web browsers and
+their extensions, email clients, PDF applications, Adobe Flash Player, and
+security products.*
+
+The vendored end-of-life dataset covers three and a half of them. Searching
+endoflife.date's 477-product index confirms there is **no entry** for Microsoft
+Edge, any PDF reader, email clients or security products — and browser
+extensions are not an installed-application concept at all.
+
+| Family | Covered | How |
+|---|---|---|
+| Office productivity suites | yes | `office`, `libreoffice` |
+| Web browsers | partly | `chrome`, `firefox` — **not Edge** |
+| Java | yes | `oracle-jdk` |
+| Adobe Flash Player | yes | public record, no feed needed |
+| PDF applications | **no** | not in the dataset |
+| Email clients | **no** | not in the dataset |
+| Security products | **no** | not in the dataset |
+| Browser extensions | **no** | not an installed application |
+
+Those gaps are named in **every** result, satisfied or not. Silence would imply
+coverage.
+
+### Three ways this check refuses to flatter
+
+- **Nothing mappable is `unassessed`, not a pass.** A workstation full of
+  line-of-business software that maps to no support timeline has not been
+  shown to satisfy the control. Reporting `satisfied` because nothing was
+  recognised would put a green tick against a control that was never evaluated.
+- **Unmapped applications are never counted as supported.** They are reported
+  separately and are neither passed nor failed.
+- **An unreadable profile hive makes the whole result partial.** The hive that
+  could not be read may hold the unsupported application.
+
+### Adobe Flash is judged from public record
+
+The control names Flash explicitly, endoflife.date does not carry it, and its
+end of life is not a judgement: Adobe ended support on **2020-12-31** and began
+**blocking Flash content from running on 2021-01-12**. Any installation found
+is unsupported, with no feed consulted and no room for argument.
+
+### A mapping bug worth recording
+
+Office's end-of-life cycles are **release years** (`2016`, `2019`, `2021`,
+`2024`) while every modern Office reports a version of `16.0.x`. Deriving the
+cycle from the version yields `16`, which matches nothing — so the check
+silently learned nothing about the first product family the control names. The
+year comes from the display name instead. An Office with no year in its name is
+a subscription build, which is evergreen and correctly reports as unknown
+rather than as supported.
+
 ## Verification status
 
 | Path | Status |
@@ -125,10 +257,21 @@ likely way a workstation looks protected and is not.
 | Evaluator logic | **Tested** — fixture bundles, no host needed |
 | Read-only guarantee (static) | **Tested** — no mutating module surface in collect roles |
 | `ansible-lint` production profile | **Passing** |
+| PowerShell syntax, every collector | **Tested** — `make ps-lint` parses each script with PowerShell's own parser; CI job `powershell` |
+| AppLocker XML parsing | **Tested by execution** — the collector's own `ConvertFrom-AppLockerPolicyXml` runs against a real policy document on Linux and its output is fed to the evaluators |
 | PowerShell against a real registry | **Not verified** — needs a Windows host |
 | AppLocker / WDAC state collection | **Not verified** — needs a Windows host; evaluators tested against fixtures (14 cases) |
+| AppLocker rule-path and DACL collection | **Not verified** — needs a Windows host; evaluator tested against fixtures (34 cases) |
 | WinRM/Kerberos transport | **Not verified** — needs a domain |
 | Legacy tier (Server 2012, Win 10) | **Not verified** — no such CI runners exist; needs a documented lab |
 
 Legacy-tier checks stay marked unverified in the coverage ledger until a lab run
 signs them off. This repository will not claim a path is tested when it is not.
+
+Two of those rows are new and deliberately narrow. Parsing is a long way short
+of running, and running `ConvertFrom-AppLockerPolicyXml` on Linux says nothing
+about `Get-AppLockerPolicy`, `Get-Acl` or `Win32_DeviceGuard`. What it does say
+is that the collector's output shape and the evaluator's expectations agree —
+which was previously asserted by a hand-written fixture agreeing with itself.
+The test that closes that loop is
+[`tests/test_powershell_collectors.py`](../../tests/test_powershell_collectors.py).

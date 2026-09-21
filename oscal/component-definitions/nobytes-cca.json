@@ -1495,6 +1495,91 @@
                 "remarks": "Residual assessment gap: Observes that an application control mechanism is in ENFORCING mode -- AppLocker with at least one rule collection set to Enabled, or App Control for Business running a code integrity policy. Two gaps are stated rather than hidden. \"Implemented\" is a judgement about an operational control, and a policy can enforce while permitting everything, so what is observed is enforcement mode rather than efficacy. And AuditOnly is deliberately not counted as implemented: an audit-mode collection writes an event and blocks nothing, which is the most likely way a workstation looks protected and is not."
               },
               {
+                "uuid": "80715797-1d2a-54ba-aac8-1c213f6bba10",
+                "control-id": "ism-1870",
+                "description": "This is the control AppLocker's default rules fail quietly. Those rules allow Everyone to execute anything under %WINDIR% and %PROGRAMFILES%; %WINDIR%\\Temp is inside %WINDIR%, is the operating system's temporary folder, and is writable by standard users on a default install. So a host can enforce all five rule collections, report thousands of rules, and still let a standard user drop an executable into a temporary folder and run it. The check answers that by comparing the allow rules against the directories THIS host reports as writable by a non-administrator, rather than against a hardcoded list -- an estate that has hardened C:\\Windows\\Temp is in a different position from one that has not.\nWhat it does not prove, in three parts. It enumerates a defined set of profile, operating-system, browser and email-client locations; a temporary folder belonging to some other installed application is outside what was probed, which is why confidence is partial and never direct. It reads DACLs rather than performing an access check, so ace ordering, inheritance and group nesting are simplified in the direction that over-reports. And it judges only rule collections that are ENFORCING: a collection left NotConfigured restricts nothing anywhere, which is ism-0843 and ism-1657's finding, and repeating it under every control it touches would bury the specific gap this check exists to surface.\nAn allow rule scoped to administrative principals is recorded but not counted as a failure here, because the control is about locations rather than about whether privileged accounts are themselves subject to application control. A deployment that reads it more strictly -- and at ML2/ML3 it probably should -- sets fail_on_administrator_allow.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-application-control-user-writable-paths"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_appcontrol"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.appcontrol_paths:application_control_covers_user_writable_paths"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "a466fb3938ae9427e7867815a863bedd495acccaa11a57d532ce63868b76c00e"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1870_smt",
+                    "uuid": "5f305a4b-48e7-50d1-80a4-45ab8eb2754b",
+                    "description": "Application control is applied to user profiles and temporary folders used by operating systems, web browsers and email clients."
+                  }
+                ],
+                "remarks": "Residual assessment gap: This is the control AppLocker's default rules fail quietly. Those rules allow Everyone to execute anything under %WINDIR% and %PROGRAMFILES%; %WINDIR%\\Temp is inside %WINDIR%, is the operating system's temporary folder, and is writable by standard users on a default install. So a host can enforce all five rule collections, report thousands of rules, and still let a standard user drop an executable into a temporary folder and run it. The check answers that by comparing the allow rules against the directories THIS host reports as writable by a non-administrator, rather than against a hardcoded list -- an estate that has hardened C:\\Windows\\Temp is in a different position from one that has not.\nWhat it does not prove, in three parts. It enumerates a defined set of profile, operating-system, browser and email-client locations; a temporary folder belonging to some other installed application is outside what was probed, which is why confidence is partial and never direct. It reads DACLs rather than performing an access check, so ace ordering, inheritance and group nesting are simplified in the direction that over-reports. And it judges only rule collections that are ENFORCING: a collection left NotConfigured restricts nothing anywhere, which is ism-0843 and ism-1657's finding, and repeating it under every control it touches would bury the specific gap this check exists to surface.\nAn allow rule scoped to administrative principals is recorded but not counted as a failure here, because the control is about locations rather than about whether privileged accounts are themselves subject to application control. A deployment that reads it more strictly -- and at ML2/ML3 it probably should -- sets fail_on_administrator_allow."
+              },
+              {
                 "uuid": "15712fff-336c-5466-b7c3-d4f2feb1df26",
                 "control-id": "ism-1654",
                 "description": "The control is a binary state and both halves are directly observable: whether the optional feature is present, and whether policy disables the IE11 application. The one residual gap is IE mode inside Microsoft Edge, which is a deliberately supported configuration and is reported in the facts rather than judged, since the control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine.",
@@ -1578,6 +1663,91 @@
                   }
                 ],
                 "remarks": "Residual assessment gap: The control is a binary state and both halves are directly observable: whether the optional feature is present, and whether policy disables the IE11 application. The one residual gap is IE mode inside Microsoft Edge, which is a deliberately supported configuration and is reported in the facts rather than judged, since the control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine."
+              },
+              {
+                "uuid": "6b4254da-df73-56c5-9bf5-e7d332c2810f",
+                "control-id": "ism-1704",
+                "description": "The control names six application families. The vendored end-of-life dataset covers Office productivity suites, two web browsers and Java; searching endoflife.date's 477-product index confirms it carries no entry for Microsoft Edge, any PDF reader, email clients or security products, and browser extensions are not an installed-application concept at all. Those gaps are named in every result rather than omitted, because \"checked and supported\" and \"not checked at all\" must not render the same way. Adobe Flash Player is judged from public record instead of a feed -- the control names it explicitly, Adobe ended support on 2020-12-31 and began blocking content on 2021-01-12, so any installation is unsupported without argument. An application that cannot be mapped to a support timeline is reported as unmapped and is neither passed nor failed; and where NOTHING could be mapped the result is unassessed rather than a vacuous pass. Support is judged as of the fact's collection date, so re-running over archived evidence reproduces the verdict that was true when it was gathered.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-unsupported-applications-removed"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_applications"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.app_support:unsupported_applications_removed"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "3"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "b3fc6b6b27b7a35fa2c51596044f801fcca63401ef99c4db6cb8cc59f5c8cb07"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1704_smt",
+                    "uuid": "67dafb9a-1814-5e26-9f69-2b5f8f15a1bc",
+                    "description": "Office productivity suites, web browsers and their extensions, email clients, PDF applications, Adobe Flash Player, and security products that are no longer supported by vendors are removed."
+                  }
+                ],
+                "remarks": "Residual assessment gap: The control names six application families. The vendored end-of-life dataset covers Office productivity suites, two web browsers and Java; searching endoflife.date's 477-product index confirms it carries no entry for Microsoft Edge, any PDF reader, email clients or security products, and browser extensions are not an installed-application concept at all. Those gaps are named in every result rather than omitted, because \"checked and supported\" and \"not checked at all\" must not render the same way. Adobe Flash Player is judged from public record instead of a feed -- the control names it explicitly, Adobe ended support on 2020-12-31 and began blocking content on 2021-01-12, so any installation is unsupported without argument. An application that cannot be mapped to a support timeline is reported as unmapped and is neither passed nor failed; and where NOTHING could be mapped the result is unassessed rather than a vacuous pass. Support is judged as of the fact's collection date, so re-running over archived evidence reproduces the verdict that was true when it was gathered."
               }
             ]
           }

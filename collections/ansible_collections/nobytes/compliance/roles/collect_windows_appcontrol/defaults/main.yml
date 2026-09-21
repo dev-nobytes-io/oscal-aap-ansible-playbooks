@@ -1,0 +1,18 @@
+---
+# Bounds on the %WINDIR% subdirectory walk that backs ism-1870.
+#
+# These are cost controls, not security settings, and raising them makes the
+# evidence stronger rather than weaker. Depth 3 reaches the directories that
+# matter in practice -- Temp and Tasks sit at depth 1, System32\Tasks and
+# Registration\CRMLog at depth 2, System32\com\dmp at depth 3.
+#
+# When the walk hits its budget it reports `truncated`, and the evaluator will
+# not read "nothing found" from a truncated walk as "there is nothing".
+collect_windows_appcontrol_windows_depth: 3
+collect_windows_appcontrol_windows_budget: 4000
+
+# How many user profiles to inspect. Every profile is writable by its own user
+# by construction, so the finding does not depend on which profiles are
+# sampled; the cap only bounds a file server with thousands of them. The total
+# found is always reported alongside the number probed.
+collect_windows_appcontrol_max_profiles: 10

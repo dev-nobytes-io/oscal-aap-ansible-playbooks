@@ -1,0 +1,103 @@
+<!--
+  An AppLocker policy in the shape `Get-AppLockerPolicy -Effective -Xml`
+  returns, carrying the default rule set plus the four structures that have
+  actually broken parsers:
+
+    * RuleCollectionExtensions, a sibling of the rules that is NOT a rule
+    * a FilePublisherRule, which legitimately has no path condition
+    * an Exceptions block mixing a path condition with a publisher condition
+    * a collection with EnforcementMode="NotConfigured" and no children
+
+  Rule Ids are synthetic. Nothing reads them, and inventing plausible-looking
+  GUIDs for real Microsoft default rules would be asserting something this
+  project has not verified. The rule NAMES, paths, SIDs and actions mirror
+  AppLocker's default rule set, and those are what is under test.
+-->
+<AppLockerPolicy Version="1">
+  <RuleCollection Type="Appx" EnforcementMode="NotConfigured" />
+  <RuleCollection Type="Exe" EnforcementMode="Enabled">
+    <FilePathRule Id="00000000-0000-0000-0000-000000000001"
+                  Name="(Default Rule) All files located in the Program Files folder"
+                  Description="Allows members of the Everyone group to run applications that are located in the Program Files folder."
+                  UserOrGroupSid="S-1-1-0" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%PROGRAMFILES%\*" />
+      </Conditions>
+    </FilePathRule>
+    <FilePathRule Id="00000000-0000-0000-0000-000000000002"
+                  Name="(Default Rule) All files located in the Windows folder"
+                  Description="Allows members of the Everyone group to run applications that are located in the Windows folder."
+                  UserOrGroupSid="S-1-1-0" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%WINDIR%\*" />
+      </Conditions>
+      <Exceptions>
+        <FilePathCondition Path="%WINDIR%\Tasks\*" />
+        <FilePublisherCondition PublisherName="O=SOME VENDOR, L=SYDNEY, S=NSW, C=AU"
+                                ProductName="*" BinaryName="*">
+          <BinaryVersionRange LowSection="*" HighSection="*" />
+        </FilePublisherCondition>
+      </Exceptions>
+    </FilePathRule>
+    <FilePathRule Id="00000000-0000-0000-0000-000000000003"
+                  Name="(Default Rule) All files"
+                  Description="Allows members of the local Administrators group to run all applications."
+                  UserOrGroupSid="S-1-5-32-544" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="*" />
+      </Conditions>
+    </FilePathRule>
+    <FilePublisherRule Id="00000000-0000-0000-0000-000000000004"
+                       Name="Line of business application, by publisher"
+                       Description="" UserOrGroupSid="S-1-1-0" Action="Allow">
+      <Conditions>
+        <FilePublisherCondition PublisherName="O=CONTOSO PTY LTD, L=CANBERRA, S=ACT, C=AU"
+                                ProductName="*" BinaryName="*">
+          <BinaryVersionRange LowSection="*" HighSection="*" />
+        </FilePublisherCondition>
+      </Conditions>
+    </FilePublisherRule>
+    <RuleCollectionExtensions>
+      <ThresholdExtensions>
+        <Services EnforcementMode="Enabled" />
+      </ThresholdExtensions>
+      <RedstoneExtensions>
+        <SystemApps Allow="Enabled" />
+      </RedstoneExtensions>
+    </RuleCollectionExtensions>
+  </RuleCollection>
+  <RuleCollection Type="Script" EnforcementMode="AuditOnly">
+    <FilePathRule Id="00000000-0000-0000-0000-000000000005"
+                  Name="(Default Rule) All scripts located in the Windows folder"
+                  Description="Allows members of the Everyone group to run scripts that are located in the Windows folder."
+                  UserOrGroupSid="S-1-1-0" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%WINDIR%\*" />
+      </Conditions>
+    </FilePathRule>
+  </RuleCollection>
+  <RuleCollection Type="Msi" EnforcementMode="Enabled">
+    <FilePathRule Id="00000000-0000-0000-0000-000000000006"
+                  Name="(Default Rule) All Windows Installer files in %systemdrive%\Windows\Installer"
+                  Description="Allows members of the Everyone group to run all Windows Installer files located in %systemdrive%\Windows\Installer."
+                  UserOrGroupSid="S-1-1-0" Action="Allow">
+      <Conditions>
+        <FilePathCondition Path="%WINDIR%\Installer\*" />
+      </Conditions>
+    </FilePathRule>
+    <FilePathRule Id="00000000-0000-0000-0000-000000000007"
+                  Name="Block Windows Installer files from the operating system temporary folder"
+                  Description="" UserOrGroupSid="S-1-1-0" Action="Deny">
+      <Conditions>
+        <FilePathCondition Path="%WINDIR%\Temp\*" />
+      </Conditions>
+    </FilePathRule>
+  </RuleCollection>
+  <RuleCollection Type="Dll" EnforcementMode="NotConfigured">
+    <RuleCollectionExtensions>
+      <ThresholdExtensions>
+        <Services EnforcementMode="NotConfigured" />
+      </ThresholdExtensions>
+    </RuleCollectionExtensions>
+  </RuleCollection>
+</AppLockerPolicy>

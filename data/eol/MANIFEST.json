@@ -5,9 +5,29 @@
   "copyright": "endoflife.date contributors",
   "authoritative": false,
   "files": {
+    "chrome.json": {
+      "sha256": "ec0e3aebae19b5073244ef603b2a37142cd9814d098b2a3e471e580c48b58219",
+      "cycles": 146
+    },
     "debian.json": {
       "sha256": "fe61d838d2c7ee5b60c82f47023d099defbd06409dd296f8555f77f978256344",
       "cycles": 18
+    },
+    "firefox.json": {
+      "sha256": "037b3cdb6b32c8483de5eca22a47b7a5172dc2281f9be9b7dfba8d869e2c8907",
+      "cycles": 57
+    },
+    "libreoffice.json": {
+      "sha256": "72364696f007a003bbc3e7da7d389db0bcd39e216577cd3cdd04f1db43aacd06",
+      "cycles": 10
+    },
+    "office.json": {
+      "sha256": "8f5a85db2d7c1df06178b960a0828781ed1d3f5a72ce9823296440eb31449023",
+      "cycles": 10
+    },
+    "oracle-jdk.json": {
+      "sha256": "263ca66284ba2268452f52494ab56274068eb45c20e5ecc9a31d564ad530b2c2",
+      "cycles": 28
     },
     "rhel.json": {
       "sha256": "92cd222c8f04bb12deb286ae29f05f4771ca068170eec80c4d6d3b1a6fb02618",
