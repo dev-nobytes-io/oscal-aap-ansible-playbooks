@@ -4,6 +4,14 @@
 # people's compliance should be able to meet a published standard itself.
 profile: production
 
+# ansible-lint runs `ansible-galaxy collection install` implicitly on every
+# invocation unless told not to. That made linting depend on galaxy.ansible.com
+# being reachable -- it went down mid-run and turned main red for a transient
+# network fault with no code change behind it. Worse, it is the wrong posture
+# for a project whose thesis is air-gapped reproducibility. Dependencies are
+# installed once, deliberately, by `make deps`; lint only reads what is there.
+offline: true
+
 exclude_paths:
   - .github/
   - .venv/

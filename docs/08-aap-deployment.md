@@ -5,16 +5,41 @@ Targets **AAP 2.6**. Everything here has an AWX equivalent — see
 
 ## Two execution environments
 
-| Image | ansible-core | Python | Reaches |
-|---|---|---|---|
-| `ee-current` | 2.19.x | 3.11 | Server 2016+/Win 11, RHEL 9/10, Ubuntu 22.04/24.04 |
-| `ee-legacy` | 2.16.x | 3.9 | Server 2012/2012 R2, RHEL 7/8, Python 2.7/3.6 targets |
+| Image | ansible-core | Controller Python | Evaluator Python | Reaches |
+|---|---|---|---|---|
+| `ee-current` | 2.19.x | 3.11 | 3.9 | Server 2016+/Win 11, RHEL 9/10, Ubuntu 22.04/24.04 |
+| `ee-legacy` | 2.16.x | 3.11 | 3.9 | Server 2012/2012 R2, RHEL 7/8, Python 2.7/3.6 targets |
 
 `ee-legacy` is a **capability, not technical debt**. ansible-core dropped
 Windows Server 2012/2012 R2 after 2.16, dropped managed-node Python 2.7/3.6 in
 2.17, and does not support RHEL 8 as a managed node in 2.20. Government estates
 run all of those. Refusing to assess a legacy host does not make it secure — it
 makes it unmeasured.
+
+**Both images carry two interpreters, and the distinction matters.**
+
+- `/usr/bin/python3.11` runs **`ansible-core`**. Core 2.16 requires ≥ 3.10 and
+  core 2.19 requires ≥ 3.11, so both tiers are on 3.11. An execution
+  environment's own Python is the *controller's*; what reaches a 2012 host is
+  core 2.16's **managed-node** support, which is independent of it. It is
+  selected with `--build-arg PYCMD=/usr/bin/python3.11`, which is why images
+  are built with `make ee-build EE=…` rather than a bare `ansible-builder`
+  invocation — ansible-builder v3 does not let `PYCMD` be defaulted in the
+  definition file.
+- `/usr/bin/python3` stays the 3.9 system interpreter the base image ships,
+  untouched. `dnf` runs on it, so repointing it would break the package
+  manager; and it is what a playbook's `command: python3 …` actually invokes,
+  which makes it the **evaluator** interpreter and the reason for ADR 0007's
+  3.9 floor. The evaluator is vendored to `/opt/nobytes-cca` and put on
+  `PYTHONPATH`, so both interpreters can import it; the image build asserts
+  both imports rather than hoping.
+
+Build them:
+
+```bash
+make ee-context EE=ee-legacy   # render + verify the context, no runtime needed
+make ee-build   EE=ee-legacy   # build the image
+```
 
 Only **collection** needs the legacy image. Evaluation always runs on current
 Python, so both tiers produce identical fact bundles judged by identical code.
@@ -120,9 +145,9 @@ signal is a real operational risk and is not this project's default posture.
 
 | Path | Status |
 |---|---|
-| EE definitions accepted by `ansible-builder create` | **Verified** |
-| EE images build; correct ansible-core; evaluator suite runs **inside each image** | **CI only** (needs a container runtime) |
-| Evaluator is valid Python 3.9 and imports only stdlib + PyYAML | **Tested locally** |
+| EE definitions accepted by `ansible-builder create`, `_build/` populated | **Verified** |
+| EE images build; correct ansible-core; image carries the evaluator; evaluator runs **inside each image** | **CI only** (needs a container runtime) |
+| Evaluator is valid Python 3.9 and imports only stdlib + PyYAML | **Tested locally**, and run on a real 3.9 interpreter in `ee-legacy` in CI |
 | Playbooks pass `ansible-lint` production profile | **Verified** |
 | Controller configuration applied to a real AAP instance | **Not verified** — no controller available here |
 

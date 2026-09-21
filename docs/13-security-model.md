@@ -116,9 +116,11 @@ The assess → evaluate → report path runs with **zero internet egress**: OSCA
 data, JSON schemas and reference datasets are vendored. Ingest is the only online
 step and happens in CI, never on the estate.
 
-The evaluator is restricted to the standard library and Python 3.9 syntax
-specifically so it runs inside `ee-legacy` as well as `ee-current` — in an
-enclave, the older image may be the only one that made it through.
+The evaluator is restricted to the standard library and Python 3.9 syntax so
+that it runs under whatever `python3` an environment hands it — on RHEL 9 and
+CentOS Stream 9 that is 3.9, and in an enclave you do not get to choose. See
+ADR 0007, which records why this floor is *not* about `ee-legacy`'s
+`ansible-core` version.
 
 ## Threat cases worth stating
 

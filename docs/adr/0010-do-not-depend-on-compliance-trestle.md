@@ -30,7 +30,9 @@ constant suggests.
 **1. It cannot be used by the evaluator.** trestle requires Python ≥3.11 and
 pulls roughly 60 dependencies including pydantic, paramiko, cryptography and
 openpyxl. ADR 0007 constrains the evaluator to the standard library and Python
-3.9 syntax so it runs inside `ee-legacy` — the image that reaches Server 2012 and
+3.9 syntax so it runs under a RHEL 9 system interpreter — see ADR 0007; the
+constraint is what lets the evaluator run in an enclave where only `ee-legacy`
+reached Server 2012 and
 RHEL 7/8, and in an enclave often the only one available. These are irreconcilable.
 
 **2. It mutates timestamps on round-trip.** ASD publishes nanosecond precision;

@@ -17,10 +17,23 @@ import yaml
 
 from .catalog import Catalog
 from .contract import Confidence, EvidenceTier, Method, Scope
+from .paths import checks_dir, project_root
 
-ROOT = Path(__file__).resolve().parent.parent.parent
-CHECKS_DIR = ROOT / "checks"
-SCHEMA_PATH = CHECKS_DIR / "schema.json"
+# Deliberately NOT module-level constants derived from __file__. The package is
+# vendored into an execution environment at a path that has nothing to do with
+# the checkout -- resolving at import time gave `<install-prefix>/checks`, which
+# does not exist, so every check silently vanished and coverage reported 0 of 46
+# with a zero exit. A wrong answer delivered confidently is the one outcome this
+# project exists to prevent, so the location is resolved when it is used, via
+# CCA_PROJECT_ROOT. See ADR 0007 and paths.py.
+
+
+def _display(path: Path) -> str:
+    """A path as a reader recognises it, relative to the project when possible."""
+    try:
+        return str(path.relative_to(project_root()))
+    except ValueError:
+        return str(path)
 
 
 @dataclass(frozen=True)
@@ -111,7 +124,7 @@ class Registry:
 
     @classmethod
     def load(cls, directory: Path | None = None) -> Registry:
-        directory = directory or CHECKS_DIR
+        directory = directory or checks_dir()
         checks: dict = {}
         for path in sorted(directory.rglob("*.yml")):
             if path.name == "schema.json":
@@ -126,6 +139,15 @@ class Registry:
                     f"duplicate check id {check.id!r}: {checks[check.id].source_file} and {path}"
                 )
             checks[check.id] = check
+        if not checks:
+            # "no checks are defined" and "the checks could not be found" are
+            # indistinguishable downstream, and both render as 0% coverage with
+            # a successful exit. Refuse rather than report a green nothing.
+            raise FileNotFoundError(
+                f"No checks found under {directory}. Either the check registry is "
+                f"empty or the project root resolved wrongly -- set CCA_PROJECT_ROOT "
+                f"to the checkout containing oscal/ and checks/."
+            )
         return cls(checks)
 
     def __len__(self) -> int:
@@ -197,8 +219,8 @@ def validate_schema(directory: Path | None = None) -> list:
 
     import jsonschema
 
-    directory = directory or CHECKS_DIR
-    schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    directory = directory or checks_dir()
+    schema = json.loads((directory / "schema.json").read_text(encoding="utf-8"))
     validator = jsonschema.Draft7Validator(schema)
     problems: list = []
     for path in sorted(directory.rglob("*.yml")):
@@ -208,5 +230,5 @@ def validate_schema(directory: Path | None = None) -> list:
             continue
         for error in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
             location = "/".join(str(p) for p in error.path) or "<root>"
-            problems.append(f"{path.relative_to(ROOT)}: {location}: {error.message}")
+            problems.append(f"{_display(path)}: {location}: {error.message}")
     return problems

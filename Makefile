@@ -26,7 +26,7 @@ ISM_MIRROR  ?= https://github.com/AustralianCyberSecurityCentre/ism-oscal
 # Default baseline for coverage and local assessment runs.
 BASELINE    ?= E8_ML1
 
-.PHONY: help bootstrap deps lint docs generate validate test assess-local coverage fetch clean
+.PHONY: help bootstrap deps lint docs generate validate test assess-local coverage fetch clean ee-context ee-build
 
 help: ## Show this help
 	@awk 'BEGIN{FS=":.*?## "} /^[a-zA-Z_-]+:.*?## /{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -75,6 +75,39 @@ assess-local: ## End-to-end evaluate -> emit using the bundled fixtures
 
 coverage: ## Report control coverage for a baseline (honest, not flattering)
 	$(BIN)python tools/cca.py coverage --baseline $(BASELINE)
+
+# --- Execution environments -------------------------------------------------
+#
+# EE_PYCMD is the ANSIBLE-CORE controller interpreter inside the image, and it
+# has to be passed explicitly: ansible-core 2.16 requires Python >= 3.10 and
+# 2.19 requires >= 3.11, while the CentOS Stream 9 base ships 3.9 as
+# /usr/bin/python3. We deliberately leave /usr/bin/python3 alone -- dnf runs on
+# it, and it is the interpreter the evaluator is invoked with -- so the
+# controller Python is selected here instead. ansible-builder v3 restricts
+# build_arg_defaults to a fixed set of keys, so this cannot live in the
+# definition file.
+EE          ?= ee-current
+EE_PYCMD    ?= /usr/bin/python3.11
+EE_TAG      ?= nobytes-cca/$(EE):dev
+EE_DEF       = aap/execution-environment/$(EE)/execution-environment.yml
+# Pinned rather than auto-detected. ansible-builder picks podman when it is
+# installed, and CI inspects the result with `docker run` -- an image built into
+# the other runtime's store simply is not there. Override for a podman host.
+EE_RUNTIME  ?= docker
+
+ee-context: ## Render an EE build context without building (no container runtime needed)
+	$(BIN)ansible-builder create -f $(EE_DEF) -c $(OUT)/ee-context-$(EE)
+	@test -d "$(OUT)/ee-context-$(EE)/_build/nobytes_cca" || { \
+	  echo "ERROR: _build/nobytes_cca is missing -- additional_build_files is wrong"; \
+	  exit 1; }
+	@echo "context OK -> $(OUT)/ee-context-$(EE) (evaluator staged for COPY)"
+
+ee-build: ## Build an execution environment image (EE=ee-current|ee-legacy)
+	# -c keeps the generated context under $(OUT); without it ansible-builder
+	# drops a `context/` directory in the repository root.
+	$(BIN)ansible-builder build -f $(EE_DEF) -t $(EE_TAG) \
+	  -c $(OUT)/ee-context-$(EE) --build-arg PYCMD=$(EE_PYCMD) \
+	  --container-runtime $(EE_RUNTIME) -v 2
 
 clean: ## Remove generated output and caches
 	rm -rf $(OUT) .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage

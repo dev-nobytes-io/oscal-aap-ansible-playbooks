@@ -7,6 +7,8 @@ it sits in the repository looking authoritative while assessing nothing.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from ism_release import catalog_path
@@ -110,3 +112,47 @@ def test_every_check_binds_to_a_component_definition() -> None:
         for req in impl["implemented-requirements"]
     }
     assert bound == Registry.load().covered_controls()
+
+
+def test_registry_resolves_checks_from_the_project_not_the_package(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The registry must find checks via CCA_PROJECT_ROOT, never via __file__.
+
+    This is a regression test for a bug that only appears once the package is
+    installed somewhere other than the checkout -- which is exactly what an
+    execution environment does. The registry used to derive its checks
+    directory from `__file__`, so a package vendored at /opt/nobytes-cca
+    resolved `/opt/checks`, found nothing, and reported 0 of 46 controls
+    covered with a SUCCESSFUL exit code.
+
+    A silently empty registry is the worst available failure: it is
+    indistinguishable from an honest "nothing is covered yet", and every
+    downstream report renders it as a clean 0%.
+    """
+    from nobytes_cca import paths
+
+    real_root = paths.project_root()
+
+    # Simulate the execution environment: the working directory is somewhere
+    # unrelated, and only CCA_PROJECT_ROOT says where the project lives.
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("CCA_PROJECT_ROOT", str(real_root))
+
+    assert len(Registry.load()) > 0, (
+        "registry resolved no checks when loaded from outside the checkout -- "
+        "it is deriving paths from __file__ again"
+    )
+
+
+def test_registry_refuses_to_load_an_empty_directory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Zero checks found must raise, not return an empty registry."""
+    (tmp_path / "oscal").mkdir()
+    (tmp_path / "checks").mkdir()
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("CCA_PROJECT_ROOT", str(tmp_path))
+
+    with pytest.raises(FileNotFoundError, match="No checks found"):
+        Registry.load()
