@@ -129,6 +129,49 @@ jobs:
           print(f"collected {len(facts)} fact(s) from {release.get('pretty_name')}")
           PY
 
+  powershell:
+    name: PowerShell (parse + run the AppLocker parser)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install pinned tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # The runner image ships pwsh. Asserting it rather than assuming it:
+      # a missing interpreter would make the pytest module below SKIP, and a
+      # skipped test reads exactly like a passing one in a green tick.
+      - name: Assert PowerShell is present
+        run: pwsh -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+
+      - name: Parse every Windows collector
+        run: make ps-lint
+
+      # Get-AppLockerPolicy needs Windows; parsing its output does not. This
+      # runs the collector's OWN parser over a real policy document and feeds
+      # the result to the evaluators, so the two ends are shown to agree
+      # instead of being assumed to. It does NOT verify Get-AppLockerPolicy,
+      # Get-Acl or Win32_DeviceGuard -- those still need a lab.
+      #
+      # The skip assertion is the point of running it here separately: these
+      # tests skip when no interpreter is found, and a skipped test reads
+      # exactly like a passing one inside a green tick.
+      - name: Run the collector's AppLocker parser and evaluate its output
+        run: |
+          set -euo pipefail
+          python -m pytest tests/test_powershell_collectors.py -q -rs \
+            | tee /tmp/pwsh-tests.log
+          if grep -qiE '[0-9]+ skipped' /tmp/pwsh-tests.log; then
+            echo "::error::PowerShell tests skipped; this job proved nothing"
+            exit 1
+          fi
+
   test:
     name: Unit tests
     runs-on: ubuntu-latest

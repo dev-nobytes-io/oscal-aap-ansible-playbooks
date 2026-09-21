@@ -1,12 +1,23 @@
 ---
 # READ-ONLY. `win_powershell` is a permitted read-only executor, and every task
 # here declares changed_when: false and check_mode: false so evidence is still
-# gathered during a check run. The script emits raw state and judges nothing.
+# gathered during a check run. The scripts emit raw state and judge nothing.
 
 - name: Read effective application control state (AppLocker and WDAC)
   ansible.windows.win_powershell:
     script: "{{ lookup('ansible.builtin.file', role_path ~ '/files/Get-ApplicationControlState.ps1') }}"
   register: collect_windows_appcontrol_state
+  changed_when: false
+  check_mode: false
+
+- name: Read writability of the locations ism-1870 names
+  ansible.windows.win_powershell:
+    script: "{{ lookup('ansible.builtin.file', role_path ~ '/files/Get-UserWritableExecutionPaths.ps1') }}"
+    parameters:
+      MaxWindowsDepth: "{{ collect_windows_appcontrol_windows_depth | int }}"
+      MaxDirectories: "{{ collect_windows_appcontrol_windows_budget | int }}"
+      MaxProfiles: "{{ collect_windows_appcontrol_max_profiles | int }}"
+  register: collect_windows_appcontrol_paths
   changed_when: false
   check_mode: false
 
@@ -16,6 +27,7 @@
     tasks_from: record
   vars:
     _cca_ac: "{{ (collect_windows_appcontrol_state.output | default([{}]))[0] | default({}) }}"
+    _cca_paths: "{{ (collect_windows_appcontrol_paths.output | default([{}]))[0] | default({}) }}"
     fact_records:
       windows.appcontrol.state:
         source: "Get-AppLockerPolicy -Effective + Win32_DeviceGuard"
@@ -26,3 +38,10 @@
           {{ not (_cca_ac.applocker.available | default(false))
              and not (_cca_ac.wdac.available | default(false)) }}
         value: "{{ _cca_ac }}"
+      windows.appcontrol.writable_paths:
+        source: "Get-Acl over the locations named by ism-1870"
+        # No probe at all means the filesystem could not be inspected. A policy
+        # that allows execution from a directory nobody could read is not a
+        # pass and not a failure -- it is a thing we did not observe.
+        partial: "{{ (_cca_paths.probes | default([])) | length == 0 }}"
+        value: "{{ _cca_paths }}"
