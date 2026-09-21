@@ -271,3 +271,62 @@ def test_tenant_checks_do_not_run_against_hosts_and_common_checks_run_everywhere
         "no `common` check ran on a Windows host -- os-vendor-supported covers "
         "Windows too, and losing it here is a silent coverage regression"
     )
+
+
+def test_a_check_with_no_subject_is_not_reported_as_our_failure() -> None:
+    """Three ways a control can go undetermined, and they are not interchangeable.
+
+    `not-implemented` says nobody built a check. `requires-attestation` says no
+    tool can ever answer it. `evaluation-error` says OUR CODE broke. A run
+    covering only workstations leaves the Entra checks with no subject at all,
+    and reporting that as `evaluation-error` sends an operator debugging a tool
+    that is working correctly -- while quietly implying the compliance posture
+    is unknown for a bad reason rather than a mundane one.
+
+    Found by running the end-to-end pipeline, not by the unit tests, which is
+    the argument for `make assess-local` existing at all.
+    """
+    from pathlib import Path
+
+    from nobytes_cca.bundle import load_bundle
+    from nobytes_cca.catalog import Catalog
+    from nobytes_cca.evaluate import evaluate_bundle, unassessed_controls
+    from nobytes_cca.paths import ism_catalog
+    from nobytes_cca.registry import Registry
+
+    catalog_file = ism_catalog()
+    if not catalog_file.exists():
+        import pytest
+
+        pytest.skip("no vendored catalog; run `make fetch`")
+
+    registry = Registry.load()
+    catalog = Catalog.load(catalog_file)
+    baseline = catalog.baseline(e8="ML1")
+
+    fixtures = sorted((Path(__file__).parent / "fixtures" / "bundles").glob("*.json"))
+    assert fixtures, "no fixture bundles; this test would pass vacuously"
+    assert not any(
+        str(load_bundle(f).subject.get("platform_family")) == "entra-id" for f in fixtures
+    ), "a fixture tenant exists, so this test no longer exercises the empty-scope path"
+
+    evaluations = []
+    for fixture in fixtures:
+        evaluations.extend(evaluate_bundle(registry, load_bundle(fixture), baseline))
+
+    undetermined = unassessed_controls(baseline, registry, evaluations)
+
+    entra_controls = {
+        binding.control_id
+        for check in registry
+        if check.platform_family == "entra-id"
+        for binding in check.controls
+        if binding.control_id in baseline
+    }
+    assert entra_controls, "no Entra controls in the baseline; nothing to assert"
+
+    for control_id in entra_controls:
+        assert undetermined[control_id] is UnassessedReason.NO_SUBJECT_IN_SCOPE, (
+            f"{control_id} reported as {undetermined[control_id].value}; a check that "
+            f"never ran for want of a subject is not an evaluation failure"
+        )

@@ -180,12 +180,20 @@ def unassessed_controls(
         elif control_id not in attempted:
             out[control_id] = UnassessedReason.NOT_IMPLEMENTED
         else:
-            reasons = [
-                ev.result.reason
+            relevant = [
+                ev
                 for ev in evaluations
                 if any(b.control_id == control_id for b in ev.check.controls)
-                and ev.result.reason is not None
             ]
+            if not relevant:
+                # A check exists but never ran, because no subject it applies
+                # to was in the assessed set. Falling through to
+                # EVALUATION_ERROR here blamed our own code for what is really
+                # a fact about scope, and sent the reader debugging a tool that
+                # is working correctly.
+                out[control_id] = UnassessedReason.NO_SUBJECT_IN_SCOPE
+                continue
+            reasons = [ev.result.reason for ev in relevant if ev.result.reason is not None]
             out[control_id] = reasons[0] if reasons else UnassessedReason.EVALUATION_ERROR
     return out
 

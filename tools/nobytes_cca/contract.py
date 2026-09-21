@@ -133,6 +133,13 @@ class UnassessedReason(str, Enum):
     UNSUPPORTED_PLATFORM = "unsupported-platform"
     COLLECTION_ERROR = "collection-error"
     REQUIRES_ATTESTATION = "requires-attestation"
+    #: A check exists and works, but no subject it applies to was in the
+    #: assessed set -- an Entra tenant check in a run covering only
+    #: workstations, say. Distinct from EVALUATION_ERROR, which blames our own
+    #: code, and from NOT_IMPLEMENTED, which says nobody has built it. Telling
+    #: an operator their tooling failed when they simply did not include the
+    #: platform sends them debugging the wrong thing.
+    NO_SUBJECT_IN_SCOPE = "no-subject-in-scope"
     EVALUATION_ERROR = "evaluation-error"
     REQUIRES_INTERVIEW = "requires-interview"
     REQUIRES_EXTERNAL_SYSTEM = "requires-external-system"
