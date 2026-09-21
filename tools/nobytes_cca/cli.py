@@ -141,6 +141,7 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
         baseline=args.baseline,
         baseline_controls=baseline,
         evaluations=evaluations,
+        registry=registry,
         catalog=catalog,
         plan_href="./assessment-plan.json",
         now=now,
@@ -168,6 +169,41 @@ def cmd_evaluate(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_report(args: argparse.Namespace) -> int:
+    """Render the human-readable report from emitted OSCAL documents.
+
+    Reads the documents rather than re-evaluating, so the report cannot drift
+    from the assessment it describes: if they disagree, one of them is stale
+    and that is worth finding out.
+    """
+    from .report import render
+    from .report.model import load
+
+    out = Path(args.out) if args.out else project_root() / "out"
+    plan_path = Path(args.plan) if args.plan else out / "assessment-plan.json"
+    results_path = Path(args.results) if args.results else out / "assessment-results.json"
+    for path in (plan_path, results_path):
+        if not path.exists():
+            print(f"missing {path}; run `cca evaluate` first", file=sys.stderr)
+            return 1
+
+    report = load(plan_path, results_path, Catalog.load(ism_catalog()))
+    suffix = "md" if args.format == "markdown" else "html"
+    body = render.markdown(report) if suffix == "md" else render.to_html(report)
+
+    target = Path(args.output) if args.output else out / f"assessment-report.{suffix}"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(body, encoding="utf-8")
+    print(f"wrote {target}")
+    determined = [r for r in report.rows if r.is_determined]
+    print(
+        f"  {len(determined)} determined, "
+        f"{len(report.rows) - len(determined)} undetermined, "
+        f"{len(report.attested)} attested"
+    )
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="cca", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -177,6 +213,13 @@ def main() -> int:
     cov = sub.add_parser("coverage", help="report control coverage for a baseline")
     cov.add_argument("--baseline", default="E8_ML1", choices=sorted(BASELINES))
     cov.add_argument("--json", action="store_true")
+
+    rep = sub.add_parser("report", help="render a human-readable assessment report")
+    rep.add_argument("--format", default="markdown", choices=["markdown", "html"])
+    rep.add_argument("--plan", default=None, help="default: <out>/assessment-plan.json")
+    rep.add_argument("--results", default=None, help="default: <out>/assessment-results.json")
+    rep.add_argument("--out", default=None, help="default: <project root>/out")
+    rep.add_argument("--output", default=None, help="explicit output file path")
 
     gen = sub.add_parser("generate", help="regenerate derived OSCAL artefacts")
     gen.add_argument("--out", default=None, help="default: <project root>/oscal")
@@ -200,6 +243,7 @@ def main() -> int:
         "validate-registry": cmd_validate_registry,
         "coverage": cmd_coverage,
         "generate": cmd_generate,
+        "report": cmd_report,
         "evaluate": cmd_evaluate,
     }[args.command](args)
 

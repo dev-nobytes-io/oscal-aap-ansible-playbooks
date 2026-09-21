@@ -69,6 +69,206 @@
             "name": "subjects-assessed",
             "value": "3",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-0445=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-0843=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1175=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1380=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1401=no-subject-in-scope",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1485=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1486=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1504=no-subject-in-scope",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1507=requires-attestation",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1511=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1515=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1585=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1657=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1679=requires-attestation",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1680=requires-attestation",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1681=requires-attestation",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1688=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1689=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1690=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1691=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1694=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1695=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1698=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1699=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1701=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1702=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1704=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1807=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1808=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1810=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1811=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1812=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1814=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1870=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1876=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1877=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1883=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1892=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1893=requires-attestation",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "undetermined",
+            "value": "ism-1905=not-implemented",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           }
         ],
         "local-definitions": {

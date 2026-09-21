@@ -379,6 +379,7 @@ def emit_assessment_results(
     baseline: str,
     baseline_controls: list,
     evaluations: list,
+    registry: Registry,
     catalog: Catalog,
     plan_href: str,
     now: dt.datetime,
@@ -417,6 +418,12 @@ def emit_assessment_results(
 
     determined = {f["title"].split()[0] for f in findings}
     undetermined = [c for c in baseline_controls if c not in determined]
+
+    # Imported here rather than at module scope: emit is the OSCAL layer and
+    # should not pull the evaluation orchestrator into every importer of it.
+    from ..evaluate import unassessed_controls
+
+    undetermined_reasons = unassessed_controls(baseline_controls, registry, evaluations)
 
     inventory = [
         {
@@ -465,6 +472,17 @@ def emit_assessment_results(
                         _prop("controls-unassessed", str(len(undetermined))),
                         _prop("subjects-in-scope", str(total)),
                         _prop("subjects-assessed", str(assessed)),
+                    ]
+                    # WHY each control went undetermined, carried in the
+                    # document rather than only printed to a terminal. OSCAL
+                    # cannot express "not determined" in a finding, so without
+                    # this a consumer sees an absent finding and has to guess
+                    # between "nobody built a check", "no tool can ever answer
+                    # it", "the host was unreachable" and "our code broke".
+                    # Those call for completely different responses.
+                    + [
+                        _prop("undetermined", f"{control_id}={reason.value}")
+                        for control_id, reason in sorted(undetermined_reasons.items())
                     ],
                     "local-definitions": {"inventory-items": inventory},
                     "reviewed-controls": {

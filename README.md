@@ -151,6 +151,7 @@ make validate     # checksums, OSCAL schemas, check registry (fully offline)
 make test         # canary, invariant, purity and golden-OSCAL tests
 make coverage     # honest control coverage for a baseline
 make assess-local # end-to-end evaluate -> OSCAL against fixture bundles
+make report       # human-readable assessment report (markdown + html)
 ```
 
 Targets for work that has not landed yet print an explicit `SKIP` naming the
@@ -178,10 +179,11 @@ content, gradually.
 | 06 | Linux collectors + end-of-life dataset | merged |
 | 07 | Dual execution environments + AAP/AWX configuration-as-code | merged |
 | 08 | Attestation model — declare what no tool can observe | open |
-| 09 | Entra ID collectors + Blueprint vendoring | **this PR** |
-| 10 | Evidence providers — Splunk, Change Auditor | planned |
-| 11 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
-| 12+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| 09 | Entra ID collectors + Blueprint vendoring | open |
+| 10 | Reporting — human-readable assessment report | **this PR** |
+| 11 | Evidence providers — Splunk, Change Auditor | planned |
+| 12 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
+| 13+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
 | last | Remediation scaffolding — opt-in, separated | planned |
 
 Assessment comes first throughout. Remediation is deliberately last, opt-in and
