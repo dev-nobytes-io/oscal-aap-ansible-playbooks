@@ -187,10 +187,11 @@ content, gradually.
 | 12 | User application hardening — unsupported applications | merged |
 | 13 | Application control reaches user profiles and temp folders | merged |
 | 14 | Population arithmetic, aggregate scope, and the guards that could not see | **this PR** |
-| 15 | Active Directory privileged access | planned |
-| 16 | Fact store — unblocks the 12 temporal ML1 controls | planned |
-| 17 | Web browser hardening | planned |
-| 18+ | CyberArk, ADCS, ADFS, Keycloak, Exchange, NetApp, Splunk, Change Auditor, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| 15 | Active Directory privileged access — one attestation, five documented refusals | **this PR** |
+| 16 | Redaction is applied, not merely declared | planned |
+| 17 | Fact store — unblocks the 12 temporal ML1 controls | planned |
+| 18 | Web browser hardening | planned |
+| 19+ | CyberArk, ADCS, ADFS, Keycloak, Exchange, NetApp, Splunk, Change Auditor, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
 | then | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
 | last | Remediation scaffolding — opt-in, separated | planned |
 

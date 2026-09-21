@@ -1,0 +1,73 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: org-privileged-online-service-access-limited
+version: 1.0.0
+title: Privileged online-service access is limited to what duties require
+platform_family: organisation
+component: privileged-access-process
+
+controls:
+  - id: ism-1883
+    statement_id: ism-1883_smt
+    control_revision: "2"
+    statement_sha256: f8de3a3c1e2ddb505048fcd22d727ccd816330c01813cdc9df6a3071d3fc4164
+    coverage: full
+    rationale: >-
+      The control compares two quantities and neither is a system state, which
+      is what separates it from the four other privileged-access controls
+      examined alongside it and deferred rather than attested.
+
+      "Explicitly authorised to access online services" is an approval. A
+      security group, a proxy rule or an Entra group is the *implementation* of
+      an authorisation decision, never the decision -- the same substitution
+      this project already refused for ism-1507. Here it cuts deeper: for
+      ism-1507 the approval merely produces a membership the control is about,
+      while here the approval *defines the population the control is a
+      statement about*, so a directory read cannot even compute the
+      denominator.
+
+      "Only what is required for users to undertake their duties or functions"
+      is a proportionality judgement about a person's job. No directory, PAM
+      vault, identity governance platform, proxy or CASB holds an attribute
+      meaning "what this person's duties require". An access review records
+      that an approver clicked approve, which returns you to the first term. A
+      job title is a string, not a set of required services.
+
+      What settles it is that no product implements "strictly limited to what
+      is required" the way a conditional access policy implements "MFA is
+      required". Where such a mechanism exists this project automates at proxy
+      or partial confidence and accepts the ceiling; here there is no
+      mechanism to read, which makes this structure rather than effort.
+
+      Three observables were considered and rejected on principle, not cost.
+      Counting the authorised set against a threshold would publish a number
+      this project invented inside an OSCAL document citing an ASD control id.
+      Observing egress from a proxy or CASB measures what access exists, not
+      what is authorised, and its only detectable failure belongs to ism-1175.
+      Reading an identity-governance campaign's completion records that a
+      review happened, not that its outcome was proportionate.
+
+method: EXAMINE
+confidence: attested
+assessability: attested
+scope: aggregate
+evidence_tier: passive
+freshness_hours: 4320
+history_window_days: 0
+
+attestation:
+  source: >-
+    The register of privileged user accounts explicitly authorised to access
+    online services, recording for each account the services authorised, the
+    business function requiring them, the approving authority and the date of
+    the most recent proportionality review.
+  owner: Privileged access management process owner
+  renewal_days: 180
+  why_not_observable: >-
+    Both sides of the control's comparison are approval and judgement
+    artefacts. The authorised population is defined by an approval decision
+    rather than by any group membership that implements it, and "what a user's
+    duties require" exists in no system as an attribute. No product implements
+    the limitation the way a policy engine implements an authentication
+    requirement, so there is no configuration state to read -- this is a gap no
+    amount of engineering closes, not a collector nobody has written yet.

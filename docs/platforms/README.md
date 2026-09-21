@@ -9,11 +9,13 @@ One page per target family, each answering the same questions:
 - How to verify the collector works, and what cannot be verified without real kit
 
 Delivered: [`windows.md`](windows.md), [`linux.md`](linux.md),
-[`entra-id.md`](entra-id.md).
+[`entra-id.md`](entra-id.md), [`active-directory.md`](active-directory.md).
 
-Planned: `active-directory.md`, `adcs.md`, `adfs.md`, `keycloak.md`,
+Planned: `adcs.md`, `adfs.md`, `keycloak.md`,
 `exchange.md`, `cyberark.md`, `netapp.md`, `splunk.md`, `change-auditor.md`,
 `vmware.md`, `proxmox.md`, `xcp-ng.md`, `containers.md`, `kubernetes.md`,
 `network.md`, `cloud.md`.
 
-Each page ships with the pull request that delivers its collector.
+Each page ships with the pull request that delivers its collector — or, in
+[`active-directory.md`](active-directory.md)'s case, with the pull request that
+explains why five of its six controls deliberately have none.
