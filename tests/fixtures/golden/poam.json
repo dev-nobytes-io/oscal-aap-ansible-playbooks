@@ -22,7 +22,7 @@
       {
         "uuid": "b2d64925-4439-5a14-afd3-147fd06a81aa",
         "title": "ism-1488 not satisfied",
-        "description": "1 of 4 assessed subjects do not satisfy this control.",
+        "description": "1 of 1 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -51,7 +51,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "4",
+            "value": "1",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -69,7 +69,7 @@
       {
         "uuid": "dc2f609f-bc9e-5be6-9485-6972e02cb574",
         "title": "ism-1489 not satisfied",
-        "description": "1 of 4 assessed subjects do not satisfy this control.",
+        "description": "1 of 1 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -98,7 +98,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "4",
+            "value": "1",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -114,9 +114,56 @@
         ]
       },
       {
+        "uuid": "9a1d737d-3d21-52b9-8152-e70516b862ce",
+        "title": "ism-1504 not satisfied",
+        "description": "1 of 1 assessed aggregate subjects do not satisfy this control.",
+        "props": [
+          {
+            "name": "control-id",
+            "value": "ism-1504",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "baseline",
+            "value": "E8_ML1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "poam-status",
+            "value": "open",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "confidence",
+            "value": "proxy",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-failing",
+            "value": "1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "population-assessed",
+            "value": "1",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+          },
+          {
+            "name": "marking",
+            "value": "OFFICIAL: Sensitive",
+            "class": "pspf"
+          }
+        ],
+        "related-findings": [
+          {
+            "finding-uuid": "adbc9e89-6579-5cb5-8656-ee599d168264"
+          }
+        ]
+      },
+      {
         "uuid": "e321dabe-19f9-548a-b386-fa1984801a16",
         "title": "ism-1654 not satisfied",
-        "description": "1 of 4 assessed subjects do not satisfy this control.",
+        "description": "1 of 2 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -145,7 +192,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "4",
+            "value": "2",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -163,7 +210,7 @@
       {
         "uuid": "95ee0dcc-1cc5-5661-8232-b1b4803c970e",
         "title": "ism-1657 not satisfied",
-        "description": "1 of 4 assessed subjects do not satisfy this control.",
+        "description": "1 of 1 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -192,7 +239,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "4",
+            "value": "1",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -210,7 +257,7 @@
       {
         "uuid": "530728ff-a0f0-55f5-bd0d-8155f81146d7",
         "title": "ism-1671 not satisfied",
-        "description": "1 of 4 assessed subjects do not satisfy this control.",
+        "description": "1 of 1 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -239,7 +286,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "4",
+            "value": "1",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -257,7 +304,7 @@
       {
         "uuid": "0a857206-cf16-5ce6-a9c9-2e86d3508f7e",
         "title": "ism-1870 not satisfied",
-        "description": "1 of 4 assessed subjects do not satisfy this control.",
+        "description": "1 of 1 assessed subjects do not satisfy this control.",
         "props": [
           {
             "name": "control-id",
@@ -286,7 +333,7 @@
           },
           {
             "name": "population-assessed",
-            "value": "4",
+            "value": "1",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {

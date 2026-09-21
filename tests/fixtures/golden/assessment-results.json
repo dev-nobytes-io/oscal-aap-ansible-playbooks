@@ -21,7 +21,7 @@
       {
         "uuid": "c459b237-d9c4-5b3c-9fe9-92fd446c9185",
         "title": "E8_ML1 assessment run golden:001",
-        "description": "Automated assessment of the E8_ML1 baseline against SYSTEM-GOVDESK. 9 of 46 baseline controls were determined; 37 were not and are reported as unassessed rather than compliant.",
+        "description": "Automated assessment of the E8_ML1 baseline against SYSTEM-GOVDESK. 11 of 46 baseline controls were determined; 35 were not and are reported as unassessed rather than compliant.",
         "start": "2026-09-20T02:14:07+10:00",
         "end": "2026-09-20T03:05:12+10:00",
         "props": [
@@ -52,12 +52,12 @@
           },
           {
             "name": "controls-determined",
-            "value": "9",
+            "value": "11",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
             "name": "controls-unassessed",
-            "value": "37",
+            "value": "35",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -67,7 +67,7 @@
           },
           {
             "name": "subjects-assessed",
-            "value": "4",
+            "value": "5",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -87,22 +87,12 @@
           },
           {
             "name": "undetermined",
-            "value": "ism-1401=no-subject-in-scope",
-            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-          },
-          {
-            "name": "undetermined",
             "value": "ism-1485=not-implemented",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
             "name": "undetermined",
             "value": "ism-1486=not-implemented",
-            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-          },
-          {
-            "name": "undetermined",
-            "value": "ism-1504=no-subject-in-scope",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -258,6 +248,21 @@
         ],
         "local-definitions": {
           "inventory-items": [
+            {
+              "uuid": "2c687228-1862-57f9-aec3-074a0bfa47a3",
+              "description": "Entra ID tenant contoso.onmicrosoft.com",
+              "props": [
+                {
+                  "name": "asset-id",
+                  "value": "contoso.onmicrosoft.com"
+                },
+                {
+                  "name": "ee-tier",
+                  "value": "current",
+                  "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                }
+              ]
+            },
             {
               "uuid": "2571d73c-d2f5-5e1d-ae6c-23dfe2552d21",
               "description": "RHEL 7 application server",
@@ -680,6 +685,216 @@
                 ]
               }
             ]
+          },
+          {
+            "uuid": "c42e8ed3-e0cf-5354-980b-2df3273ea16d",
+            "title": "ism-1504 / entra-mfa-conditional-access \u2014 contoso.onmicrosoft.com",
+            "description": "No enforcing conditional access policy requires multi-factor authentication across all users and all resources. 1 policy/policies are report-only (`enabledForReportingButNotEnforced`) and enforce nothing.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "entra-mfa-conditional-access",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "aggregate",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2c687228-1862-57f9-aec3-074a0bfa47a3",
+                "type": "inventory-item",
+                "title": "contoso.onmicrosoft.com"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-21T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "max_excluded_principals,near_misses,policies_enforcing,policies_report_only,policies_total,qualifying_policies,require_phishing_resistant",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "7552a682-4927-5a91-bd67-905b2dfb8470",
+            "title": "ism-1401 / entra-mfa-factor-types \u2014 contoso.onmicrosoft.com",
+            "description": "Every enabled authentication method can form one of the factor pairs the control accepts (fido2, microsoftauthenticator). This observes tenant POLICY, not what any user registered or used at sign-in.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "entra-mfa-factor-types",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "aggregate",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2c687228-1862-57f9-aec3-074a0bfa47a3",
+                "type": "inventory-item",
+                "title": "contoso.onmicrosoft.com"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-21T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "disallowed_methods,enabled_but_disallowed,enabled_methods,reported_not_judged",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "b91643aa-0a03-5789-972c-808029b40592",
+            "title": "ism-1501 / os-vendor-supported \u2014 contoso.onmicrosoft.com",
+            "description": "missing required fact(s): os.release",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "os-vendor-supported",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "2c687228-1862-57f9-aec3-074a0bfa47a3",
+                "type": "inventory-item",
+                "title": "contoso.onmicrosoft.com"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
           },
           {
             "uuid": "47f54ba1-2568-57b3-a18d-cc4bf3a683ee",
@@ -2726,7 +2941,7 @@
           {
             "uuid": "fc54d57b-2a91-5c1a-8890-d64e1042a520",
             "title": "ism-0843 satisfied",
-            "description": "All 4 assessed subjects satisfy this control.",
+            "description": "All 1 assessed subjects satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -2750,7 +2965,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "1",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -2762,17 +2977,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-0843_smt",
               "title": "Application control is implemented on workstations.",
-              "description": "All 4 assessed subjects satisfy this control.",
+              "description": "All 1 assessed subjects satisfy this control.",
               "status": {
                 "state": "satisfied",
                 "reason": "pass",
-                "remarks": "Determined from 1 subject observation(s) at `proxy` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `proxy` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
@@ -2782,9 +3002,72 @@
             ]
           },
           {
+            "uuid": "af0a65d6-acbf-56c2-ad56-47c08f5dc037",
+            "title": "ism-1401 satisfied",
+            "description": "All 1 assessed aggregate subjects satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "aggregate-subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1401_smt",
+              "title": "Multi-factor authentication uses either: something people have and something people know, or something people have that is unlocked by something people know or are.",
+              "description": "All 1 assessed aggregate subjects satisfy this control.",
+              "status": {
+                "state": "satisfied",
+                "reason": "pass",
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `proxy` confidence."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "7552a682-4927-5a91-bd67-905b2dfb8470"
+              }
+            ]
+          },
+          {
             "uuid": "27bfe796-81f7-5075-9771-d681abaa54c2",
             "title": "ism-1488 not-satisfied",
-            "description": "1 of 4 assessed subjects do not satisfy this control.",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -2808,7 +3091,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "1",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -2820,17 +3103,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-1488_smt",
               "title": "Microsoft Office macros in files originating from the internet are blocked.",
-              "description": "1 of 4 assessed subjects do not satisfy this control.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
               "status": {
                 "state": "not-satisfied",
                 "reason": "fail",
-                "remarks": "Determined from 1 subject observation(s) at `proxy` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `proxy` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
@@ -2842,7 +3130,7 @@
           {
             "uuid": "15be50a6-2457-5c78-809a-576eb0a0b41d",
             "title": "ism-1489 not-satisfied",
-            "description": "1 of 4 assessed subjects do not satisfy this control.",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -2866,7 +3154,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "1",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -2878,17 +3166,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-1489_smt",
               "title": "Microsoft Office macro security settings cannot be changed by human users.",
-              "description": "1 of 4 assessed subjects do not satisfy this control.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
               "status": {
                 "state": "not-satisfied",
                 "reason": "fail",
-                "remarks": "Determined from 1 subject observation(s) at `proxy` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `proxy` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
@@ -2900,7 +3193,7 @@
           {
             "uuid": "4130557c-7479-54db-9282-89df0243c9f7",
             "title": "ism-1501 satisfied",
-            "description": "All 4 assessed subjects satisfy this control.",
+            "description": "All 3 assessed subjects satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -2924,7 +3217,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "3",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -2936,17 +3229,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-1501_smt",
               "title": "Operating systems that are no longer supported by vendors are replaced.",
-              "description": "All 4 assessed subjects satisfy this control.",
+              "description": "All 3 assessed subjects satisfy this control.",
               "status": {
                 "state": "satisfied",
                 "reason": "pass",
-                "remarks": "Determined from 3 subject observation(s) at `proxy` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 3 observation(s) across 3 subject(s) at `proxy` confidence. Coverage is incomplete: this control was not determined for 47 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
@@ -2962,9 +3260,72 @@
             ]
           },
           {
+            "uuid": "adbc9e89-6579-5cb5-8656-ee599d168264",
+            "title": "ism-1504 not-satisfied",
+            "description": "1 of 1 assessed aggregate subjects do not satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "aggregate-subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1504_smt",
+              "title": "Multi-factor authentication is used to authenticate human users to their organisation\u2019s online services that process, store or communicate their organisation\u2019s sensitive data.",
+              "description": "1 of 1 assessed aggregate subjects do not satisfy this control.",
+              "status": {
+                "state": "not-satisfied",
+                "reason": "fail",
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `proxy` confidence."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "c42e8ed3-e0cf-5354-980b-2df3273ea16d"
+              }
+            ]
+          },
+          {
             "uuid": "7be794e8-1339-52a7-8345-95f289d006b1",
             "title": "ism-1654 not-satisfied",
-            "description": "1 of 4 assessed subjects do not satisfy this control.",
+            "description": "1 of 2 assessed subjects do not satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -2988,7 +3349,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "2",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -3000,17 +3361,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-1654_smt",
               "title": "Internet Explorer 11 is disabled or removed.",
-              "description": "1 of 4 assessed subjects do not satisfy this control.",
+              "description": "1 of 2 assessed subjects do not satisfy this control.",
               "status": {
                 "state": "not-satisfied",
                 "reason": "fail",
-                "remarks": "Determined from 2 subject observation(s) at `direct` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 2 observation(s) across 2 subject(s) at `direct` confidence. Coverage is incomplete: this control was not determined for 48 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
@@ -3025,7 +3391,7 @@
           {
             "uuid": "bdd7b04d-7cf7-5cae-ab58-9ba442960f5c",
             "title": "ism-1657 not-satisfied",
-            "description": "1 of 4 assessed subjects do not satisfy this control.",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -3049,7 +3415,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "1",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -3061,17 +3427,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-1657_smt",
               "title": "Application control restricts the execution of executables, libraries, scripts, installers, compiled HTML, HTML applications and control panel applets to an organisation-approved set.",
-              "description": "1 of 4 assessed subjects do not satisfy this control.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
               "status": {
                 "state": "not-satisfied",
                 "reason": "fail",
-                "remarks": "Determined from 1 subject observation(s) at `partial` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `partial` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
@@ -3083,7 +3454,7 @@
           {
             "uuid": "9d2db1be-a953-51c7-b905-5ef82c43c4a6",
             "title": "ism-1671 not-satisfied",
-            "description": "1 of 4 assessed subjects do not satisfy this control.",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -3107,7 +3478,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "1",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -3119,17 +3490,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-1671_smt",
               "title": "Microsoft Office macros are disabled for human users that do not have a demonstrated business requirement.",
-              "description": "1 of 4 assessed subjects do not satisfy this control.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
               "status": {
                 "state": "not-satisfied",
                 "reason": "fail",
-                "remarks": "Determined from 1 subject observation(s) at `partial` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `partial` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
@@ -3141,7 +3517,7 @@
           {
             "uuid": "5fb7dea2-d8db-578d-83e5-af0ea26f5241",
             "title": "ism-1672 satisfied",
-            "description": "All 4 assessed subjects satisfy this control.",
+            "description": "All 2 assessed subjects satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -3165,7 +3541,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "2",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -3177,17 +3553,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-1672_smt",
               "title": "Microsoft Office macro antivirus scanning is enabled.",
-              "description": "All 4 assessed subjects satisfy this control.",
+              "description": "All 2 assessed subjects satisfy this control.",
               "status": {
                 "state": "satisfied",
                 "reason": "pass",
-                "remarks": "Determined from 2 subject observation(s) at `proxy` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 2 observation(s) across 2 subject(s) at `proxy` confidence. Coverage is incomplete: this control was not determined for 48 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
@@ -3202,7 +3583,7 @@
           {
             "uuid": "8d8c1c43-cb21-5b7c-9952-5c31479c3ff9",
             "title": "ism-1870 not-satisfied",
-            "description": "1 of 4 assessed subjects do not satisfy this control.",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
             "props": [
               {
                 "name": "assessment-status",
@@ -3226,7 +3607,7 @@
               },
               {
                 "name": "population-assessed",
-                "value": "4",
+                "value": "1",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -3238,17 +3619,22 @@
                 "name": "population-na",
                 "value": "0",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               }
             ],
             "target": {
               "type": "statement-id",
               "target-id": "ism-1870_smt",
               "title": "Application control is applied to user profiles and temporary folders used by operating systems, web browsers and email clients.",
-              "description": "1 of 4 assessed subjects do not satisfy this control.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
               "status": {
                 "state": "not-satisfied",
                 "reason": "fail",
-                "remarks": "Determined from 1 subject observation(s) at `partial` confidence. Coverage is incomplete: 46 in-scope subject(s) were not assessed and are not represented in this determination."
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `partial` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
               }
             },
             "related-observations": [
