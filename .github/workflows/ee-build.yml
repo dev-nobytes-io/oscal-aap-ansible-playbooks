@@ -1,0 +1,163 @@
+---
+name: Execution environments
+
+# Builds both images and runs the evaluator INSIDE each one.
+#
+# That second half is the point. `ansible-builder create` only renders a
+# Containerfile; it does not build one, and taking a green `create` as proof
+# is how both tiers came to ship a COPY of a path nothing populated. Only a
+# real build catches that, so this workflow is the gate for the EE claims:
+# that each image carries the evaluator, that it runs there with nothing but
+# the standard library plus PyYAML, and that ee-legacy honours ADR 0007's
+# Python 3.9 floor on an actual 3.9 interpreter.
+
+"on":
+  push:
+    branches: [main]
+    paths:
+      - 'aap/execution-environment/**'
+      - 'tools/nobytes_cca/**'
+      - 'pyproject.toml'
+      - 'requirements.yml'
+      - '.github/workflows/ee-build.yml'
+  pull_request:
+    paths:
+      - 'aap/execution-environment/**'
+      - 'tools/nobytes_cca/**'
+      - 'pyproject.toml'
+      - 'requirements.yml'
+      - '.github/workflows/ee-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.tier }} (ansible-core ${{ matrix.core }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # `python` is the image's CONTROLLER interpreter -- the one
+          # ansible-core runs on. Both are 3.11: core 2.19 requires >= 3.11 and
+          # core 2.16 requires >= 3.10, so the 3.9 that ee-legacy once declared
+          # could never have run it. What reaches legacy targets is core 2.16's
+          # managed-node support, not the controller's Python version.
+          - tier: ee-current
+            core: "2.19"
+            python: "3.11"
+          - tier: ee-legacy
+            core: "2.16"
+            python: "3.11"
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install ansible-builder
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible-builder==3.1.1
+
+      # `create` renders a Containerfile; it does not build one. Taking a
+      # green `create` as proof is how both tiers came to ship a COPY of a
+      # build-context path that nothing populated. `make ee-context` runs
+      # `create` AND asserts the evaluator was actually staged, so the same
+      # mistake fails locally next time instead of waiting for a build.
+      - name: Render and check the build context
+        run: make ee-context EE=${{ matrix.tier }}
+
+      # make passes --build-arg PYCMD, which is not optional: the CentOS
+      # Stream 9 base ships Python 3.9 as /usr/bin/python3, and ansible-core
+      # 2.16/2.19 require >= 3.10/3.11 on the controller.
+      #
+      # Retried, because the image build runs `ansible-galaxy collection
+      # install` INSIDE the Containerfile and galaxy.ansible.com has been
+      # resetting connections. That fetch cannot be made offline: an execution
+      # environment exists to carry those collections, so they have to be
+      # fetched once at build time. Air-gapped operation is a property of
+      # ASSESSMENT, which runs from the built image and touches no registry.
+      # Docker caches the layers before the failing one, so a retry is cheap.
+      - name: Build the image
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if make ee-build EE=${{ matrix.tier }} EE_TAG=nobytes-cca/${{ matrix.tier }}:ci; then
+              exit 0
+            fi
+            echo "::warning::${{ matrix.tier }} build attempt $attempt failed; retrying"
+            sleep $((attempt * 10))
+          done
+          echo "::error::${{ matrix.tier }} image build failed after 3 attempts"
+          exit 1
+
+      - name: Assert the image carries the expected ansible-core
+        run: |
+          set -euo pipefail
+          actual="$(docker run --rm nobytes-cca/${{ matrix.tier }}:ci \
+            ansible --version | head -1)"
+          echo "$actual"
+          echo "$actual" | grep -q "core ${{ matrix.core }}" || {
+            echo "::error::expected ansible-core ${{ matrix.core }} in ${{ matrix.tier }}"
+            exit 1
+          }
+
+      # NO MOUNT, deliberately. Every step below mounts the checkout, so they
+      # would pass against the repository's copy of the evaluator even if the
+      # image contained none -- which is exactly what shipped. This step can
+      # only pass if the image itself carries the package.
+      - name: Assert the image carries the evaluator (no mount)
+        run: |
+          docker run --rm --network none nobytes-cca/${{ matrix.tier }}:ci \
+            python3 -c "import nobytes_cca, sys; print(nobytes_cca.__file__, sys.version)"
+
+      # `python3` in the image is the 3.9 system interpreter, untouched from
+      # the base. That is the ADR 0007 floor, and it is also what a playbook's
+      # `command: python3 ...` will actually invoke -- so this runs the real
+      # evaluator, on real vendored data, on the interpreter that matters.
+      - name: Assert the evaluator runs on the image's system Python
+        run: |
+          docker run --rm --network none \
+            -v "${PWD}:/project:ro" -w /project \
+            -e CCA_PROJECT_ROOT=/project \
+            nobytes-cca/${{ matrix.tier }}:ci \
+            python3 tools/cca.py coverage --baseline E8_ML1
+
+      - name: Assert the evaluator also runs on the controller Python
+        run: |
+          docker run --rm --network none \
+            -v "${PWD}:/project:ro" -w /project \
+            -e CCA_PROJECT_ROOT=/project \
+            nobytes-cca/${{ matrix.tier }}:ci \
+            /usr/bin/python${{ matrix.python }} tools/cca.py coverage --baseline E8_ML1
+
+      # The full suite, on the image's 3.9 interpreter, with networking off.
+      # pytest and jsonschema are test-time dependencies (ADR 0007) and have no
+      # business in a production execution environment, so they go into a
+      # THROWAWAY layer on top of the real image rather than into the image
+      # itself. What gets tested is still the shipped interpreter and the
+      # shipped evaluator.
+      - name: Run the evaluator suite inside the image
+        run: |
+          set -euo pipefail
+          # An empty directory, so the build context is the Containerfile and
+          # nothing else.
+          mkdir -p /tmp/ee-test-ctx
+          cat > /tmp/ee-test-ctx/Dockerfile <<'EOF'
+          FROM nobytes-cca/${{ matrix.tier }}:ci
+          USER root
+          RUN dnf install -y python3-pip && dnf clean all \
+           && /usr/bin/python3 -m pip install --no-cache-dir pytest jsonschema regex
+          EOF
+          docker build -t nobytes-cca/${{ matrix.tier }}:test /tmp/ee-test-ctx
+          docker run --rm --network none \
+            -v "${PWD}:/project:ro" -w /project \
+            -e CCA_PROJECT_ROOT=/project \
+            nobytes-cca/${{ matrix.tier }}:test \
+            /usr/bin/python3 -m pytest tests/ -q \
+              -p no:cacheprovider \
+              --ignore=tests/test_collectors_are_read_only.py

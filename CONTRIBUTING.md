@@ -73,8 +73,8 @@ cannot satisfy its window returns `unassessed / insufficient-history` — **neve
 ### Evaluators must stay pure
 
 No network. No subprocess. Standard library only at runtime, Python 3.9 syntax —
-so the evaluator also runs inside `ee-legacy`, which in an air-gapped enclave may
-be the only image that got through.
+so the evaluator runs under a RHEL 9 / CentOS Stream 9 system interpreter, which
+in an air-gapped enclave may be the only one available (ADR 0007).
 
 This is enforced: the suite runs with `socket.socket` and `subprocess.Popen`
 patched to raise, with networking disabled, and with an import contract over

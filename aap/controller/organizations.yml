@@ -1,0 +1,7 @@
+---
+aap_organizations:
+  - name: Compliance Assurance
+    description: >-
+      Continuous compliance assessment against the ACSC ISM. Assessment is
+      read-only; remediation lives in a separate workflow with separate
+      credentials.

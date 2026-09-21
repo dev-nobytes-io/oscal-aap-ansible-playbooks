@@ -21,9 +21,6 @@ from __future__ import annotations
 import datetime as dt
 import json
 from dataclasses import dataclass
-from pathlib import Path
-
-DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "eol"
 
 #: Maps what a collector reports to an endoflife.date product file.
 PRODUCT_FILES = {
@@ -67,7 +64,9 @@ class SupportStatus:
 
 
 def _load(product_file: str) -> list:
-    path = DATA_DIR / product_file
+    from .paths import eol_dir
+
+    path = eol_dir() / product_file
     if not path.exists():
         raise FileNotFoundError(f"EOL data missing: {path}. Run `make fetch`.")
     with path.open(encoding="utf-8") as handle:

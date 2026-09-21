@@ -1,0 +1,5 @@
+# System packages. Deliberately minimal: this image reads remote systems and
+# writes evidence; it has no reason to carry a compiler or a shell toolchain.
+git [platform:rpm]
+openssh-clients [platform:rpm]
+krb5-workstation [platform:rpm]

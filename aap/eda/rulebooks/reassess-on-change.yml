@@ -1,0 +1,41 @@
+---
+# Trigger ASSESSMENT on an estate change. Never remediation.
+#
+# The event says "something changed, go and measure". Deciding what to do about
+# the result stays a human call: automatically reconfiguring production hosts in
+# response to a compliance signal is a real operational risk, and it is not this
+# project's default posture.
+
+- name: Reassess when the estate changes
+  hosts: all
+  sources:
+    - ansible.eda.webhook:
+        host: 0.0.0.0
+        port: 5000
+    # A change-auditing tool (Quest Change Auditor, Splunk) posting a policy or
+    # group-membership change is the signal worth acting on: it means evidence
+    # collected before it may no longer describe the system.
+
+  rules:
+    - name: Reassess a host whose security configuration changed
+      condition: >-
+        event.payload.change_type is defined and
+        event.payload.change_type in ["gpo", "local_policy", "group_membership", "patch"]
+      action:
+        run_job_template:
+          name: CCA / Assess estate
+          organization: Compliance Assurance
+          job_args:
+            limit: "{{ event.payload.hostname }}"
+            extra_vars:
+              cca_system_id: "{{ event.payload.system_id | default('UNSET') }}"
+
+    - name: Reassess the estate when a new ISM release is vendored
+      condition: event.payload.event_type == "ism_release_merged"
+      action:
+        run_job_template:
+          name: CCA / Assess estate
+          organization: Compliance Assurance
+      # A catalog bump can change what a control says. ASD reworded 111
+      # statements in a single quarter, so previously-collected evidence may now
+      # be evaluated against different text.

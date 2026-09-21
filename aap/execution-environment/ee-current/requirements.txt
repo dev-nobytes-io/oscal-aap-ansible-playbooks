@@ -1,0 +1,6 @@
+# Runtime only. The evaluator needs the standard library plus PyYAML, which
+# ansible-core already requires (ADR 0011). Nothing else belongs in the image
+# that runs against production estates.
+PyYAML>=5.1
+pywinrm>=0.4.3
+requests>=2.32.2

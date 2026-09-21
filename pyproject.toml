@@ -1,3 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nobytes-cca"
+version = "0.1.0"
+description = "Continuous compliance assessment evaluator and OSCAL emitters for the ACSC ISM"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+# 3.9 is the floor because the evaluator must run inside ee-legacy, which pins
+# ansible-core 2.16 to reach Windows Server 2012 and RHEL 7/8. See ADR 0007.
+requires-python = ">=3.9"
+# Runtime dependencies are the standard library plus PyYAML, which ansible-core
+# itself requires and is therefore present in every execution environment by
+# construction (ADR 0011). Nothing else qualifies.
+dependencies = ["PyYAML>=5.1"]
+
+[project.scripts]
+cca = "nobytes_cca.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "tools"}
+
+[tool.setuptools.packages.find]
+where = ["tools"]
+include = ["nobytes_cca*"]
+
 # Python tooling configuration. This project ships no installable Python
 # package yet; pyproject.toml exists to configure ruff in one place.
 

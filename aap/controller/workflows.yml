@@ -1,0 +1,28 @@
+---
+controller_workflows:
+  - name: CCA / Assess estate
+    organization: Compliance Assurance
+    description: >-
+      collect (all tiers, in parallel) -> coverage gate -> evaluate -> publish.
+      Collect nodes connect on ALWAYS, not SUCCESS: one platform failing must
+      not abort the assessment, but it must be visible in the coverage figures.
+    ask_variables_on_launch: true
+    simplified_workflow_nodes:
+      - identifier: collect-windows-current
+        unified_job_template: CCA / Collect — Windows (current)
+        always_nodes: [coverage-gate]
+      - identifier: collect-windows-legacy
+        unified_job_template: CCA / Collect — Windows (legacy)
+        always_nodes: [coverage-gate]
+      - identifier: collect-linux-current
+        unified_job_template: CCA / Collect — Linux (current)
+        always_nodes: [coverage-gate]
+      - identifier: collect-linux-legacy
+        unified_job_template: CCA / Collect — Linux (legacy)
+        always_nodes: [coverage-gate]
+      - identifier: coverage-gate
+        unified_job_template: CCA / Coverage gate
+        all_parents_must_converge: true
+        success_nodes: [evaluate]
+      - identifier: evaluate
+        unified_job_template: CCA / Evaluate and emit OSCAL

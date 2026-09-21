@@ -3,9 +3,10 @@
 ## Context
 
 [ADR 0007](0007-evaluator-is-a-plain-python-package.md) constrains the evaluator
-to the standard library so it runs inside `ee-legacy` — the image that reaches
-Windows Server 2012 and RHEL 7/8, and in an air-gapped enclave often the only
-image available.
+to the standard library, and to Python 3.9 syntax, so it runs under whatever
+`python3` an environment provides — on RHEL 9 and CentOS Stream 9 that is the
+3.9 system interpreter, and in an air-gapped enclave often the only one
+available.
 
 The check registry is YAML. Contributors author one registry entry and one
 evaluator function; making them hand-write JSON instead would be hostile for no

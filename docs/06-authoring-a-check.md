@@ -92,7 +92,8 @@ Rules:
 - **No network, no subprocess, no clock.** Time arrives in the bundle. Enforced
   by tests, not convention.
 - **Standard library plus PyYAML** only (ADR 0011), Python 3.9 syntax — so the
-  evaluator runs in `ee-legacy` too.
+  evaluator runs under a RHEL 9 system interpreter, not only the one an
+  execution environment happens to install (ADR 0007).
 - **Return `unassessed`, not `satisfied`, when the picture is incomplete.** A
   host with one unreadable profile hive and no observed failures is not a pass:
   the hive you could not read might be the failing one. Most tools get this

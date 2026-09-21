@@ -1,0 +1,83 @@
+---
+version: 3
+
+# ee-legacy -- ansible-core 2.16.x, reaching what current cannot
+#
+# Reaches: Windows Server 2012 / 2012 R2, RHEL 7-8, managed nodes on Python 2.7 or 3.6
+#
+# NOT technical debt -- a deliberate capability. ansible-core dropped Windows
+# Server 2012/2012 R2 after 2.16, dropped managed-node Python 2.7/3.6 in 2.17,
+# and does not support RHEL 8 as a managed node in 2.20. Government estates run
+# all of those, and refusing to assess a legacy host does not make it secure --
+# it makes it unmeasured. Only COLLECTION needs this image; evaluation runs
+# centrally on current Python, so both tiers produce identical fact bundles.
+#
+# TWO INTERPRETERS, deliberately, because they answer different questions:
+#
+#   /usr/bin/python3     -> 3.9    CentOS Stream 9 / RHEL 9 system Python, left
+#                                  exactly as the base image ships it. This is
+#                                  the EVALUATOR interpreter: the evaluator is
+#                                  invoked via `command`, so it runs on
+#                                  whatever `python3` the environment provides.
+#                                  It is also what dnf runs on -- repointing
+#                                  /usr/bin/python3 at 3.11 would break the
+#                                  package manager, so we do not.
+#   /usr/bin/python3.11  -> 3.11   the ANSIBLE-CORE controller interpreter,
+#                                  selected with `--build-arg PYCMD=...`.
+#                                  core 2.16 requires Python >= 3.10, and an
+#                                  execution environment's own Python is the
+#                                  CONTROLLER's, never the managed node's.
+#
+# Build it with `make ee-build EE=ee-legacy`, which passes that PYCMD build
+# argument. A bare `ansible-builder build` would install ansible-core into 3.9
+# and fail on the requires-python metadata; ansible-builder v3 restricts
+# build_arg_defaults to a fixed set of keys, so PYCMD cannot be defaulted here.
+#
+# The base image is CentOS Stream 9 so this builds with no Red Hat
+# subscription. For Ansible Automation Platform, change the one line below to
+# registry.redhat.io/ansible-automation-platform-25/ee-minimal-rhel9 -- the
+# ansible-core pin is what matters, not the base.
+
+images:
+  base_image:
+    name: 'quay.io/centos/centos:stream9'
+
+dependencies:
+  ansible_core:
+    package_pip: ansible-core==2.16.19
+  ansible_runner:
+    package_pip: ansible-runner
+  galaxy: requirements.yml
+  python: requirements.txt
+  system: bindep.txt
+
+# The evaluator is vendored into the image rather than installed from an index
+# at run time: an air-gapped enclave has no index, and pinning the exact code
+# that produced a verdict is part of the evidence chain.
+#
+# ansible-builder copies the CONTENTS of a directory `src` into `_build/<dest>`,
+# so this lands the package at `_build/nobytes_cca/` ready for a single COPY.
+additional_build_files:
+  - src: ../../../tools/nobytes_cca
+    dest: nobytes_cca
+
+additional_build_steps:
+  prepend_base:
+    # python3-pyyaml is the 3.9 build. It is what makes the system interpreter
+    # a usable evaluator runtime rather than merely a present binary (ADR 0011).
+    - RUN dnf install -y python3.11 python3.11-pip python3-pyyaml git && dnf clean all
+    - RUN /usr/bin/python3 --version && /usr/bin/python3.11 --version
+  append_final:
+    - COPY _build/nobytes_cca /opt/nobytes-cca/nobytes_cca
+    # Byte-compiled caches from the build host are for a different interpreter
+    # and must not ride along into the image.
+    - RUN find /opt/nobytes-cca -name __pycache__ -type d -prune -exec rm -rf {} +
+    - ENV PYTHONPATH=/opt/nobytes-cca
+    # The evaluator is stdlib + PyYAML, so a directory on PYTHONPATH *is* the
+    # install -- no index, no build backend, nothing to fail closed on. These
+    # are assertions, not attempts: an image that silently lacks the evaluator
+    # is exactly the failure this project refuses to ship, and the previous
+    # revision hid one behind `|| true`.
+    - RUN /usr/bin/python3 -c "import sys, yaml, nobytes_cca; print('evaluator on', sys.version.split()[0])"
+    - RUN /usr/bin/python3.11 -c "import nobytes_cca; print('evaluator visible to core')"
+    - RUN ansible --version

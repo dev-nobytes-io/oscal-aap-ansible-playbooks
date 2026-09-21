@@ -86,6 +86,10 @@ group:
 | `ee-current` | 2.19.x | Server 2016+/Win 11, RHEL 9/10, Ubuntu 22.04/24.04 |
 | `ee-legacy` | 2.16.x | Server 2012/2012 R2, RHEL 7/8, Python 2.7/3.6 targets |
 
+Both images run `ansible-core` on Python 3.11 — an execution environment's own
+interpreter is the *controller's*, and what reaches a 2012 host is core 2.16's
+**managed-node** support. See [`docs/08`](docs/08-aap-deployment.md).
+
 Refusing to assess a legacy host does not make it secure — it makes it
 unmeasured. Note also that an estate running unsupported operating systems
 **fails `ism-1501`, `ism-1704` and `ism-1905` by definition**, and all three are
@@ -164,9 +168,9 @@ content, gradually.
 | 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | open |
 | 04 | Check contract, evaluator, assessment-results + POA&M emitters | merged |
 | 05 | Component-definition model + Windows collectors | merged |
-| 06 | Linux collectors + end-of-life dataset | **this PR** |
-| 07 | Dual execution environments + AAP/AWX configuration-as-code | next |
-| 08 | Identity collectors — Entra ID, ADFS, Keycloak | planned |
+| 06 | Linux collectors + end-of-life dataset | merged |
+| 07 | Dual execution environments + AAP/AWX configuration-as-code | **this PR** |
+| 08 | Identity collectors — Entra ID, ADFS, Keycloak | next |
 | 09 | Evidence providers — Splunk, Change Auditor | planned |
 | 10 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
 | 11+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |

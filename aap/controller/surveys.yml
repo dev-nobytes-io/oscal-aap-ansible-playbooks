@@ -1,0 +1,57 @@
+---
+# Survey for the assess workflow.
+#
+# One trap worth the help text: narrowing the run must NOT shrink the
+# population denominator. If it did, a partial run would silently report full
+# coverage -- which is exactly what the coverage gate exists to prevent.
+controller_workflow_survey_spec:
+  name: CCA / Assess estate
+  survey_enabled: true
+  spec:
+    - question_name: Baseline
+      variable: cca_baseline
+      type: multiplechoice
+      required: true
+      default: E8_ML1
+      choices:
+        - E8_ML1
+        - E8_ML2
+        - E8_ML3
+        - NON_CLASSIFIED
+        - OFFICIAL_SENSITIVE
+        - PROTECTED
+        - SECRET
+        - TOP_SECRET
+    - question_name: System identifier
+      variable: cca_system_id
+      type: text
+      required: true
+      question_description: >-
+        The authorisation boundary this run belongs to. Results that cannot be
+        attributed to a system are not useful as evidence.
+    - question_name: Minimum coverage (%)
+      variable: cca_min_coverage
+      type: integer
+      required: true
+      default: 95
+      min: 0
+      max: 100
+      question_description: >-
+        The workflow fails below this share of in-scope subjects reached.
+    - question_name: Allow partial coverage
+      variable: cca_allow_partial_coverage
+      type: multiplechoice
+      required: true
+      default: "false"
+      choices: ["false", "true"]
+      question_description: >-
+        Overrides the coverage gate. The override and its approver are recorded
+        on the assessment result, so a partial run is never silently partial.
+    - question_name: Additional limit
+      variable: cca_scope_limit
+      type: text
+      required: false
+      question_description: >-
+        Narrows which hosts are COLLECTED. It does not narrow the population
+        denominator: a limited run still reports against the full in-scope
+        count, so it cannot render as full coverage.

@@ -1,0 +1,93 @@
+---
+# Fail the assessment when too little of the estate was actually reached.
+#
+# This is the structural defence against the default failure mode of compliance
+# automation: unreachable hosts vanish from the output, and a 94%-of-fleet pass
+# renders as green. The denominator comes from the INVENTORY, never from
+# however many fact bundles happened to arrive.
+#
+# Overriding the gate is permitted -- estates have genuine outages -- but the
+# override, its approver and the real figures are recorded on the assessment
+# result. A partial run is never silently partial.
+
+- name: Gate the assessment on collection coverage
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    cca_scope_group: all
+    cca_min_coverage: 95
+    cca_allow_partial_coverage: false
+    cca_run_id: "{{ lookup('ansible.builtin.env', 'CCA_RUN_ID') | default('local', true) }}"
+    cca_bundle_dir: >-
+      {{ lookup('ansible.builtin.env', 'CCA_BUNDLE_DIR')
+         | default(playbook_dir ~ '/../out/bundles', true) }}
+
+  tasks:
+    - name: Count the subjects that were in scope
+      ansible.builtin.set_fact:
+        cca_in_scope: "{{ groups[cca_scope_group] | default([]) | length }}"
+
+    - name: Count the fact bundles that were actually collected
+      ansible.builtin.find:
+        paths: "{{ cca_bundle_dir }}/{{ cca_run_id | replace(':', '-') }}"
+        patterns: "*.json"
+      register: cca_found
+
+    - name: Compute coverage
+      ansible.builtin.set_fact:
+        cca_collected: "{{ cca_found.files | length }}"
+        cca_coverage_pct: >-
+          {{ 0 if (cca_in_scope | int) == 0
+             else (100 * (cca_found.files | length) / (cca_in_scope | int)) | round(1) }}
+
+    - name: Report coverage
+      ansible.builtin.debug:
+        msg: >-
+          {{ cca_collected }} of {{ cca_in_scope }} in-scope subjects collected
+          ({{ cca_coverage_pct }}%); threshold {{ cca_min_coverage }}%.
+
+    - name: Refuse to assess an empty estate
+      ansible.builtin.assert:
+        that:
+          - (cca_in_scope | int) > 0
+        fail_msg: >-
+          The scope group '{{ cca_scope_group }}' is empty, so coverage is
+          undefined rather than 100%. An assessment over zero subjects would
+          report every control undetermined -- true, but useless.
+        success_msg: "{{ cca_in_scope }} subjects in scope."
+
+    - name: Fail the workflow when coverage is below the threshold
+      ansible.builtin.assert:
+        that:
+          - (cca_coverage_pct | float) >= (cca_min_coverage | float)
+        fail_msg: >-
+          Coverage {{ cca_coverage_pct }}% is below the {{ cca_min_coverage }}%
+          threshold: {{ cca_in_scope | int - cca_collected | int }} in-scope
+          subject(s) were not reached. Assessing anyway would report a
+          partial-fleet result as though it covered the estate. Fix collection,
+          or set cca_allow_partial_coverage=true to proceed with the shortfall
+          recorded on the result.
+        success_msg: "Coverage {{ cca_coverage_pct }}% meets the threshold."
+      when: not (cca_allow_partial_coverage | bool)
+
+    - name: Record an accepted coverage shortfall
+      ansible.builtin.debug:
+        msg: >-
+          COVERAGE OVERRIDE: proceeding at {{ cca_coverage_pct }}% against a
+          {{ cca_min_coverage }}% threshold. This is recorded on the assessment
+          result with the real figures so the shortfall is visible to anyone
+          reading it.
+      when:
+        - cca_allow_partial_coverage | bool
+        - (cca_coverage_pct | float) < (cca_min_coverage | float)
+
+    - name: Publish coverage to downstream workflow nodes
+      ansible.builtin.set_stats:
+        data:
+          cca_population_total: "{{ cca_in_scope }}"
+          cca_population_collected: "{{ cca_collected }}"
+          cca_coverage_pct: "{{ cca_coverage_pct }}"
+          cca_coverage_overridden: "{{ cca_allow_partial_coverage | bool }}"
+        per_host: false
