@@ -74,8 +74,8 @@ def test_control_with_no_check_never_becomes_a_finding(registry, ism) -> None:
 
     results = emit.emit_assessment_results(
         system_id="TEST", run_id="t1", baseline="E8_ML1",
-        baseline_controls=baseline, evaluations=evaluations, catalog=ism,
-        plan_href="./assessment-plan.json", now=NOW,
+        baseline_controls=baseline, evaluations=evaluations, registry=registry,
+        catalog=ism, plan_href="./assessment-plan.json", now=NOW,
     )
     findings = results["assessment-results"]["results"][0]["findings"]
     covered = registry.covered_controls()
@@ -230,8 +230,8 @@ def test_reviewed_controls_covers_the_entire_baseline(registry, ism) -> None:
     evaluations = evaluate_bundle(registry, bundle, baseline)
     results = emit.emit_assessment_results(
         system_id="TEST", run_id="t1", baseline="E8_ML1",
-        baseline_controls=baseline, evaluations=evaluations, catalog=ism,
-        plan_href="./assessment-plan.json", now=NOW,
+        baseline_controls=baseline, evaluations=evaluations, registry=registry,
+        catalog=ism, plan_href="./assessment-plan.json", now=NOW,
     )
     reviewed = {
         inc["control-id"]
@@ -278,7 +278,8 @@ def test_emission_is_byte_deterministic(registry, ism) -> None:
         return json.dumps(
             emit.emit_assessment_results(
                 system_id="TEST", run_id="t1", baseline="E8_ML1",
-                baseline_controls=baseline, evaluations=evaluations, catalog=ism,
+                baseline_controls=baseline, evaluations=evaluations,
+                registry=registry, catalog=ism,
                 plan_href="./assessment-plan.json", now=NOW,
             ),
             indent=2,

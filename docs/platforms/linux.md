@@ -103,5 +103,31 @@ legacy image is a capability rather than technical debt.
 | `ism-1501` evaluator | **Tested** against RHEL 7, Windows 10 and Windows 11 fixtures |
 | Read-only guarantee (static) | **Tested** — no mutating module surface |
 | `ansible-lint` production profile | **Passing** |
-| `/etc/os-release` parsing on a real host | **Not verified** — needs a Linux target |
+| `/etc/os-release` parsing on a real host | **Verified** — `collect.yml` run against a live Ubuntu 24.04 host |
+| Full pipeline on real data | **Verified** — collect → bundle → evaluate → OSCAL, all three documents schema-valid |
 | Legacy tier (RHEL 7 / 8) | **Not verified** — needs a documented lab |
+
+### The live run, recorded
+
+`collect.yml` was executed against a real Ubuntu 24.04.4 host with
+`--connection=local`. It parsed `/etc/os-release` through `slurp`, produced a
+fact bundle, and the evaluator judged `ism-1501` **satisfied at `proxy`
+confidence**:
+
+> ubuntu 24.04 is within vendor support as of 2026-09-21 (vendor support runs
+> to 2029-05-31).
+
+Worth noting what that run also confirmed, because it exercised paths the
+fixtures cannot:
+
+- **Nothing was changed on the managed node.** The only two `changed` tasks
+  were `delegate_to: localhost` writes into the evidence store on the
+  controller. The node never needs write access to it.
+- **Seven controls reported `no-subject-in-scope`** — the five Windows checks
+  and two Entra checks, correctly skipped because no subject of their platform
+  was present. That is the platform filter and the scoping reason working
+  together on real data rather than on a fixture built to exercise them.
+- All three emitted OSCAL documents validated against the pinned NIST schemas.
+
+The legacy tier remains unverified and will stay so until a lab run signs it
+off. A single modern Ubuntu host proves the path, not the estate.

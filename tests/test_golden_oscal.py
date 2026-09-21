@@ -51,8 +51,9 @@ def _emit_all() -> dict:
     )
     results = emit.emit_assessment_results(
         system_id="SYSTEM-GOVDESK", run_id="golden:001", baseline="E8_ML1",
-        baseline_controls=baseline, evaluations=evaluations, catalog=catalog,
-        plan_href="./assessment-plan.json", now=NOW, population_total=50,
+        baseline_controls=baseline, evaluations=evaluations, registry=registry,
+        catalog=catalog, plan_href="./assessment-plan.json", now=NOW,
+        population_total=50,
     )
     poam = emit.emit_poam(
         system_id="SYSTEM-GOVDESK", baseline="E8_ML1", results=results, now=NOW

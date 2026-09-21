@@ -1,0 +1,15 @@
+---
+# The control node assessing itself.
+#
+# Not a deployment inventory -- it exists so `make assess-self` can run the
+# REAL collect playbook against a real host. Everything else about the Ansible
+# half was only ever linted and syntax-checked, and neither of those executes a
+# task. This does.
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: "{{ ansible_playbook_python }}"
+      # Modern host: the legacy tier needs a documented lab and stays
+      # unverified until one signs it off.
+      estate_tier: current
