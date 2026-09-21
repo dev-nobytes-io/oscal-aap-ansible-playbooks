@@ -25,6 +25,7 @@ make bootstrap    # virtualenv + pinned Python tooling
 make deps         # Ansible collection dependencies
 make lint         # exactly what CI runs
 make test         # unit tests
+make ps-lint      # PowerShell collectors, if you have pwsh (CI always does)
 ```
 
 Requires **Python 3.11**. ansible-core 2.20+ needs Python ≥3.12, so the control

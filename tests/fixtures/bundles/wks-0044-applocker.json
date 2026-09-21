@@ -1,0 +1,248 @@
+{
+  "schema": "https://nobytes.io/schema/oscal-cca/fact-bundle/1.0",
+  "run_id": "fixture:applocker-default-rules",
+  "collected": "2026-09-20T02:14:07+10:00",
+  "subject": {
+    "asset_id": "corp.example.gov.au/WKS-0044",
+    "description": "Windows 11 workstation WKS-0044 running AppLocker default rules",
+    "platform_family": "windows",
+    "estate_tier": "current"
+  },
+  "collector": {
+    "collection": "nobytes.compliance",
+    "version": "0.1.0"
+  },
+  "marking": {
+    "system": "pspf",
+    "value": "OFFICIAL: Sensitive"
+  },
+  "facts": {
+    "windows.appcontrol.state": {
+      "collected": "2026-09-20T02:14:06+10:00",
+      "source": "Get-AppLockerPolicy -Effective + Win32_DeviceGuard",
+      "value": {
+        "applocker": {
+          "available": true,
+          "rule_count": 9,
+          "collections": [
+            {
+              "type": "Exe",
+              "enforcement_mode": "Enabled",
+              "rule_count": 3,
+              "rule_types": {"FilePathRule": 3, "FilePublisherRule": 0, "FileHashRule": 0, "other": 0},
+              "path_rules": [
+                {
+                  "name": "(Default Rule) All files located in the Program Files folder",
+                  "action": "Allow",
+                  "sid": "S-1-1-0",
+                  "paths": ["%PROGRAMFILES%\\*"],
+                  "exceptions": [],
+                  "non_path_conditions": 0,
+                  "non_path_exceptions": 0
+                },
+                {
+                  "name": "(Default Rule) All files located in the Windows folder",
+                  "action": "Allow",
+                  "sid": "S-1-1-0",
+                  "paths": ["%WINDIR%\\*"],
+                  "exceptions": [],
+                  "non_path_conditions": 0,
+                  "non_path_exceptions": 0
+                },
+                {
+                  "name": "(Default Rule) All files",
+                  "action": "Allow",
+                  "sid": "S-1-5-32-544",
+                  "paths": ["*"],
+                  "exceptions": [],
+                  "non_path_conditions": 0,
+                  "non_path_exceptions": 0
+                }
+              ]
+            },
+            {
+              "type": "Script",
+              "enforcement_mode": "Enabled",
+              "rule_count": 3,
+              "rule_types": {"FilePathRule": 3, "FilePublisherRule": 0, "FileHashRule": 0, "other": 0},
+              "path_rules": [
+                {
+                  "name": "(Default Rule) All scripts located in the Program Files folder",
+                  "action": "Allow",
+                  "sid": "S-1-1-0",
+                  "paths": ["%PROGRAMFILES%\\*"],
+                  "exceptions": [],
+                  "non_path_conditions": 0,
+                  "non_path_exceptions": 0
+                },
+                {
+                  "name": "(Default Rule) All scripts located in the Windows folder",
+                  "action": "Allow",
+                  "sid": "S-1-1-0",
+                  "paths": ["%WINDIR%\\*"],
+                  "exceptions": [],
+                  "non_path_conditions": 0,
+                  "non_path_exceptions": 0
+                },
+                {
+                  "name": "(Default Rule) All scripts",
+                  "action": "Allow",
+                  "sid": "S-1-5-32-544",
+                  "paths": ["*"],
+                  "exceptions": [],
+                  "non_path_conditions": 0,
+                  "non_path_exceptions": 0
+                }
+              ]
+            },
+            {
+              "type": "Msi",
+              "enforcement_mode": "Enabled",
+              "rule_count": 2,
+              "rule_types": {"FilePathRule": 1, "FilePublisherRule": 1, "FileHashRule": 0, "other": 0},
+              "path_rules": [
+                {
+                  "name": "(Default Rule) All Windows Installer files in %systemdrive%\\Windows\\Installer",
+                  "action": "Allow",
+                  "sid": "S-1-1-0",
+                  "paths": ["%WINDIR%\\Installer\\*"],
+                  "exceptions": [],
+                  "non_path_conditions": 0,
+                  "non_path_exceptions": 0
+                }
+              ]
+            },
+            {
+              "type": "Dll",
+              "enforcement_mode": "AuditOnly",
+              "rule_count": 1,
+              "rule_types": {"FilePathRule": 1, "FilePublisherRule": 0, "FileHashRule": 0, "other": 0},
+              "path_rules": [
+                {
+                  "name": "(Default Rule) All DLLs located in the Windows folder",
+                  "action": "Allow",
+                  "sid": "S-1-1-0",
+                  "paths": ["%WINDIR%\\*"],
+                  "exceptions": [],
+                  "non_path_conditions": 0,
+                  "non_path_exceptions": 0
+                }
+              ]
+            }
+          ],
+          "error": ""
+        },
+        "wdac": {
+          "available": true,
+          "configured": [1, 2],
+          "running": [1],
+          "code_integrity_policy_enforcement_status": 0,
+          "usermode_code_integrity_policy_enforcement_status": 0,
+          "error": ""
+        }
+      }
+    },
+    "windows.appcontrol.writable_paths": {
+      "collected": "2026-09-20T02:14:07+10:00",
+      "source": "Get-Acl over the locations named by ism-1870",
+      "value": {
+        "windows_root": "C:\\Windows",
+        "profiles_root": "C:\\Users",
+        "profiles_total": 3,
+        "profiles_probed": 3,
+        "profile_error": "",
+        "probes": [
+          {
+            "path": "C:\\Windows\\Temp",
+            "role": "os-temp",
+            "exists": true,
+            "access": "ok",
+            "allow_write_sids": ["S-1-5-32-545"],
+            "deny_write_sids": [],
+            "non_admin_writable": true,
+            "error": ""
+          },
+          {
+            "path": "C:\\Users",
+            "role": "profile-root",
+            "exists": true,
+            "access": "ok",
+            "allow_write_sids": [],
+            "deny_write_sids": [],
+            "non_admin_writable": false,
+            "error": ""
+          },
+          {
+            "path": "C:\\Users\\alice",
+            "role": "user-profile",
+            "exists": true,
+            "access": "ok",
+            "allow_write_sids": ["S-1-5-21-1-1-1-1174"],
+            "deny_write_sids": [],
+            "non_admin_writable": true,
+            "error": ""
+          },
+          {
+            "path": "C:\\Users\\alice\\AppData\\Local\\Temp",
+            "role": "user-temp",
+            "exists": true,
+            "access": "ok",
+            "allow_write_sids": ["S-1-5-21-1-1-1-1174"],
+            "deny_write_sids": [],
+            "non_admin_writable": true,
+            "error": ""
+          },
+          {
+            "path": "C:\\Users\\alice\\AppData\\Local\\Microsoft\\Edge\\User Data",
+            "role": "browser-temp",
+            "exists": true,
+            "access": "ok",
+            "allow_write_sids": ["S-1-5-21-1-1-1-1174"],
+            "deny_write_sids": [],
+            "non_admin_writable": true,
+            "error": ""
+          },
+          {
+            "path": "C:\\Users\\alice\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Outlook",
+            "role": "email-temp",
+            "exists": true,
+            "access": "ok",
+            "allow_write_sids": ["S-1-5-21-1-1-1-1174"],
+            "deny_write_sids": [],
+            "non_admin_writable": true,
+            "error": ""
+          },
+          {
+            "path": "C:\\Users\\alice\\AppData\\Local\\Thunderbird\\Profiles",
+            "role": "email-temp",
+            "exists": false,
+            "access": "missing",
+            "allow_write_sids": [],
+            "deny_write_sids": [],
+            "non_admin_writable": null,
+            "error": ""
+          }
+        ],
+        "windows_writable": [
+          {
+            "path": "C:\\Windows\\Tasks",
+            "role": "windows-subdirectory",
+            "exists": true,
+            "access": "ok",
+            "allow_write_sids": ["S-1-5-32-545"],
+            "deny_write_sids": [],
+            "non_admin_writable": true,
+            "error": ""
+          }
+        ],
+        "windows_walk": {
+          "depth": 3,
+          "budget": 4000,
+          "remaining": 2731,
+          "truncated": false,
+          "error": ""
+        }
+      }
+    }
+  }
+}

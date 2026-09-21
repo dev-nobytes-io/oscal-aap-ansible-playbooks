@@ -830,6 +830,82 @@
           }
         },
         {
+          "uuid": "46fbb0fb-e9b5-5c2d-9587-935f8192487e",
+          "title": "Application control reaches user profiles and temporary folders",
+          "description": "This is the control AppLocker's default rules fail quietly. Those rules allow Everyone to execute anything under %WINDIR% and %PROGRAMFILES%; %WINDIR%\\Temp is inside %WINDIR%, is the operating system's temporary folder, and is writable by standard users on a default install. So a host can enforce all five rule collections, report thousands of rules, and still let a standard user drop an executable into a temporary folder and run it. The check answers that by comparing the allow rules against the directories THIS host reports as writable by a non-administrator, rather than against a hardcoded list -- an estate that has hardened C:\\Windows\\Temp is in a different position from one that has not.\nWhat it does not prove, in three parts. It enumerates a defined set of profile, operating-system, browser and email-client locations; a temporary folder belonging to some other installed application is outside what was probed, which is why confidence is partial and never direct. It reads DACLs rather than performing an access check, so ace ordering, inheritance and group nesting are simplified in the direction that over-reports. And it judges only rule collections that are ENFORCING: a collection left NotConfigured restricts nothing anywhere, which is ism-0843 and ism-1657's finding, and repeating it under every control it touches would bury the specific gap this check exists to surface.\nAn allow rule scoped to administrative principals is recorded but not counted as a failure here, because the control is about locations rather than about whether privileged accounts are themselves subject to application control. A deployment that reads it more strictly -- and at ML2/ML3 it probably should -- sets fail_on_administrator_allow.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "win-application-control-user-writable-paths",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "TEST",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "partial",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "subject",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "168",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "collect-role",
+              "value": "nobytes.compliance.collect_windows_appcontrol",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evaluator",
+              "value": "nobytes_cca.checks.windows.appcontrol_paths:application_control_covers_user_writable_paths",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1870",
+                    "statement-ids": [
+                      "ism-1870_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "uuid": "00e34067-5d42-5928-a4e3-0a898d3b43a1",
           "title": "Internet Explorer 11 is disabled or removed",
           "description": "The control is a binary state and both halves are directly observable: whether the optional feature is present, and whether policy disables the IE11 application. The one residual gap is IE mode inside Microsoft Edge, which is a deliberately supported configuration and is reported in the facts rather than judged, since the control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine.",
@@ -1358,6 +1434,12 @@
               "statement-ids": [
                 "ism-1704_smt"
               ]
+            },
+            {
+              "control-id": "ism-1870",
+              "statement-ids": [
+                "ism-1870_smt"
+              ]
             }
           ]
         },
@@ -1565,12 +1647,6 @@
               "control-id": "ism-1814",
               "statement-ids": [
                 "ism-1814_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1870",
-              "statement-ids": [
-                "ism-1870_smt"
               ]
             },
             {

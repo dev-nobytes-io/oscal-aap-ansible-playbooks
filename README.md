@@ -149,6 +149,7 @@ make help         # everything else
 make fetch        # vendor the pinned ISM OSCAL release + NIST schemas (needs network)
 make validate     # checksums, OSCAL schemas, check registry (fully offline)
 make test         # canary, invariant, purity and golden-OSCAL tests
+make ps-lint      # parse every Windows collector with PowerShell (needs pwsh)
 make coverage     # honest control coverage for a baseline
 make assess-local # end-to-end evaluate -> OSCAL against fixture bundles
 make report       # human-readable assessment report (markdown + html)
@@ -183,10 +184,11 @@ content, gradually.
 | 09 | Entra ID collectors + Blueprint vendoring | merged |
 | 10 | Reporting — human-readable report + ASD SSP Annex | merged |
 | 11 | Windows application control — AppLocker / WDAC | merged |
-| 12 | User application hardening — unsupported applications | **this PR** |
-| 13 | Evidence providers — Splunk, Change Auditor | planned |
-| 14 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
-| 15+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| 12 | User application hardening — unsupported applications | open |
+| 13 | Application control reaches user profiles and temp folders | **this PR** |
+| 14 | Evidence providers — Splunk, Change Auditor | planned |
+| 15 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
+| 16+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
 | last | Remediation scaffolding — opt-in, separated | planned |
 
 Assessment comes first throughout. Remediation is deliberately last, opt-in and
