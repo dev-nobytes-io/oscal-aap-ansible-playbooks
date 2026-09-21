@@ -1,0 +1,14 @@
+---
+controller_projects:
+  - name: CCA — compliance content
+    organization: Compliance Assurance
+    scm_type: git
+    scm_url: https://github.com/dev-nobytes-io/oscal-aap-ansible-playbooks
+    scm_branch: main
+    # Pinned to a tag in production. A compliance run should be reproducible,
+    # and "whatever main said that morning" is not.
+    scm_update_on_launch: false
+    scm_clean: true
+    description: >-
+      Checks, collectors, vendored ISM OSCAL and the evaluator. The project
+      checkout IS the project root the evaluator resolves data from.

@@ -1,0 +1,9 @@
+---
+controller_schedules:
+  - name: CCA — nightly collect and evaluate
+    unified_job_template: CCA / Assess estate
+    organization: Compliance Assurance
+    # 02:00 AEST. Facts carry a freshness budget (168h for config state, 24h
+    # for patch and identity state); nightly keeps config evidence inside it.
+    rrule: "DTSTART;TZID=Australia/Sydney:20260101T020000 RRULE:FREQ=DAILY;INTERVAL=1"
+    enabled: true

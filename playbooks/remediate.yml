@@ -1,0 +1,45 @@
+---
+# Remediation. NOT part of any assessment workflow.
+#
+# Deliberately the last thing this project builds, and deliberately inert until
+# someone opts in per control. An assessment that quietly reconfigures the
+# estate it is assessing is not an assessment.
+#
+# This playbook runs under SEPARATE, write-capable credentials. Those
+# credentials never appear on a collect template.
+
+- name: Remediate compliance findings (opt-in)
+  hosts: "{{ cca_target | default('none') }}"
+  gather_facts: true
+
+  vars:
+    # Nothing runs without an explicit, per-control opt-in list. An empty list
+    # is the safe default and the playbook says so rather than silently
+    # succeeding with no work done.
+    cca_remediate_controls: []
+    cca_remediation_acknowledged: false
+
+  tasks:
+    - name: Require an explicit acknowledgement before changing anything
+      ansible.builtin.assert:
+        that:
+          - cca_remediation_acknowledged | bool
+          - cca_remediate_controls | length > 0
+        fail_msg: >-
+          Remediation is opt-in. Set cca_remediation_acknowledged=true AND list
+          the specific controls in cca_remediate_controls. There is no "remediate
+          everything" mode: each control's remediation has a stated user impact
+          that someone has to accept.
+        success_msg: >-
+          Remediating {{ cca_remediate_controls | length }} control(s) on
+          {{ ansible_play_hosts | length }} host(s).
+
+    # Per-control remediation roles are added alongside the checks they fix,
+    # each carrying the user impact recorded in its check registry entry.
+    - name: No remediation roles are implemented yet
+      ansible.builtin.fail:
+        msg: >-
+          No remediation role exists for {{ cca_remediate_controls | join(', ') }}.
+          Remediation content is the last chunk of the roadmap, after assessment
+          coverage is meaningful. Failing loudly beats reporting success for work
+          that did not happen.

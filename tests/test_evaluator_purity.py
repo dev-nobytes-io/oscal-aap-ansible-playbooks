@@ -137,3 +137,65 @@ def test_same_bundle_evaluates_identically_twice() -> None:
     assert first.result == second.result
     assert first.expires == second.expires
     assert isinstance(first.collected, dt.datetime)
+
+
+def test_evaluator_parses_as_python_39() -> None:
+    """ADR 0007's Python 3.9 floor, checked locally rather than only in CI.
+
+    The evaluator has to run inside ee-legacy, which pins ansible-core 2.16 on
+    Python 3.9 to reach Windows Server 2012 and RHEL 7/8. The EE build that
+    proves this end-to-end is CI-only (it needs a container runtime), so this
+    catches a 3.10+ construct at the point it is written instead of two hours
+    later in a matrix job.
+    """
+    import ast
+
+    package = ROOT / "tools" / "nobytes_cca"
+    offenders = []
+    for path in sorted(package.rglob("*.py")):
+        try:
+            ast.parse(path.read_text(encoding="utf-8"), feature_version=(3, 9))
+        except SyntaxError as exc:
+            offenders.append(f"{path.relative_to(ROOT)}: {exc}")
+
+    assert not offenders, "not valid Python 3.9:\n  " + "\n  ".join(offenders)
+
+
+def test_evaluator_runtime_imports_stay_within_the_allowed_set() -> None:
+    """Only the standard library plus PyYAML may be imported at runtime.
+
+    PyYAML is permitted because ansible-core requires it, so it is present in
+    every execution environment by construction (ADR 0011). The bar for
+    anything further is that it must ALSO already be there -- "it's only one
+    small package" does not qualify.
+    """
+    import ast
+    import sys
+
+    allowed_third_party = {"yaml"}
+    stdlib = set(getattr(sys, "stdlib_module_names", set()))
+    package = ROOT / "tools" / "nobytes_cca"
+
+    offenders = []
+    for path in sorted(package.rglob("*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            names = []
+            if isinstance(node, ast.Import):
+                names = [a.name.split(".")[0] for a in node.names]
+            elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+                names = [node.module.split(".")[0]]
+            for name in names:
+                if name in stdlib or name in allowed_third_party:
+                    continue
+                if name in ("nobytes_cca", "cca"):
+                    continue
+                # jsonschema is imported lazily inside a CI-only validation
+                # helper; it never enters the evaluator's runtime import graph.
+                if name == "jsonschema":
+                    continue
+                offenders.append(f"{path.relative_to(ROOT)}: imports {name!r}")
+
+    assert not offenders, (
+        "runtime dependency outside stdlib + PyYAML:\n  " + "\n  ".join(offenders)
+    )

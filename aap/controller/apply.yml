@@ -1,0 +1,46 @@
+---
+# Apply this directory to a controller.
+#
+#   ansible-playbook aap/controller/apply.yml \
+#     -e @aap/controller/organizations.yml -e @aap/controller/projects.yml ...
+#
+# Uses infra.aap_configuration (AAP 2.5+), which supersedes
+# redhat_cop.controller_configuration. For AWX, the awx.awx collection provides
+# equivalent modules.
+#
+# Credentials are NEVER defined in this repository -- only the credential TYPES
+# and the names templates expect to be bound to.
+
+- name: Apply compliance assessment configuration to the controller
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    aap_hostname: "{{ lookup('ansible.builtin.env', 'AAP_HOSTNAME') }}"
+    aap_validate_certs: true
+
+  tasks:
+    - name: Require controller connection details
+      ansible.builtin.assert:
+        that:
+          - aap_hostname | length > 0
+        fail_msg: Set AAP_HOSTNAME (and AAP_USERNAME/AAP_PASSWORD or AAP_TOKEN).
+        success_msg: "Targeting {{ aap_hostname }}."
+
+    - name: Warn when certificate validation is disabled
+      ansible.builtin.debug:
+        msg: >-
+          aap_validate_certs is false. This is a compliance tool holding
+          estate-wide credentials; disabling certificate validation to talk to
+          its own controller is difficult to justify in an assessment.
+      when: not (aap_validate_certs | bool)
+
+    - name: Configure the controller
+      ansible.builtin.debug:
+        msg: >-
+          Apply with infra.aap_configuration's dispatch role over the data files
+          in this directory. Not invoked automatically here: this repository
+          cannot verify it against a real controller, and a config-as-code run
+          that has never been tested should be executed deliberately, not as a
+          side effect of importing a playbook.

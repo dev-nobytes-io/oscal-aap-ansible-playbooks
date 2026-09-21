@@ -1,0 +1,100 @@
+---
+name: Execution environments
+
+# Builds both images and runs the evaluator suite INSIDE each one.
+#
+# That second half is the point. ADR 0007 claims the evaluator runs on Python
+# 3.9 with only the standard library plus PyYAML so it works in ee-legacy --
+# the image that reaches Windows Server 2012 and RHEL 7/8, and in an air-gapped
+# enclave often the only image that made it through. Asserting that in a
+# docstring proves nothing; running the suite in the image does.
+
+"on":
+  push:
+    branches: [main]
+    paths:
+      - 'aap/execution-environment/**'
+      - 'tools/nobytes_cca/**'
+      - 'pyproject.toml'
+      - 'requirements.yml'
+      - '.github/workflows/ee-build.yml'
+  pull_request:
+    paths:
+      - 'aap/execution-environment/**'
+      - 'tools/nobytes_cca/**'
+      - 'pyproject.toml'
+      - 'requirements.yml'
+      - '.github/workflows/ee-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.tier }} (ansible-core ${{ matrix.core }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - tier: ee-current
+            core: "2.19"
+            python: "3.11"
+          - tier: ee-legacy
+            core: "2.16"
+            python: "3.9"
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install ansible-builder
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible-builder==3.1.1
+
+      - name: Validate the definition
+        run: |
+          ansible-builder create \
+            -f aap/execution-environment/${{ matrix.tier }}/execution-environment.yml \
+            -c /tmp/context-${{ matrix.tier }}
+
+      - name: Build the image
+        run: |
+          ansible-builder build \
+            -f aap/execution-environment/${{ matrix.tier }}/execution-environment.yml \
+            -t nobytes-cca/${{ matrix.tier }}:ci \
+            --container-runtime docker -v 2
+
+      - name: Assert the image carries the expected ansible-core
+        run: |
+          set -euo pipefail
+          actual="$(docker run --rm nobytes-cca/${{ matrix.tier }}:ci \
+            ansible --version | head -1)"
+          echo "$actual"
+          echo "$actual" | grep -q "core ${{ matrix.core }}" || {
+            echo "::error::expected ansible-core ${{ matrix.core }} in ${{ matrix.tier }}"
+            exit 1
+          }
+
+      - name: Run the evaluator suite INSIDE the image
+        # The real proof of the stdlib-only / Python 3.9 constraint. Network is
+        # disabled so an evaluator that quietly reached out would fail here.
+        run: |
+          docker run --rm --network none \
+            -v "${PWD}:/project:ro" -w /project \
+            -e CCA_PROJECT_ROOT=/project \
+            nobytes-cca/${{ matrix.tier }}:ci \
+            python3 -m pytest tests/ -q \
+              --ignore=tests/test_collectors_are_read_only.py
+
+      - name: Assert the CLI works in the image
+        run: |
+          docker run --rm --network none \
+            -v "${PWD}:/project:ro" -w /project \
+            -e CCA_PROJECT_ROOT=/project \
+            nobytes-cca/${{ matrix.tier }}:ci \
+            python3 tools/cca.py coverage --baseline E8_ML1

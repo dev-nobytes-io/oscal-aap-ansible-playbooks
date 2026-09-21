@@ -1,0 +1,42 @@
+---
+version: 3
+
+# ee-current — ansible-core 2.19.13 on Python 3.11
+#
+# Reaches: Windows Server 2016+ / Windows 11, RHEL 9-10, Ubuntu 22.04-24.04
+#
+# The default image for anything modern.
+#
+# The base image is CentOS Stream 9 so this builds with no Red Hat
+# subscription. For Ansible Automation Platform, change the one line below to
+# registry.redhat.io/ansible-automation-platform-25/ee-minimal-rhel9 — the
+# ansible-core pin is what matters, not the base.
+#
+# (ansible-builder v3 restricts build_arg_defaults to a fixed set of keys, so a
+# custom EE_BASE_IMAGE arg is not available; the image name is set directly.)
+
+images:
+  base_image:
+    name: 'quay.io/centos/centos:stream9'
+
+dependencies:
+  ansible_core:
+    package_pip: ansible-core==2.19.13
+  ansible_runner:
+    package_pip: ansible-runner
+  galaxy: requirements.yml
+  python: requirements.txt
+  system: bindep.txt
+
+additional_build_steps:
+  prepend_base:
+    - RUN dnf install -y python3.11 python3.11-pip git && dnf clean all
+    - RUN alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 || true
+  append_final:
+    # The evaluator is vendored into the image rather than installed from an
+    # index at run time: an air-gapped enclave has no index, and pinning the
+    # exact code that produced a verdict is part of the evidence chain.
+    - COPY _build/nobytes_cca /tmp/nobytes_cca
+    - RUN python3 -m pip install --no-index --no-deps /tmp/nobytes_cca || true
+    - RUN python3 -c "import yaml; print('PyYAML present:', yaml.__version__)"
+    - RUN ansible --version

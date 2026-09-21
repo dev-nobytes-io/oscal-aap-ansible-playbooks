@@ -164,9 +164,9 @@ content, gradually.
 | 03 | OSCAL ingest — fetch, pin, checksum, validate, release watch | open |
 | 04 | Check contract, evaluator, assessment-results + POA&M emitters | merged |
 | 05 | Component-definition model + Windows collectors | merged |
-| 06 | Linux collectors + end-of-life dataset | **this PR** |
-| 07 | Dual execution environments + AAP/AWX configuration-as-code | next |
-| 08 | Identity collectors — Entra ID, ADFS, Keycloak | planned |
+| 06 | Linux collectors + end-of-life dataset | merged |
+| 07 | Dual execution environments + AAP/AWX configuration-as-code | **this PR** |
+| 08 | Identity collectors — Entra ID, ADFS, Keycloak | next |
 | 09 | Evidence providers — Splunk, Change Auditor | planned |
 | 10 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
 | 11+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |

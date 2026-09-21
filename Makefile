@@ -35,6 +35,9 @@ bootstrap: ## Create the virtualenv and install pinned Python tooling
 	python3 -m venv $(VENV)
 	$(PIP) install --quiet --upgrade pip
 	$(PIP) install --quiet -r requirements.txt
+	# Editable install so the `cca` console script exists locally and the
+	# package layout is exercised the same way an execution environment does.
+	$(PIP) install --quiet -e .
 	@echo "bootstrap OK -> $$($(VENV)/bin/python -V), $$($(VENV)/bin/ansible --version | head -1)"
 
 deps: ## Install Ansible collection dependencies into collections/

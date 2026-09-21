@@ -1,0 +1,5 @@
+# Same runtime surface as ee-current. Kept deliberately identical so a fact
+# bundle collected by either image is indistinguishable to the evaluator.
+PyYAML>=5.1
+pywinrm>=0.4.3
+requests>=2.32.2

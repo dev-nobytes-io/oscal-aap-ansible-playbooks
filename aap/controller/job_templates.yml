@@ -1,0 +1,111 @@
+---
+# A job template binds exactly ONE execution environment, so the estate is
+# split by tier in the INVENTORY rather than branching inside a job. Tier comes
+# from CMDB/AD/vCenter OS data, never from gathered facts -- the right image has
+# to be chosen before anything can be gathered.
+#
+# Every collect template is bound to credentials that physically CANNOT write.
+# Role hygiene is the first line; credential scoping is the one that survives
+# adversarial review.
+
+controller_templates:
+  - name: CCA / Collect — Windows (current)
+    organization: Compliance Assurance
+    project: CCA — compliance content
+    playbook: playbooks/collect.yml
+    inventory: CCA — estate
+    execution_environment: ee-current
+    limit: ee_current:&windows
+    job_type: run
+    ask_limit_on_launch: true
+    credentials:
+      - CCA Windows read-only
+      - CCA Evidence Store
+    extra_vars:
+      cca_platform_family: windows
+
+  - name: CCA / Collect — Windows (legacy)
+    organization: Compliance Assurance
+    project: CCA — compliance content
+    playbook: playbooks/collect.yml
+    inventory: CCA — estate
+    # Server 2012/2012 R2 cannot be managed by a current core at all.
+    execution_environment: ee-legacy
+    limit: ee_legacy:&windows
+    job_type: run
+    ask_limit_on_launch: true
+    credentials:
+      - CCA Windows read-only
+      - CCA Evidence Store
+
+  - name: CCA / Collect — Linux (current)
+    organization: Compliance Assurance
+    project: CCA — compliance content
+    playbook: playbooks/collect.yml
+    inventory: CCA — estate
+    execution_environment: ee-current
+    limit: ee_current:&linux
+    job_type: run
+    ask_limit_on_launch: true
+    credentials:
+      - CCA Linux read-only
+      - CCA Evidence Store
+
+  - name: CCA / Collect — Linux (legacy)
+    organization: Compliance Assurance
+    project: CCA — compliance content
+    playbook: playbooks/collect.yml
+    inventory: CCA — estate
+    # RHEL 8 is not a supported managed node on core 2.20.
+    execution_environment: ee-legacy
+    limit: ee_legacy:&linux
+    job_type: run
+    ask_limit_on_launch: true
+    credentials:
+      - CCA Linux read-only
+      - CCA Evidence Store
+
+  - name: CCA / Coverage gate
+    organization: Compliance Assurance
+    project: CCA — compliance content
+    playbook: playbooks/coverage_gate.yml
+    inventory: CCA — estate
+    execution_environment: ee-current
+    job_type: run
+    credentials:
+      - CCA Evidence Store
+    description: >-
+      Fails the workflow when too few in-scope subjects were reached. This is
+      the structural defence against the default failure mode of compliance
+      automation: unreachable hosts vanishing from the output while a
+      partial-fleet pass renders as green.
+
+  - name: CCA / Evaluate and emit OSCAL
+    organization: Compliance Assurance
+    project: CCA — compliance content
+    playbook: playbooks/evaluate.yml
+    inventory: CCA — estate
+    execution_environment: ee-current
+    job_type: run
+    credentials:
+      - CCA Evidence Store
+    description: >-
+      Runs on the controller only. Pure function over stored facts, so the same
+      evidence always produces identical OSCAL.
+
+  # Remediation is a SEPARATE template with SEPARATE, write-capable
+  # credentials. The two credential sets never appear on the same template.
+  - name: CCA / Remediate (opt-in)
+    organization: Compliance Assurance
+    project: CCA — compliance content
+    playbook: playbooks/remediate.yml
+    inventory: CCA — estate
+    execution_environment: ee-current
+    job_type: run
+    ask_limit_on_launch: true
+    ask_variables_on_launch: true
+    credentials:
+      - CCA Remediation (write)
+    description: >-
+      NOT part of any assessment workflow. Opt-in, per-control flagged, and
+      never triggered by a compliance signal without a human deciding.
