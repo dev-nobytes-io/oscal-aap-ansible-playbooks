@@ -10,7 +10,10 @@
     "content/en/configuration/entra-id/protection/authentication-methods/policies.md",
     "content/en/configuration/entra-id/protection/conditional-access/authentication-strengths.md",
     "content/en/configuration/entra-id/protection/conditional-access/policies/strong-authentication.md",
-    "content/en/security-and-governance/essential-eight/multi-factor-authentication.md"
+    "content/en/configuration/intune/devices/configuration-policies/asd-edge-hardening-guidelines.md",
+    "content/en/design/endpoints/windows/security/edge-hardening.md",
+    "content/en/security-and-governance/essential-eight/multi-factor-authentication.md",
+    "content/en/security-and-governance/essential-eight/user-application-hardening.md"
   ],
   "files": {
     "content/en/configuration/entra-id/protection/authentication-methods/policies.md": {
@@ -25,9 +28,21 @@
       "sha256": "97df6c2e16d6a30282baac6609e52008edee2a6400650d256350bd758d15105e",
       "bytes": 6972
     },
+    "content/en/configuration/intune/devices/configuration-policies/asd-edge-hardening-guidelines.md": {
+      "sha256": "fb286fc1a9ec2eb72fac5d184dbe7e2dcf3ae0efbfebd579d5c86fef14fdb2b8",
+      "bytes": 6592
+    },
+    "content/en/design/endpoints/windows/security/edge-hardening.md": {
+      "sha256": "b6c43bfc078786cabe75f8d82883a1c6bc3f176d6f8976d5c075c374735761e1",
+      "bytes": 6161
+    },
     "content/en/security-and-governance/essential-eight/multi-factor-authentication.md": {
       "sha256": "d37165e0988ccac1e65afee254b29fc95bd459e4b8f09fd55eb6650e9ecd1ee4",
       "bytes": 12951
+    },
+    "content/en/security-and-governance/essential-eight/user-application-hardening.md": {
+      "sha256": "40cfd1ecc8d62bf38f7cdc38f0fbda3df8dbfcc0b6767d0e659d49b7cf6ba907",
+      "bytes": 16957
     },
     "static/content/files/Blueprint Essential Eight Template.docx": {
       "sha256": "81ea775df7ae2b0911f352852a62f0cfc2293b863681e75b90732263e7860ffe",

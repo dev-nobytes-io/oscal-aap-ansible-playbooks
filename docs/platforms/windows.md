@@ -16,6 +16,9 @@ the largest cluster of host-testable ones are Windows/Office policy states.
 | `ism-1657` | `win-application-control-file-types` | `partial` | Nothing: AppLocker *cannot* satisfy this control — see below |
 | `ism-1870` | `win-application-control-user-writable-paths` | `partial` | Temporary folders belonging to applications outside the probed set |
 | `ism-1704` | `win-unsupported-applications-removed` | `partial` | PDF applications, email clients and security products — not in the dataset |
+| `ism-1485` | `win-browser-ads-blocked` | `partial` | Gateway/proxy filtering, which ASD also names; whether a forced extension is enabled |
+| `ism-1486` | `win-browser-java-blocked` | `proxy` | Whether a Java ActiveX control is actually registered |
+| `ism-1585` | `win-browser-settings-locked` | `partial` | That the running browser honours each policy name; Firefox managed by policies.json |
 
 `ism-1654` is the only one of these at `direct` confidence, and that is not an
 accident: it is one of very few ML1 controls that is genuinely a binary state
@@ -250,6 +253,99 @@ year comes from the display name instead. An Office with no year in its name is
 a subscription build, which is evergreen and correctly reports as unknown
 rather than as supported.
 
+## Web browsers: three controls, three traps
+
+Each of `ism-1485`, `ism-1486` and `ism-1585` has an obvious implementation,
+and each obvious implementation is wrong in a documented way.
+
+### ASD says the obvious `ism-1485` evidence is not a mitigation
+
+The natural check reads Chromium's `AdsSettingForIntrusiveAdsSites`. ASD's own
+Blueprint says otherwise, in writing:
+
+> Microsoft Edge's native web advertisement capability is limited and **does not
+> provide an effective mitigation** against the risk of malicious web
+> advertisement.
+
+And `BlockAds` is Edge's **default**. A check resting on it would report every
+unmanaged Edge installation in an estate as satisfying a control ASD states it
+does not meet. Two further wrinkles: Chrome's unset default is the *opposite*
+(allow advertisements everywhere), and Chromium documents that the blocking
+value does nothing when `SafeBrowsingEnabled` is false.
+
+So the verdict rests on a **force-installed ad-blocking extension**, which ASD
+names as the effective mechanism. The native setting and Safe Browsing state
+are recorded as supporting facts and neither is decisive.
+
+**The accepted false red**: ASD also names *proxy-level* filtering as part of
+this control, and that is invisible from a host. An estate blocking
+advertisements at the gateway reads here as a failure it has in fact mitigated.
+That is stated in the finding itself rather than hidden.
+
+### `\Recommended` is not locked, and it matches the Office glob
+
+Chromium publishes every policy at **two** registry paths:
+
+| Path | Meaning |
+|---|---|
+| `SOFTWARE\Policies\Microsoft\Edge` | **mandatory** — the user cannot change it |
+| `SOFTWARE\Policies\Microsoft\Edge\Recommended` | a default the user **may override** |
+
+`Get-OfficeMacroPolicy.ps1` derives `gpo_delivered` as
+`$Path -like '*\Policies\*'`. **Both paths match it.** Copying that line onto
+browsers would report every user-overridable default as locked — the precise
+inverse of what `ism-1585` asks.
+
+`Get-BrowserPolicy.ps1` classifies into `mandatory` / `recommended` /
+`preference` instead, via `Get-PolicyLevel`, which is a pure string function so
+that it can be **executed** in the test suite rather than reviewed. Firefox has
+no `\Recommended` concept at all: its only locking mechanism is a `Status`
+field inside the `Preferences` policy, one JSON document in one `REG_MULTI_SZ`
+value, which the collector emits raw and the evaluator parses.
+
+The control says browsers, plural, so the semantics are **every installed
+browser**. A hardened Edge beside a developer's per-user Chrome with no policy
+does not meet it.
+
+### `ism-1486`: NPAPI is gone, and the hole it left is in Edge
+
+No browser policy value answers this control. NPAPI — the interface Java
+applets required — was removed from Chrome in **45** and Firefox in **53**.
+Note 53, not 52: plug-ins kept working in ESR 52, which is exactly the build a
+conservative government SOE is most likely to have pinned. Chromium's
+`DefaultPluginsSetting` and `PluginsBlockedForUrls` are documented **obsolete**
+and concerned Flash; reading either would be reading a dead key.
+
+So the control is answered from which browsers are installed and at what
+version — satisfied by construction, with the evidence of the construction
+recorded rather than asserted.
+
+**With one live exception, and it is why this check exists.** Internet Explorer
+never used NPAPI: its Java plug-in was an **ActiveX control**. Edge Internet
+Explorer mode runs the Trident engine and supports ActiveX.
+[`win-ie11-disabled`](../../checks/windows/win-ie11-disabled.yml) deliberately
+records `edge_ie_mode` **without judging it**, because `ism-1654` speaks to
+Internet Explorer 11 as a browser rather than to the MSHTML engine.
+
+That leaves **Edge + IE mode + a registered Java runtime** as a current,
+exploitable configuration that every other check in this repository passes. It
+is reported `not-satisfied` here.
+
+What the collector does *not* do is match a Java plug-in CLSID. The constant
+could not be verified against a current vendor document, and a collector
+matching an unverified constant reports "absent" for something it merely failed
+to look for correctly. Whatever is under `HKLM\SOFTWARE\JavaSoft` is emitted
+verbatim instead.
+
+### Why none of the three can be `direct`
+
+A registry value is an administrator's **intent**, not the running browser's
+**behaviour**. The only thing that would show the latter is `edge://policy` or
+`chrome://policy` reporting *Status: OK* — per-user, per-profile, and not
+readable from a read-only remote query. Chromium also deprecates policy names
+on a six-week cadence, so a value in the registry may name a policy the
+installed build no longer honours.
+
 ## Verification status
 
 | Path | Status |
@@ -262,6 +358,8 @@ rather than as supported.
 | PowerShell against a real registry | **Not verified** — needs a Windows host |
 | AppLocker / WDAC state collection | **Not verified** — needs a Windows host; evaluators tested against fixtures (14 cases) |
 | AppLocker rule-path and DACL collection | **Not verified** — needs a Windows host; evaluator tested against fixtures (34 cases) |
+| Browser policy collection | **Not verified** — needs a Windows host; evaluator tested against fixtures (21 cases) |
+| Browser `policy_level` classification | **Tested by execution** — `Get-PolicyLevel` runs under PowerShell in CI, including the `\Recommended` case the Office glob gets wrong |
 | WinRM/Kerberos transport | **Not verified** — needs a domain |
 | Legacy tier (Server 2012, Win 10) | **Not verified** — no such CI runners exist; needs a documented lab |
 

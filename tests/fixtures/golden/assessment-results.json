@@ -21,7 +21,7 @@
       {
         "uuid": "c459b237-d9c4-5b3c-9fe9-92fd446c9185",
         "title": "E8_ML1 assessment run golden:001",
-        "description": "Automated assessment of the E8_ML1 baseline against SYSTEM-GOVDESK. 11 of 46 baseline controls were determined; 35 were not and are reported as unassessed rather than compliant.",
+        "description": "Automated assessment of the E8_ML1 baseline against SYSTEM-GOVDESK. 15 of 46 baseline controls were determined; 31 were not and are reported as unassessed rather than compliant.",
         "start": "2026-09-20T02:14:07+10:00",
         "end": "2026-09-20T03:05:12+10:00",
         "props": [
@@ -52,12 +52,12 @@
           },
           {
             "name": "controls-determined",
-            "value": "11",
+            "value": "15",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
             "name": "controls-unassessed",
-            "value": "35",
+            "value": "31",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -67,7 +67,7 @@
           },
           {
             "name": "subjects-assessed",
-            "value": "5",
+            "value": "6",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -87,16 +87,6 @@
           },
           {
             "name": "undetermined",
-            "value": "ism-1485=not-implemented",
-            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-          },
-          {
-            "name": "undetermined",
-            "value": "ism-1486=not-implemented",
-            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-          },
-          {
-            "name": "undetermined",
             "value": "ism-1507=requires-attestation",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
@@ -108,11 +98,6 @@
           {
             "name": "undetermined",
             "value": "ism-1515=not-implemented",
-            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-          },
-          {
-            "name": "undetermined",
-            "value": "ism-1585=not-implemented",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -178,11 +163,6 @@
           {
             "name": "undetermined",
             "value": "ism-1702=not-implemented",
-            "ns": "https://nobytes.io/ns/oscal/cca/1.0"
-          },
-          {
-            "name": "undetermined",
-            "value": "ism-1704=collection-error",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {
@@ -315,6 +295,21 @@
                 {
                   "name": "asset-id",
                   "value": "corp.example.gov.au/WKS-0044"
+                },
+                {
+                  "name": "ee-tier",
+                  "value": "current",
+                  "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                }
+              ]
+            },
+            {
+              "uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+              "description": "Windows 11 workstation WKS-0045, mixed browser estate",
+              "props": [
+                {
+                  "name": "asset-id",
+                  "value": "corp.example.gov.au/WKS-0045"
                 },
                 {
                   "name": "ee-tier",
@@ -1157,6 +1152,192 @@
             "expires": "2026-09-27T02:14:07+10:00"
           },
           {
+            "uuid": "56e4990c-6625-590f-90c9-34efb77ebf79",
+            "title": "ism-1485 / win-browser-ads-blocked \u2014 corp.example.gov.au/WKS-0042",
+            "description": "missing required fact(s): windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-ads-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "892800ca-2802-5eaf-acd4-20b993b52a6c",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0042"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "18804403-3194-5c89-8d63-54fb331f81f2",
+            "title": "ism-1486 / win-browser-java-blocked \u2014 corp.example.gov.au/WKS-0042",
+            "description": "missing required fact(s): windows.browsers.java_surface, windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-java-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "892800ca-2802-5eaf-acd4-20b993b52a6c",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0042"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "3d50cd08-215b-52d0-80a7-34510318619d",
+            "title": "ism-1585 / win-browser-settings-locked \u2014 corp.example.gov.au/WKS-0042",
+            "description": "missing required fact(s): windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-settings-locked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "892800ca-2802-5eaf-acd4-20b993b52a6c",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0042"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
             "uuid": "c2c9ec21-ff24-5a0c-85f2-2b050b67476d",
             "title": "ism-1654 / win-ie11-disabled \u2014 corp.example.gov.au/WKS-0042",
             "description": "The Internet Explorer 11 optional feature is present but not enabled.",
@@ -1794,6 +1975,192 @@
               {
                 "name": "check-id",
                 "value": "win-application-control-user-writable-paths",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "0d09a1f7-0caf-58dc-8c96-a515483154e2",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0043"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "293cd030-76ff-50c5-8ad5-a09c877f66b7",
+            "title": "ism-1485 / win-browser-ads-blocked \u2014 corp.example.gov.au/WKS-0043",
+            "description": "missing required fact(s): windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-ads-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "0d09a1f7-0caf-58dc-8c96-a515483154e2",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0043"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "5bbab32b-b684-5c8c-bb32-018107527d1f",
+            "title": "ism-1486 / win-browser-java-blocked \u2014 corp.example.gov.au/WKS-0043",
+            "description": "missing required fact(s): windows.browsers.java_surface, windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-java-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "0d09a1f7-0caf-58dc-8c96-a515483154e2",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0043"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "322c79a2-efee-553d-92c4-519219c138df",
+            "title": "ism-1585 / win-browser-settings-locked \u2014 corp.example.gov.au/WKS-0043",
+            "description": "missing required fact(s): windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-settings-locked",
                 "ns": "https://nobytes.io/ns/oscal/cca/1.0"
               },
               {
@@ -2565,6 +2932,192 @@
             ]
           },
           {
+            "uuid": "4a9e763c-02a7-59db-a35f-a09e87877821",
+            "title": "ism-1485 / win-browser-ads-blocked \u2014 corp.example.gov.au/WKS-0044",
+            "description": "missing required fact(s): windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-ads-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "d53b658e-8c3e-52a0-b8f4-34b2d4627df1",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0044"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "48e1ff9c-a427-534c-ab05-231522461571",
+            "title": "ism-1486 / win-browser-java-blocked \u2014 corp.example.gov.au/WKS-0044",
+            "description": "missing required fact(s): windows.browsers.java_surface, windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-java-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "d53b658e-8c3e-52a0-b8f4-34b2d4627df1",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0044"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "e161bd2e-27c0-514d-b558-829101ddc478",
+            "title": "ism-1585 / win-browser-settings-locked \u2014 corp.example.gov.au/WKS-0044",
+            "description": "missing required fact(s): windows.browsers.policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-settings-locked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "d53b658e-8c3e-52a0-b8f4-34b2d4627df1",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0044"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
             "uuid": "2fa6ac35-25e6-5806-81c4-964773f9b7f1",
             "title": "ism-1654 / win-ie11-disabled \u2014 corp.example.gov.au/WKS-0044",
             "description": "missing required fact(s): windows.os.optional_features",
@@ -2935,6 +3488,860 @@
             ],
             "collected": "2026-09-20T02:14:07+10:00",
             "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "8e3a5bbc-2100-5cf3-abbb-aba400447751",
+            "title": "ism-1501 / os-vendor-supported \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): os.release",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "os-vendor-supported",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "5e64036f-22e3-523e-bf8b-e1e062fc7474",
+            "title": "ism-1657 / win-application-control-file-types \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): windows.appcontrol.state",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-application-control-file-types",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "ef3b8779-e910-5a62-8c96-1b5e9e2a8fae",
+            "title": "ism-0843 / win-application-control-implemented \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): windows.appcontrol.state",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-application-control-implemented",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "ad92b85f-d1c6-5ef1-9b47-14b98ce9e593",
+            "title": "ism-1870 / win-application-control-user-writable-paths \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): windows.appcontrol.state, windows.appcontrol.writable_paths",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-application-control-user-writable-paths",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "0bad1c51-87f2-572c-a842-96d1cf584cff",
+            "title": "ism-1485 / win-browser-ads-blocked \u2014 corp.example.gov.au/WKS-0045",
+            "description": "No recognised ad-blocking extension is force-installed for chrome. Note this check cannot see gateway or proxy level filtering, which ASD names as part of this control, so an estate blocking advertisements upstream will appear here as a failure it has in fact mitigated.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-ads-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "partial",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "forced_ad_blockers,installed_browsers,native_intrusive_ads_setting,native_setting_is_not_a_mitigation,not_observable",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "1b78743d-73c4-5373-af9b-14e50f5440e8",
+            "title": "ism-1486 / win-browser-java-blocked \u2014 corp.example.gov.au/WKS-0045",
+            "description": "Edge Internet Explorer mode is enabled (InternetExplorerIntegrationLevel=1) and a Java runtime is registered. IE mode runs the Trident engine, which supports ActiveX controls, and the Internet Explorer Java plug-in is an ActiveX control rather than NPAPI \u2014 so a site on the IE-mode site list can still process Java. ism-1654 does not cover this: it speaks to Internet Explorer 11 as a browser, not to the MSHTML engine.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-java-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "browsers_below_npapi_threshold,edge_ie_integration_level,edge_ie_site_list,installed_browsers,java_runtime_registry,npapi_removed_at",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "7fd878cf-0542-5e92-8129-d23dd490957b",
+            "title": "ism-1585 / win-browser-settings-locked \u2014 corp.example.gov.au/WKS-0045",
+            "description": "No mandatory policy found for chrome. Settings a user can change are settings a user can change back. Note that policy exists for chrome under the \\Recommended key, which sets a default the user may override rather than locking anything.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-browser-settings-locked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "partial",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "browsers_with_mandatory_policy,browsers_with_recommended_policy_only,firefox_preference_locking,installed_browsers,not_observable",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uuid": "021a808d-afe8-5f76-854e-a9212ca654fe",
+            "title": "ism-1654 / win-ie11-disabled \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): windows.os.optional_features",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-ie11-disabled",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "fecedf87-eb61-5ba1-989e-4e568cb11d9e",
+            "title": "ism-1672 / win-office-macro-av-scanning \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): windows.office.install, windows.office.macro_policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macro-av-scanning",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "ca65b765-28e2-57ef-adbb-a5ba83107b94",
+            "title": "ism-1488 / win-office-macro-internet-blocked \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): windows.office.install, windows.office.macro_policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macro-internet-blocked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "36098bb2-c3d5-577b-bfa3-cc17546e23c5",
+            "title": "ism-1489 / win-office-macro-settings-locked \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): windows.office.install, windows.office.macro_policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macro-settings-locked",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "7c9d1ab9-4c69-587b-b93a-f0be5c9220e4",
+            "title": "ism-1671 / win-office-macros-disabled \u2014 corp.example.gov.au/WKS-0045",
+            "description": "missing required fact(s): windows.office.install, windows.office.macro_policy",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-office-macros-disabled",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "unassessed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "unassessed-reason",
+                "value": "collection-error",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00"
+          },
+          {
+            "uuid": "c12ea453-a59d-51dc-8f55-092a5fcec032",
+            "title": "ism-1704 / win-unsupported-applications-removed \u2014 corp.example.gov.au/WKS-0045",
+            "description": "1 unsupported application(s) present as of 2026-09-20: Google Chrome 128.0.6613.120. Families this check cannot see: Microsoft Edge, PDF applications, email clients, security products, web browser extensions. 2 installed application(s) could not be mapped to a support timeline and are neither passed nor failed.",
+            "props": [
+              {
+                "name": "check-id",
+                "value": "win-unsupported-applications-removed",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "check-version",
+                "value": "1.0.0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "evidence-tier",
+                "value": "passive",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "scope",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "catalog-version",
+                "value": "2026.09.4",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "marking",
+                "value": "OFFICIAL: Sensitive",
+                "class": "pspf"
+              },
+              {
+                "name": "confidence",
+                "value": "partial",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "methods": [
+              "TEST"
+            ],
+            "types": [
+              "control-objective"
+            ],
+            "subjects": [
+              {
+                "subject-uuid": "7b6e1745-5704-5715-93e5-b9c6f8383ef0",
+                "type": "inventory-item",
+                "title": "corp.example.gov.au/WKS-0045"
+              }
+            ],
+            "collected": "2026-09-20T02:14:07+10:00",
+            "expires": "2026-09-27T02:14:07+10:00",
+            "relevant-evidence": [
+              {
+                "description": "Raw collected facts supporting this observation.",
+                "props": [
+                  {
+                    "name": "fact-keys",
+                    "value": "applications_seen,as_of,families_not_covered,supported,unmapped_count,unmapped_sample,unsupported",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+                  }
+                ]
+              }
+            ]
           }
         ],
         "findings": [
@@ -3061,6 +4468,132 @@
             "related-observations": [
               {
                 "observation-uuid": "7552a682-4927-5a91-bd67-905b2dfb8470"
+              }
+            ]
+          },
+          {
+            "uuid": "406d4262-a9f2-516f-b5b0-6f403d2abd73",
+            "title": "ism-1485 not-satisfied",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "partial",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "50",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1485_smt",
+              "title": "Web browsers do not process web advertisements from the internet.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
+              "status": {
+                "state": "not-satisfied",
+                "reason": "fail",
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `partial` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "0bad1c51-87f2-572c-a842-96d1cf584cff"
+              }
+            ]
+          },
+          {
+            "uuid": "56922857-c249-568b-b038-e2c0248051de",
+            "title": "ism-1486 not-satisfied",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "proxy",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "50",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1486_smt",
+              "title": "Web browsers do not process Java from the internet.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
+              "status": {
+                "state": "not-satisfied",
+                "reason": "fail",
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `proxy` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "1b78743d-73c4-5373-af9b-14e50f5440e8"
               }
             ]
           },
@@ -3323,6 +4856,69 @@
             ]
           },
           {
+            "uuid": "8f58a812-e694-5ab1-b280-76132e6dedeb",
+            "title": "ism-1585 not-satisfied",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "partial",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "50",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1585_smt",
+              "title": "Web browser security settings cannot be changed by human users.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
+              "status": {
+                "state": "not-satisfied",
+                "reason": "fail",
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `partial` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "7fd878cf-0542-5e92-8129-d23dd490957b"
+              }
+            ]
+          },
+          {
             "uuid": "7be794e8-1339-52a7-8345-95f289d006b1",
             "title": "ism-1654 not-satisfied",
             "description": "1 of 2 assessed subjects do not satisfy this control.",
@@ -3577,6 +5173,69 @@
               },
               {
                 "observation-uuid": "d5d14308-90b1-5475-9385-e2ea66429636"
+              }
+            ]
+          },
+          {
+            "uuid": "f4cf70d1-321a-5b74-8dcd-a6c42cff60ee",
+            "title": "ism-1704 not-satisfied",
+            "description": "1 of 1 assessed subjects do not satisfy this control.",
+            "props": [
+              {
+                "name": "assessment-status",
+                "value": "not-satisfied",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "confidence",
+                "value": "partial",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "aggregation-key",
+                "value": "SYSTEM-GOVDESK/E8_ML1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-total",
+                "value": "50",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-assessed",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-failing",
+                "value": "1",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-na",
+                "value": "0",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              },
+              {
+                "name": "population-basis",
+                "value": "subject",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+              }
+            ],
+            "target": {
+              "type": "statement-id",
+              "target-id": "ism-1704_smt",
+              "title": "Office productivity suites, web browsers and their extensions, email clients, PDF applications, Adobe Flash Player, and security products that are no longer supported by vendors are removed.",
+              "description": "1 of 1 assessed subjects do not satisfy this control.",
+              "status": {
+                "state": "not-satisfied",
+                "reason": "fail",
+                "remarks": "Determined from 1 observation(s) across 1 subject(s) at `partial` confidence. Coverage is incomplete: this control was not determined for 49 of 50 in-scope subject(s). Those subjects are not represented in this determination and must not be read as passing."
+              }
+            },
+            "related-observations": [
+              {
+                "observation-uuid": "c12ea453-a59d-51dc-8f55-092a5fcec032"
               }
             ]
           },

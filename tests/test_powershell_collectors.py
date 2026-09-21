@@ -427,3 +427,64 @@ def test_an_unreadable_or_missing_path_reports_unknown_not_unwritable() -> None:
     )
     assert found == []
     assert unreadable_count == 1
+
+
+BROWSER_SCRIPT = (
+    ROOT / "collections" / "ansible_collections" / "nobytes" / "compliance"
+    / "roles" / "collect_windows_browsers" / "files" / "Get-BrowserPolicy.ps1"
+)
+
+
+@requires_pwsh
+def test_the_browser_collector_classifies_recommended_as_not_locked() -> None:
+    """The highest-risk line in the browser chunk, executed rather than reviewed.
+
+    Chromium publishes every policy at both `…\\Policies\\Microsoft\\Edge`
+    (mandatory) and `…\\Policies\\Microsoft\\Edge\\Recommended` (a default the
+    user may override). The Office collector derives `gpo_delivered` from
+    `$Path -like '*\\Policies\\*'`, which matches BOTH — so copying that line
+    would report every user-overridable setting as locked, the exact inverse of
+    what ism-1585 asks.
+
+    `Get-PolicyLevel` is a pure string function precisely so this can run here.
+    """
+    cases = {
+        "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge": "mandatory",
+        "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge\\Recommended": "recommended",
+        "HKLM:\\SOFTWARE\\Policies\\Google\\Chrome": "mandatory",
+        "HKLM:\\SOFTWARE\\Policies\\Google\\Chrome\\Recommended": "recommended",
+        # Trailing separator, because a key path assembled by concatenation
+        # sometimes carries one and a classifier that missed it would silently
+        # downgrade a recommended key to mandatory.
+        "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge\\Recommended\\": "recommended",
+        "HKU:\\S-1-5-21-1-1-1-1174\\SOFTWARE\\Policies\\Mozilla\\Firefox": "mandatory",
+        # The browser's own settings store: neither mandatory nor recommended.
+        "HKCU:\\SOFTWARE\\Microsoft\\Edge": "preference",
+    }
+    listed = ",".join(f"'{p}'" for p in cases)
+    out = _pwsh(
+        f"$null = . '{BROWSER_SCRIPT}'; "
+        f"@({listed}) | ForEach-Object {{ Get-PolicyLevel -Path $_ }} "
+        "| ConvertTo-Json -Compress"
+    )
+    assert json.loads(out) == list(cases.values())
+
+    # And prove the Office derivation would have got it wrong, so the reason
+    # this function exists cannot quietly stop being true.
+    glob_says_locked = [p for p in cases if "\\Policies\\" in p]
+    assert "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge\\Recommended" in glob_says_locked
+
+
+@requires_pwsh
+def test_the_browser_collector_runs_where_there_is_no_registry() -> None:
+    """Well-formed output with an explicit error, never a thrown collector.
+
+    A collector that throws produces no bundle at all, and a run that silently
+    collected nothing is the failure mode this project exists to refuse.
+    """
+    payload = json.loads(_pwsh(f"& '{BROWSER_SCRIPT}'"))
+    result = payload[0] if isinstance(payload, list) else payload
+    assert result["rows"] == [] or result["rows"] is None
+    assert result["meta"]["collection_error"], (
+        "a host with no registry must say so, not report an estate with no browser policy"
+    )

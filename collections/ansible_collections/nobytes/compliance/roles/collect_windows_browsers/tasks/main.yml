@@ -1,0 +1,40 @@
+---
+# READ-ONLY. `win_powershell` is a permitted read-only executor, and the task
+# declares changed_when: false and check_mode: false so evidence is still
+# gathered during a check run. The script emits raw state and judges nothing.
+
+- name: Read effective web browser policy state
+  ansible.windows.win_powershell:
+    script: "{{ lookup('ansible.builtin.file', role_path ~ '/files/Get-BrowserPolicy.ps1') }}"
+    parameters:
+      Browsers: "{{ collect_windows_browsers_browsers }}"
+  register: collect_windows_browsers_policy
+  changed_when: false
+  check_mode: false
+
+- name: Record web browser facts into this host's bundle
+  ansible.builtin.include_role:
+    name: nobytes.compliance.fact_bundle
+    tasks_from: record
+  vars:
+    _cca_browsers: "{{ (collect_windows_browsers_policy.output | default([{}]))[0] | default({}) }}"
+    fact_records:
+      windows.browsers.policy:
+        source: "registry:HKLM+HKU\\*\\SOFTWARE\\Policies\\{Microsoft\\Edge,Google\\Chrome,Mozilla\\Firefox}"
+        # A registry that could not be walked at all is a collection failure,
+        # not an estate with no browser policy. Unloaded hives are NOT partial
+        # here -- they travel in meta and the evaluator turns them into
+        # unassessed/partial-population, which lets a real failure still be
+        # reported as a failure.
+        partial: "{{ (_cca_browsers.meta.collection_error | default('')) | length > 0 }}"
+        value:
+          rows: "{{ _cca_browsers.rows | default([]) }}"
+          meta: "{{ _cca_browsers.meta | default({}) }}"
+      windows.browsers.java_surface:
+        source: "registry:Edge InternetExplorerIntegration* + HKLM\\SOFTWARE\\JavaSoft"
+        # Edge IE mode runs Trident and supports ActiveX, and the IE Java
+        # plug-in was always ActiveX rather than NPAPI. This is the one live
+        # path by which a modern browser processes Java, and win-ie11-disabled
+        # deliberately does not judge it.
+        partial: "{{ (_cca_browsers.java.error | default('')) | length > 0 }}"
+        value: "{{ _cca_browsers.java | default({}) }}"

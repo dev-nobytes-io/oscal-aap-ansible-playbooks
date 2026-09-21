@@ -1,0 +1,9 @@
+---
+# Browsers to enumerate. ASD's Blueprint discourages secondary browsers because
+# they increase attack surface and complicate consistent policy enforcement --
+# but an estate that has them still has to be assessed on them, so all three
+# are probed and an absent one simply yields no rows.
+collect_windows_browsers_browsers:
+  - edge
+  - chrome
+  - firefox

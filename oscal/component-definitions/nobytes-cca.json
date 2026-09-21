@@ -1390,6 +1390,295 @@
         ]
       },
       {
+        "uuid": "71844758-283c-5e4f-a71e-c0c2a81bbe6e",
+        "type": "software",
+        "title": "Web Browser Windows",
+        "description": "Assessment coverage provided by nobytes.compliance collectors and nobytes_cca evaluators for web-browser-windows. This document asserts what is ASSESSED, not what is implemented.",
+        "props": [
+          {
+            "name": "platform-family",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "windows"
+          },
+          {
+            "name": "component-key",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "web-browser-windows"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "84799bba-abde-5305-91c8-f167ede20eeb",
+            "source": "../upstream/ism/v2026.09.4/ISM_catalog.json",
+            "description": "Controls this component can produce evidence for. A control absent from this list is not assessed on this platform.",
+            "props": [
+              {
+                "name": "implementation-kind",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                "value": "assessment"
+              }
+            ],
+            "implemented-requirements": [
+              {
+                "uuid": "d4834275-e8e9-593b-bbfb-739a232afe29",
+                "control-id": "ism-1485",
+                "description": "The obvious evidence for this control is Chromium's AdsSettingForIntrusiveAdsSites, and it is the wrong evidence. ASD's own Blueprint states that \"Microsoft Edge's native web advertisement capability is limited and does not provide an effective mitigation against the risk of malicious web advertisement\", and BlockAds is Edge's DEFAULT value -- so a check resting on it would report every unmanaged Edge installation in an estate as satisfying a control ASD says it does not meet. Chrome's unset default is the opposite (allow advertisements everywhere), and Chromium documents that the blocking value does nothing when SafeBrowsingEnabled is false. All three are recorded as supporting facts and none is decisive.\nThe verdict rests instead on a force-installed ad-blocking extension, which ASD names as the effective mechanism. The recognised-extension list is deliberately not exhaustive: ASD names uBlock Origin and Adblock Plus as examples while explicitly declining to recommend either, so an estate using a different product is reported as having an unrecognised forced extension rather than as failing.\nWhat this does not prove, in three parts. ASD also names PROXY LEVEL filtering as part of this control, and that is invisible from a host -- an estate blocking advertisements at the gateway will read here as a failure it has in fact mitigated, and that false red is accepted and stated rather than hidden. Forcelist membership means policy requires the extension, not that it is enabled and running in a profile; a non-domain-joined host can only force-install from the vendor store, and a stale extension id after a store migration looks identical to a current one. And a registry value is an administrator's intent rather than the running browser's behaviour.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-browser-ads-blocked"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_browsers"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.browsers:advertisements_not_processed"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "72ea2ab8953237954404e5921b58d05eb4f9d1a61ab09a24603262829f5d668b"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1485_smt",
+                    "uuid": "23970582-7572-5e50-9548-0e641ff15a34",
+                    "description": "Web browsers do not process web advertisements from the internet."
+                  }
+                ],
+                "remarks": "Residual assessment gap: The obvious evidence for this control is Chromium's AdsSettingForIntrusiveAdsSites, and it is the wrong evidence. ASD's own Blueprint states that \"Microsoft Edge's native web advertisement capability is limited and does not provide an effective mitigation against the risk of malicious web advertisement\", and BlockAds is Edge's DEFAULT value -- so a check resting on it would report every unmanaged Edge installation in an estate as satisfying a control ASD says it does not meet. Chrome's unset default is the opposite (allow advertisements everywhere), and Chromium documents that the blocking value does nothing when SafeBrowsingEnabled is false. All three are recorded as supporting facts and none is decisive.\nThe verdict rests instead on a force-installed ad-blocking extension, which ASD names as the effective mechanism. The recognised-extension list is deliberately not exhaustive: ASD names uBlock Origin and Adblock Plus as examples while explicitly declining to recommend either, so an estate using a different product is reported as having an unrecognised forced extension rather than as failing.\nWhat this does not prove, in three parts. ASD also names PROXY LEVEL filtering as part of this control, and that is invisible from a host -- an estate blocking advertisements at the gateway will read here as a failure it has in fact mitigated, and that false red is accepted and stated rather than hidden. Forcelist membership means policy requires the extension, not that it is enabled and running in a profile; a non-domain-joined host can only force-install from the vendor store, and a stale extension id after a store migration looks identical to a current one. And a registry value is an administrator's intent rather than the running browser's behaviour."
+              },
+              {
+                "uuid": "dda6300e-24d3-5242-b8ec-04e1670388c2",
+                "control-id": "ism-1486",
+                "description": "There is no browser policy value that answers this control. NPAPI, the plug-in interface Java applets required, was removed from Chrome in version 45 and from Firefox in version 53 -- note 53 and not 52, because plug-ins kept working in ESR 52, which is exactly the build a conservative government standard operating environment is most likely to have pinned. Chromium's DefaultPluginsSetting and PluginsBlockedForUrls are documented as obsolete and concerned Flash; reading either would be reading a dead key and reporting a pass for a reason that stopped existing.\nSo the control is answered from which browsers are installed and at what version -- satisfied by construction, with the evidence of the construction recorded rather than asserted.\nWith one live exception, which is the reason this check exists at all. Internet Explorer never used NPAPI: its Java plug-in was an ActiveX control. Edge Internet Explorer mode runs the Trident engine and supports ActiveX controls. ism-1654 deliberately records Edge IE mode without judging it, because that control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine. That leaves Edge plus IE mode plus a registered Java runtime as a current, exploitable configuration that every other check in this repository passes, and it is reported as not-satisfied here.\nWhat this does not prove: whether a Java plug-in is actually registered as an ActiveX control. The plug-in CLSID could not be verified against a current vendor document, so the collector emits whatever it finds under HKLM\\SOFTWARE\\JavaSoft verbatim rather than matching an unverified constant -- a collector that matches a constant nobody confirmed reports \"absent\" for something it merely failed to look for correctly. Presence of a Java runtime alongside IE mode is therefore treated as sufficient to fail, which may over-report where the runtime is headless.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-browser-java-blocked"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_browsers"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.browsers:java_not_processed"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "55c579b62c33ab798847026780814b4d36a1ecd66e9de36fd69d8f63afb4bac0"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1486_smt",
+                    "uuid": "6ee94bf2-1ca6-502c-a15e-93393304aa82",
+                    "description": "Web browsers do not process Java from the internet."
+                  }
+                ],
+                "remarks": "Residual assessment gap: There is no browser policy value that answers this control. NPAPI, the plug-in interface Java applets required, was removed from Chrome in version 45 and from Firefox in version 53 -- note 53 and not 52, because plug-ins kept working in ESR 52, which is exactly the build a conservative government standard operating environment is most likely to have pinned. Chromium's DefaultPluginsSetting and PluginsBlockedForUrls are documented as obsolete and concerned Flash; reading either would be reading a dead key and reporting a pass for a reason that stopped existing.\nSo the control is answered from which browsers are installed and at what version -- satisfied by construction, with the evidence of the construction recorded rather than asserted.\nWith one live exception, which is the reason this check exists at all. Internet Explorer never used NPAPI: its Java plug-in was an ActiveX control. Edge Internet Explorer mode runs the Trident engine and supports ActiveX controls. ism-1654 deliberately records Edge IE mode without judging it, because that control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine. That leaves Edge plus IE mode plus a registered Java runtime as a current, exploitable configuration that every other check in this repository passes, and it is reported as not-satisfied here.\nWhat this does not prove: whether a Java plug-in is actually registered as an ActiveX control. The plug-in CLSID could not be verified against a current vendor document, so the collector emits whatever it finds under HKLM\\SOFTWARE\\JavaSoft verbatim rather than matching an unverified constant -- a collector that matches a constant nobody confirmed reports \"absent\" for something it merely failed to look for correctly. Presence of a Java runtime alongside IE mode is therefore treated as sufficient to fail, which may over-report where the runtime is headless."
+              },
+              {
+                "uuid": "e7d1a924-0131-55d1-ac9e-5bfde4f00b1e",
+                "control-id": "ism-1585",
+                "description": "Chromium browsers publish every policy at TWO registry paths: the vendor Policies key, which is mandatory and cannot be changed by the user, and a \\Recommended subkey beneath it, which sets a default the user MAY override. Both contain the string \\Policies\\, so the derivation used by the Office macro collector -- a path glob -- would classify a user-overridable default as locked, which is the precise inverse of what this control asks. The collector classifies into mandatory, recommended or preference instead, and this check trusts that classification rather than the path.\nThe control is a statement about web browsers, plural, so the semantics are EVERY installed browser and not \"at least one\". A hardened Edge alongside a developer's per-user Chrome installation carrying no policy does not meet it.\nFirefox is different in kind. Its only locking mechanism is the Preferences policy, a single JSON document in one registry value where locking is expressed as a Status field rather than as a key path. That document is emitted as raw text and parsed by the evaluator.\nWhat this does not prove, in four parts. A registry value is an administrator's intent, not the running browser's behaviour; only edge://policy or chrome://policy reporting Status OK would show the latter, and neither is readable from a read-only remote query, which is why this can never be direct confidence. Chromium deprecates policy names on a six-week cadence, so a value present in the registry may name a policy the installed build no longer honours. A local administrator can still change anything. And a Firefox estate managed through policies.json in the installation directory rather than through the registry is invisible here -- the two are combined from Firefox 87 with the registry winning, while before 87 the JSON was ignored entirely if any registry policy was set, so a registry-only reading is structurally incomplete on that estate rather than merely unlucky.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-browser-settings-locked"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_browsers"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.browsers:security_settings_locked"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "3"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "40ec0064ceda52fc19cf0a3b7e9f42ef3f57e5f577e036d9ff6f4e4a0e96fb2c"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1585_smt",
+                    "uuid": "9af6f843-0e11-5391-aa30-163465744edd",
+                    "description": "Web browser security settings cannot be changed by human users."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Chromium browsers publish every policy at TWO registry paths: the vendor Policies key, which is mandatory and cannot be changed by the user, and a \\Recommended subkey beneath it, which sets a default the user MAY override. Both contain the string \\Policies\\, so the derivation used by the Office macro collector -- a path glob -- would classify a user-overridable default as locked, which is the precise inverse of what this control asks. The collector classifies into mandatory, recommended or preference instead, and this check trusts that classification rather than the path.\nThe control is a statement about web browsers, plural, so the semantics are EVERY installed browser and not \"at least one\". A hardened Edge alongside a developer's per-user Chrome installation carrying no policy does not meet it.\nFirefox is different in kind. Its only locking mechanism is the Preferences policy, a single JSON document in one registry value where locking is expressed as a Status field rather than as a key path. That document is emitted as raw text and parsed by the evaluator.\nWhat this does not prove, in four parts. A registry value is an administrator's intent, not the running browser's behaviour; only edge://policy or chrome://policy reporting Status OK would show the latter, and neither is readable from a read-only remote query, which is why this can never be direct confidence. Chromium deprecates policy names on a six-week cadence, so a value present in the registry may name a policy the installed build no longer honours. A local administrator can still change anything. And a Firefox estate managed through policies.json in the installation directory rather than through the registry is invisible here -- the two are combined from Firefox 87 with the registry winning, while before 87 the JSON was ignored entirely if any registry policy was set, so a registry-only reading is structurally incomplete on that estate rather than merely unlucky."
+              }
+            ]
+          }
+        ]
+      },
+      {
         "uuid": "6f692ed9-e75a-5ec9-a014-f37f8288556a",
         "type": "software",
         "title": "Windows Operating System",

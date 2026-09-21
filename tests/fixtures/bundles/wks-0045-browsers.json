@@ -1,0 +1,85 @@
+{
+  "schema": "https://nobytes.io/schema/oscal-cca/fact-bundle/1.0",
+  "run_id": "fixture:browsers-mixed-estate",
+  "collected": "2026-09-20T02:14:07+10:00",
+  "subject": {
+    "asset_id": "corp.example.gov.au/WKS-0045",
+    "description": "Windows 11 workstation WKS-0045, mixed browser estate",
+    "platform_family": "windows",
+    "estate_tier": "current"
+  },
+  "collector": {
+    "collection": "nobytes.compliance",
+    "version": "0.1.0"
+  },
+  "marking": {
+    "system": "pspf",
+    "value": "OFFICIAL: Sensitive"
+  },
+  "facts": {
+    "windows.applications.installed": {
+      "collected": "2026-09-20T02:14:05+10:00",
+      "source": "registry:HKLM+HKU\\*\\...\\Uninstall",
+      "value": [
+        {"name": "Microsoft Edge", "version": "128.0.2739.42", "publisher": "Microsoft Corporation"},
+        {"name": "Google Chrome", "version": "128.0.6613.120", "publisher": "Google LLC"},
+        {"name": "Java 8 Update 411", "version": "8.0.4110.9", "publisher": "Oracle Corporation"}
+      ]
+    },
+    "windows.browsers.policy": {
+      "collected": "2026-09-20T02:14:06+10:00",
+      "source": "registry:HKLM+HKU\\*\\SOFTWARE\\Policies\\{Microsoft\\Edge,Google\\Chrome,Mozilla\\Firefox}",
+      "value": {
+        "rows": [
+          {
+            "browser": "edge",
+            "scope": "machine",
+            "sid": null,
+            "key": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge",
+            "policy_level": "mandatory",
+            "gpo_delivered": true,
+            "values": {
+              "AdsSettingForIntrusiveAdsSites": 2,
+              "SmartScreenEnabled": 1,
+              "InternetExplorerIntegrationLevel": 1,
+              "InternetExplorerIntegrationSiteList": "https://intranet.example.gov.au/ie-sites.xml"
+            },
+            "forced_extensions": [
+              "odfafepnkmbhccpbejgmiehpchacaeak;https://edge.microsoft.com/extensionwebstorebase/v1/crx"
+            ]
+          },
+          {
+            "browser": "chrome",
+            "scope": "machine",
+            "sid": null,
+            "key": "HKLM:\\SOFTWARE\\Policies\\Google\\Chrome\\Recommended",
+            "policy_level": "recommended",
+            "gpo_delivered": false,
+            "values": {
+              "SafeBrowsingEnabled": 1
+            },
+            "forced_extensions": []
+          }
+        ],
+        "meta": {
+          "profiles_total": 3,
+          "profiles_loaded": 3,
+          "profiles_unloaded": [],
+          "collection_error": ""
+        }
+      }
+    },
+    "windows.browsers.java_surface": {
+      "collected": "2026-09-20T02:14:07+10:00",
+      "source": "registry:Edge InternetExplorerIntegration* + HKLM\\SOFTWARE\\JavaSoft",
+      "value": {
+        "ie_integration_level": 1,
+        "ie_site_list": "https://intranet.example.gov.au/ie-sites.xml",
+        "javasoft": {
+          "HKLM:\\SOFTWARE\\JavaSoft\\Java Runtime Environment": ["1.8", "1.8.0_411"]
+        },
+        "error": ""
+      }
+    }
+  }
+}
