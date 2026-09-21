@@ -1,0 +1,52 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-application-control-file-types
+version: 1.0.0
+title: Application control covers every file type the control lists
+platform_family: windows
+component: windows-operating-system
+
+controls:
+  - id: ism-1657
+    statement_id: ism-1657_smt
+    control_revision: "1"
+    statement_sha256: 80bee035cab8c85d6e10a5b38fdad43f9a82d059371c4cd46a69841515cc8b70
+    coverage: partial
+    rationale: >-
+      The control names seven file types. AppLocker has five rule collections,
+      and Microsoft documents what each covers: Executable (.exe, .com),
+      Windows Installer (.msi, .mst, .msp), Scripts (.ps1, .bat, .cmd, .vbs,
+      .js), DLLs (.dll, .ocx) and Packaged apps (.appx). Compiled HTML (.chm),
+      HTML applications (.hta) and control panel applets (.cpl) appear in NO
+      AppLocker rule collection, so an AppLocker-only estate cannot satisfy
+      this control however well configured -- and an organisation that treats
+      AppLocker as equivalent to ML1 application control has a gap it does not
+      know about. Surfacing that is the point of this check. Where App Control
+      for Business is enforcing instead, its code integrity rules are not
+      readable from the collected state and the result is unassessed rather
+      than a guess in either direction.
+
+method: TEST
+confidence: partial
+assessability: automated
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_appcontrol
+  facts:
+    required:
+      - windows.appcontrol.state
+
+evaluator: nobytes_cca.checks.windows.appcontrol:application_control_covers_required_file_types
+
+references:
+  - source: Microsoft — Understanding AppLocker rule collections
+    url: >-
+      https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/applocker/understanding-applocker-rule-collections
+    note: >-
+      The authority for which file extensions each AppLocker rule collection
+      covers, and therefore for the claim that .chm, .hta and .cpl are outside
+      all of them. Verified by fetching the page, not from recollection.

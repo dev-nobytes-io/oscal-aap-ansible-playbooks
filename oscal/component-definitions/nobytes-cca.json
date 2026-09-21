@@ -1325,6 +1325,176 @@
             ],
             "implemented-requirements": [
               {
+                "uuid": "c01b4dca-fc1d-5bee-8163-10aca3f3aa38",
+                "control-id": "ism-1657",
+                "description": "The control names seven file types. AppLocker has five rule collections, and Microsoft documents what each covers: Executable (.exe, .com), Windows Installer (.msi, .mst, .msp), Scripts (.ps1, .bat, .cmd, .vbs, .js), DLLs (.dll, .ocx) and Packaged apps (.appx). Compiled HTML (.chm), HTML applications (.hta) and control panel applets (.cpl) appear in NO AppLocker rule collection, so an AppLocker-only estate cannot satisfy this control however well configured -- and an organisation that treats AppLocker as equivalent to ML1 application control has a gap it does not know about. Surfacing that is the point of this check. Where App Control for Business is enforcing instead, its code integrity rules are not readable from the collected state and the result is unassessed rather than a guess in either direction.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-application-control-file-types"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_appcontrol"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.appcontrol:application_control_covers_required_file_types"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "80bee035cab8c85d6e10a5b38fdad43f9a82d059371c4cd46a69841515cc8b70"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1657_smt",
+                    "uuid": "f95f74b6-2876-5da3-bb8d-737e15a9fd1d",
+                    "description": "Application control restricts the execution of executables, libraries, scripts, installers, compiled HTML, HTML applications and control panel applets to an organisation-approved set."
+                  }
+                ],
+                "remarks": "Residual assessment gap: The control names seven file types. AppLocker has five rule collections, and Microsoft documents what each covers: Executable (.exe, .com), Windows Installer (.msi, .mst, .msp), Scripts (.ps1, .bat, .cmd, .vbs, .js), DLLs (.dll, .ocx) and Packaged apps (.appx). Compiled HTML (.chm), HTML applications (.hta) and control panel applets (.cpl) appear in NO AppLocker rule collection, so an AppLocker-only estate cannot satisfy this control however well configured -- and an organisation that treats AppLocker as equivalent to ML1 application control has a gap it does not know about. Surfacing that is the point of this check. Where App Control for Business is enforcing instead, its code integrity rules are not readable from the collected state and the result is unassessed rather than a guess in either direction."
+              },
+              {
+                "uuid": "3c4a7ecb-9265-5f3f-9730-c2d86f45f7c8",
+                "control-id": "ism-0843",
+                "description": "Observes that an application control mechanism is in ENFORCING mode -- AppLocker with at least one rule collection set to Enabled, or App Control for Business running a code integrity policy. Two gaps are stated rather than hidden. \"Implemented\" is a judgement about an operational control, and a policy can enforce while permitting everything, so what is observed is enforcement mode rather than efficacy. And AuditOnly is deliberately not counted as implemented: an audit-mode collection writes an event and blocks nothing, which is the most likely way a workstation looks protected and is not.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "win-application-control-implemented"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_windows_appcontrol"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.windows.appcontrol:application_control_implemented"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "subject"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "168"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "9"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "d57ccb91e7a619c97dc5b72462e3605140c892a49ca7996bfd4dd1b924431c0d"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-0843_smt",
+                    "uuid": "85bb2c13-7121-59ad-96bd-2e73e739e9d6",
+                    "description": "Application control is implemented on workstations."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Observes that an application control mechanism is in ENFORCING mode -- AppLocker with at least one rule collection set to Enabled, or App Control for Business running a code integrity policy. Two gaps are stated rather than hidden. \"Implemented\" is a judgement about an operational control, and a policy can enforce while permitting everything, so what is observed is enforcement mode rather than efficacy. And AuditOnly is deliberately not counted as implemented: an audit-mode collection writes an event and blocks nothing, which is the most likely way a workstation looks protected and is not."
+              },
+              {
                 "uuid": "15712fff-336c-5466-b7c3-d4f2feb1df26",
                 "control-id": "ism-1654",
                 "description": "The control is a binary state and both halves are directly observable: whether the optional feature is present, and whether policy disables the IE11 application. The one residual gap is IE mode inside Microsoft Edge, which is a deliberately supported configuration and is reported in the facts rather than judged, since the control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine.",

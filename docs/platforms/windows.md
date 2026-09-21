@@ -72,6 +72,52 @@ ansible-playbook playbooks/collect.yml -i inventory/example.yml --limit windows_
 CCA_SYSTEM_ID=SYSTEM-GOVDESK ansible-playbook playbooks/evaluate.yml
 ```
 
+## Application control: AppLocker cannot satisfy `ism-1657`
+
+Worth stating plainly, because it contradicts a common assumption.
+
+`ism-1657` requires application control to restrict **executables, libraries,
+scripts, installers, compiled HTML, HTML applications and control panel
+applets** — seven file types. AppLocker has five rule collections, and
+[Microsoft documents exactly what each covers](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/applocker/understanding-applocker-rule-collections):
+
+| Collection | Extensions | ISM wording it satisfies |
+|---|---|---|
+| Executable | `.exe` `.com` | executables |
+| DLLs | `.dll` `.ocx` | libraries |
+| Scripts | `.ps1` `.bat` `.cmd` `.vbs` `.js` | scripts |
+| Windows Installer | `.msi` `.mst` `.msp` | installers |
+| Packaged apps | `.appx` | *(not in the control's list)* |
+
+**Compiled HTML (`.chm`), HTML applications (`.hta`) and control panel applets
+(`.cpl`) appear in no AppLocker rule collection.** A fully enforced AppLocker
+policy is therefore still short of this control, and no amount of configuration
+closes the gap. App Control for Business (WDAC) enforces through code integrity
+policies instead and covers more.
+
+So `win-application-control-file-types` reports **not-satisfied at `partial`
+confidence even when every mappable collection is enforced**, and separates two
+kinds of gap in the evidence:
+
+- `not_covered_configurable` — file types AppLocker *could* restrict but is not
+  configured to. Fixable by configuration.
+- `not_coverable_by_applocker` — `.chm`, `.hta`, `.cpl`. Not fixable by
+  configuration at all.
+
+Reporting `satisfied` because five collections are enforced would hide the one
+thing this check exists to surface.
+
+Where WDAC is enforcing, its code integrity rules are not readable from the
+state this collector gathers, so the result is `unassessed` rather than a guess
+in either direction.
+
+### AuditOnly is not implemented
+
+An AppLocker collection in `AuditOnly` writes an event and permits execution.
+It is counted as **not** implemented, for the same reason a report-only
+conditional access policy is not counted as requiring MFA: it is the most
+likely way a workstation looks protected and is not.
+
 ## Verification status
 
 | Path | Status |
@@ -80,6 +126,7 @@ CCA_SYSTEM_ID=SYSTEM-GOVDESK ansible-playbook playbooks/evaluate.yml
 | Read-only guarantee (static) | **Tested** — no mutating module surface in collect roles |
 | `ansible-lint` production profile | **Passing** |
 | PowerShell against a real registry | **Not verified** — needs a Windows host |
+| AppLocker / WDAC state collection | **Not verified** — needs a Windows host; evaluators tested against fixtures (14 cases) |
 | WinRM/Kerberos transport | **Not verified** — needs a domain |
 | Legacy tier (Server 2012, Win 10) | **Not verified** — no such CI runners exist; needs a documented lab |
 

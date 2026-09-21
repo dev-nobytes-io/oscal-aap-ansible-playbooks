@@ -1,0 +1,10 @@
+---
+galaxy_info:
+  author: nobytes.io
+  description: >-
+    Read-only collection of Windows application control state -- AppLocker
+    effective policy and App Control for Business (WDAC) deployment status.
+  license: Apache-2.0
+  min_ansible_version: "2.16"
+  galaxy_tags: [compliance, windows, applocker]
+dependencies: []

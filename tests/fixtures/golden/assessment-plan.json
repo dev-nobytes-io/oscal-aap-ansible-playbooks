@@ -678,6 +678,158 @@
           }
         },
         {
+          "uuid": "94eaf430-bbc8-5830-b881-3beb6fca8c73",
+          "title": "Application control covers every file type the control lists",
+          "description": "The control names seven file types. AppLocker has five rule collections, and Microsoft documents what each covers: Executable (.exe, .com), Windows Installer (.msi, .mst, .msp), Scripts (.ps1, .bat, .cmd, .vbs, .js), DLLs (.dll, .ocx) and Packaged apps (.appx). Compiled HTML (.chm), HTML applications (.hta) and control panel applets (.cpl) appear in NO AppLocker rule collection, so an AppLocker-only estate cannot satisfy this control however well configured -- and an organisation that treats AppLocker as equivalent to ML1 application control has a gap it does not know about. Surfacing that is the point of this check. Where App Control for Business is enforcing instead, its code integrity rules are not readable from the collected state and the result is unassessed rather than a guess in either direction.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "win-application-control-file-types",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "TEST",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "partial",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "subject",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "168",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "collect-role",
+              "value": "nobytes.compliance.collect_windows_appcontrol",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evaluator",
+              "value": "nobytes_cca.checks.windows.appcontrol:application_control_covers_required_file_types",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1657",
+                    "statement-ids": [
+                      "ism-1657_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "a5ed4952-fcd1-5587-b28c-1884411a8c8f",
+          "title": "Application control is enforcing on this workstation",
+          "description": "Observes that an application control mechanism is in ENFORCING mode -- AppLocker with at least one rule collection set to Enabled, or App Control for Business running a code integrity policy. Two gaps are stated rather than hidden. \"Implemented\" is a judgement about an operational control, and a policy can enforce while permitting everything, so what is observed is enforcement mode rather than efficacy. And AuditOnly is deliberately not counted as implemented: an audit-mode collection writes an event and blocks nothing, which is the most likely way a workstation looks protected and is not.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "win-application-control-implemented",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "TEST",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "proxy",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "subject",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "168",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "collect-role",
+              "value": "nobytes.compliance.collect_windows_appcontrol",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evaluator",
+              "value": "nobytes_cca.checks.windows.appcontrol:application_control_implemented",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-0843",
+                    "statement-ids": [
+                      "ism-0843_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "uuid": "00e34067-5d42-5928-a4e3-0a898d3b43a1",
           "title": "Internet Explorer 11 is disabled or removed",
           "description": "The control is a binary state and both halves are directly observable: whether the optional feature is present, and whether policy disables the IE11 application. The one residual gap is IE mode inside Microsoft Edge, which is a deliberately supported configuration and is reported in the facts rather than judged, since the control speaks to Internet Explorer 11 as a browser rather than to the MSHTML engine.",
@@ -1066,6 +1218,12 @@
           "description": "Controls in the E8_ML1 baseline with an implemented automated check in this release.",
           "include-controls": [
             {
+              "control-id": "ism-0843",
+              "statement-ids": [
+                "ism-0843_smt"
+              ]
+            },
+            {
               "control-id": "ism-1401",
               "statement-ids": [
                 "ism-1401_smt"
@@ -1099,6 +1257,12 @@
               "control-id": "ism-1654",
               "statement-ids": [
                 "ism-1654_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1657",
+              "statement-ids": [
+                "ism-1657_smt"
               ]
             },
             {
@@ -1184,12 +1348,6 @@
               ]
             },
             {
-              "control-id": "ism-0843",
-              "statement-ids": [
-                "ism-0843_smt"
-              ]
-            },
-            {
               "control-id": "ism-1175",
               "statement-ids": [
                 "ism-1175_smt"
@@ -1229,12 +1387,6 @@
               "control-id": "ism-1585",
               "statement-ids": [
                 "ism-1585_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1657",
-              "statement-ids": [
-                "ism-1657_smt"
               ]
             },
             {
