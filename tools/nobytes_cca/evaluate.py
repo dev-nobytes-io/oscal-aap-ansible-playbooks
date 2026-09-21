@@ -126,6 +126,20 @@ def evaluate_bundle(
         # REQUIRES_ATTESTATION, so they surface in the report with a reason.
         if not check.is_automated:
             continue
+        # A tenant-scoped check has nothing to say about a workstation. Running
+        # it anyway yields `collection-error` -- which is both the wrong reason
+        # (nothing failed to collect; the check simply does not apply) and, at
+        # estate scale, one spurious observation per check per host. The
+        # control still appears in the plan's reviewed-controls and still
+        # reports as undetermined if nothing else answers it, so skipping here
+        # hides nothing.
+        subject_platform = str(bundle.subject.get("platform_family", "")).strip()
+        if (
+            subject_platform
+            and check.platform_family != "common"
+            and check.platform_family != subject_platform
+        ):
+            continue
         if baseline_controls is not None and not any(
             b.control_id in baseline_controls for b in check.controls
         ):

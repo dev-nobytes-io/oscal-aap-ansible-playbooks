@@ -150,6 +150,210 @@
         ]
       },
       {
+        "uuid": "a9998d54-e86b-5538-a2d1-c25eb34c98a6",
+        "type": "service",
+        "title": "Entra Id Tenant",
+        "description": "Assessment coverage provided by nobytes.compliance collectors and nobytes_cca evaluators for entra-id-tenant. This document asserts what is ASSESSED, not what is implemented.",
+        "props": [
+          {
+            "name": "platform-family",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "entra-id"
+          },
+          {
+            "name": "component-key",
+            "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+            "value": "entra-id-tenant"
+          }
+        ],
+        "control-implementations": [
+          {
+            "uuid": "04f96e6b-37f8-52e3-a6d6-250632432970",
+            "source": "../upstream/ism/v2026.09.4/ISM_catalog.json",
+            "description": "Controls this component can produce evidence for. A control absent from this list is not assessed on this platform.",
+            "props": [
+              {
+                "name": "implementation-kind",
+                "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                "value": "assessment"
+              }
+            ],
+            "implemented-requirements": [
+              {
+                "uuid": "63bc32f1-8699-5799-a6d3-1b7c8e24d08a",
+                "control-id": "ism-1504",
+                "description": "Observes that the tenant REQUIRES a second factor, from an enforcing conditional access policy covering all users and all resources. Three residual gaps are stated rather than papered over. A policy is configuration, not evidence that any sign-in actually presented a second factor. The control scopes to services that process, store or communicate sensitive data, and the tenant does not record which of its services those are -- so \"all resources\" is used as the conservative proxy and a narrower, correctly-scoped policy would read here as a near miss. And every real tenant excludes break-glass accounts, so exclusions are counted against a threshold rather than forbidden; the threshold is a judgement, not an observation.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "entra-mfa-conditional-access"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_entra_id"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.entra.authentication:mfa_required_for_organisation_services"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "aggregate"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "24"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "4"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "45afd2be4d56eb097cb1a93d8db3928f9837c65ea2f24462600f5188f5426db4"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1504_smt",
+                    "uuid": "54927c11-16b7-5a62-8c1e-1ea5c821f765",
+                    "description": "Multi-factor authentication is used to authenticate human users to their organisation\u2019s online services that process, store or communicate their organisation\u2019s sensitive data."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Observes that the tenant REQUIRES a second factor, from an enforcing conditional access policy covering all users and all resources. Three residual gaps are stated rather than papered over. A policy is configuration, not evidence that any sign-in actually presented a second factor. The control scopes to services that process, store or communicate sensitive data, and the tenant does not record which of its services those are -- so \"all resources\" is used as the conservative proxy and a narrower, correctly-scoped policy would read here as a near miss. And every real tenant excludes break-glass accounts, so exclusions are counted against a threshold rather than forbidden; the threshold is a judgement, not an observation."
+              },
+              {
+                "uuid": "03120130-0b63-5b60-8554-213abd15e477",
+                "control-id": "ism-1401",
+                "description": "Observes which authentication methods the TENANT POLICY enables, which is a statement about what users may register -- not about what any user actually registered or presented at a sign-in. The control speaks to what multi-factor authentication \"uses\", and the gap between enabled and used is real: a tenant may permit only acceptable methods while a given account holds none of them. Closing it needs sign-in logs, which is PR 10's evidence-provider work. Factor STRENGTH is deliberately out of scope here; phishing resistance is an ML2/ML3 bar under a different control.",
+                "props": [
+                  {
+                    "name": "check-id",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "entra-mfa-factor-types"
+                  },
+                  {
+                    "name": "check-version",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "1.0.0"
+                  },
+                  {
+                    "name": "assessability",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "automated"
+                  },
+                  {
+                    "name": "collect-role",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes.compliance.collect_entra_id"
+                  },
+                  {
+                    "name": "evaluator",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "nobytes_cca.checks.entra.authentication:multi_factor_authentication_factors"
+                  },
+                  {
+                    "name": "method",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "TEST"
+                  },
+                  {
+                    "name": "confidence",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "proxy"
+                  },
+                  {
+                    "name": "coverage",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "partial"
+                  },
+                  {
+                    "name": "scope",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "aggregate"
+                  },
+                  {
+                    "name": "evidence-tier",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "passive"
+                  },
+                  {
+                    "name": "freshness-hours",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "24"
+                  },
+                  {
+                    "name": "history-window-days",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "0"
+                  },
+                  {
+                    "name": "control-revision",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "6"
+                  },
+                  {
+                    "name": "statement-sha256",
+                    "ns": "https://nobytes.io/ns/oscal/cca/1.0",
+                    "value": "44157f97438d319ff0142fd06af7c86abe41fcb2dc7e92708aa26e3c283cf0ec"
+                  }
+                ],
+                "statements": [
+                  {
+                    "statement-id": "ism-1401_smt",
+                    "uuid": "16bc42d3-3f57-5554-be82-f19f338f2f6f",
+                    "description": "Multi-factor authentication uses either: something people have and something people know, or something people have that is unlocked by something people know or are."
+                  }
+                ],
+                "remarks": "Residual assessment gap: Observes which authentication methods the TENANT POLICY enables, which is a statement about what users may register -- not about what any user actually registered or presented at a sign-in. The control speaks to what multi-factor authentication \"uses\", and the gap between enabled and used is real: a tenant may permit only acceptable methods while a given account holds none of them. Closing it needs sign-in logs, which is PR 10's evidence-provider work. Factor STRENGTH is deliberately out of scope here; phishing resistance is an ML2/ML3 bar under a different control."
+              }
+            ]
+          }
+        ]
+      },
+      {
         "uuid": "6f3a1ab5-c7a8-5b40-9ccc-67f45691fdc1",
         "type": "software",
         "title": "Microsoft Office Windows",
@@ -532,7 +736,7 @@
           {
             "name": "platform-family",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0",
-            "value": "linux"
+            "value": "common"
           },
           {
             "name": "component-key",

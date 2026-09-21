@@ -18,7 +18,11 @@ from pathlib import Path
 
 LINK = re.compile(r"\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 
-SKIP_PREFIXES = (".venv", ".ansible", ".git")
+# `blueprint/` holds Commonwealth content vendored byte-for-byte unmodified.
+# Its links are site-absolute for blueprint.asd.gov.au and cannot resolve in a
+# checkout -- and we must not "fix" them, because rewriting the licensed
+# material is exactly what the CC BY 4.0 attribution says we do not do.
+SKIP_PREFIXES = (".venv", ".ansible", ".git", "blueprint/")
 SKIP_PARTS = ("collections/ansible_collections/community",)
 
 

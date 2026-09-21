@@ -1,0 +1,72 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: entra-mfa-conditional-access
+version: 1.0.0
+title: An enforcing conditional access policy requires MFA for all users and resources
+platform_family: entra-id
+component: entra-id-tenant
+
+controls:
+  - id: ism-1504
+    statement_id: ism-1504_smt
+    control_revision: "4"
+    statement_sha256: 45afd2be4d56eb097cb1a93d8db3928f9837c65ea2f24462600f5188f5426db4
+    coverage: partial
+    rationale: >-
+      Observes that the tenant REQUIRES a second factor, from an enforcing
+      conditional access policy covering all users and all resources. Three
+      residual gaps are stated rather than papered over. A policy is
+      configuration, not evidence that any sign-in actually presented a second
+      factor. The control scopes to services that process, store or communicate
+      sensitive data, and the tenant does not record which of its services those
+      are -- so "all resources" is used as the conservative proxy and a
+      narrower, correctly-scoped policy would read here as a near miss. And
+      every real tenant excludes break-glass accounts, so exclusions are counted
+      against a threshold rather than forbidden; the threshold is a judgement,
+      not an observation.
+
+method: TEST
+confidence: proxy
+assessability: automated
+scope: aggregate
+evidence_tier: passive
+freshness_hours: 24
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_entra_id
+  facts:
+    required:
+      - entra.conditional_access_policies
+    optional:
+      - entra.authentication_strength_policies
+
+evaluator: nobytes_cca.checks.entra.authentication:mfa_required_for_organisation_services
+parameters:
+  # FALSE at ML1 on purpose. ASD's Essential Eight mapping puts "Any" MFA at
+  # ML1 and phishing-resistant only at ML2/ML3, so a deployment assessing
+  # against ML2 or ML3 sets this true. Defaulting it true would fail ML1
+  # tenants for missing a bar ML1 does not set.
+  require_phishing_resistant: false
+  # Break-glass accounts must be excluded from MFA policy or a tenant can lock
+  # itself out entirely. Zero would fail every real tenant; unbounded would let
+  # a policy exclude the organisation and still pass.
+  max_excluded_principals: 5
+
+references:
+  - source: ASD's Blueprint for Secure Cloud — Conditional access, strong authentication
+    url: >-
+      https://blueprint.asd.gov.au/configuration/entra-id/protection/conditional-access/policies/strong-authentication/
+    version: v1.4.0
+    blueprint_page: content/en/configuration/entra-id/protection/conditional-access/policies/strong-authentication.md
+    note: >-
+      ASD's as-built policy "USR - G - Require strong auth", targeting all users
+      and all resources with an authentication-strength grant.
+  - source: ASD's Blueprint for Secure Cloud — Authentication strengths
+    url: https://blueprint.asd.gov.au/configuration/entra-id/protection/conditional-access/authentication-strengths/
+    version: v1.4.0
+    blueprint_page: content/en/configuration/entra-id/protection/conditional-access/authentication-strengths.md
+    note: >-
+      Defines "Phishing-resistant MFA and TAP" (Windows Hello for Business,
+      passkeys/FIDO2, certificate-based multifactor, plus Temporary Access
+      Pass). Used when require_phishing_resistant is set for an ML2/ML3 run.

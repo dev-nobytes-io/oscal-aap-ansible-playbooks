@@ -8,9 +8,12 @@ One page per target family, each answering the same questions:
 - Legacy support boundaries and which execution environment is required
 - How to verify the collector works, and what cannot be verified without real kit
 
-Planned: `windows.md`, `linux.md`, `entra-id.md`, `active-directory.md`,
-`adcs.md`, `adfs.md`, `keycloak.md`, `exchange.md`, `cyberark.md`, `netapp.md`,
-`splunk.md`, `change-auditor.md`, `vmware.md`, `proxmox.md`, `xcp-ng.md`,
-`containers.md`, `kubernetes.md`, `network.md`, `cloud.md`.
+Delivered: [`windows.md`](windows.md), [`linux.md`](linux.md),
+[`entra-id.md`](entra-id.md).
+
+Planned: `active-directory.md`, `adcs.md`, `adfs.md`, `keycloak.md`,
+`exchange.md`, `cyberark.md`, `netapp.md`, `splunk.md`, `change-auditor.md`,
+`vmware.md`, `proxmox.md`, `xcp-ng.md`, `containers.md`, `kubernetes.md`,
+`network.md`, `cloud.md`.
 
 Each page ships with the pull request that delivers its collector.

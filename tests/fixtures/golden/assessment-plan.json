@@ -20,6 +20,158 @@
     "local-definitions": {
       "activities": [
         {
+          "uuid": "f2e516eb-df5a-5b1b-8b15-319c4c65bd34",
+          "title": "An enforcing conditional access policy requires MFA for all users and resources",
+          "description": "Observes that the tenant REQUIRES a second factor, from an enforcing conditional access policy covering all users and all resources. Three residual gaps are stated rather than papered over. A policy is configuration, not evidence that any sign-in actually presented a second factor. The control scopes to services that process, store or communicate sensitive data, and the tenant does not record which of its services those are -- so \"all resources\" is used as the conservative proxy and a narrower, correctly-scoped policy would read here as a near miss. And every real tenant excludes break-glass accounts, so exclusions are counted against a threshold rather than forbidden; the threshold is a judgement, not an observation.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "entra-mfa-conditional-access",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "TEST",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "proxy",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "aggregate",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "24",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "collect-role",
+              "value": "nobytes.compliance.collect_entra_id",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evaluator",
+              "value": "nobytes_cca.checks.entra.authentication:mfa_required_for_organisation_services",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1504",
+                    "statement-ids": [
+                      "ism-1504_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "uuid": "9337d0e1-ed49-5039-9cbf-e3611aef2783",
+          "title": "Enabled authentication methods can form an acceptable multi-factor pair",
+          "description": "Observes which authentication methods the TENANT POLICY enables, which is a statement about what users may register -- not about what any user actually registered or presented at a sign-in. The control speaks to what multi-factor authentication \"uses\", and the gap between enabled and used is real: a tenant may permit only acceptable methods while a given account holds none of them. Closing it needs sign-in logs, which is PR 10's evidence-provider work. Factor STRENGTH is deliberately out of scope here; phishing resistance is an ML2/ML3 bar under a different control.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "entra-mfa-factor-types",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "TEST",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "proxy",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "aggregate",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "24",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "automated",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "collect-role",
+              "value": "nobytes.compliance.collect_entra_id",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evaluator",
+              "value": "nobytes_cca.checks.entra.authentication:multi_factor_authentication_factors",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1401",
+                    "statement-ids": [
+                      "ism-1401_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "uuid": "f3ee636c-3d1e-590b-9f4c-376aa02470d2",
           "title": "Multi-factor authentication offered to customers of online customer services",
           "description": "Customers are not authenticated by the corporate directory. Customer identity almost always lives in a separate estate -- a B2C tenant, a bespoke portal, or a provider's platform -- which is outside the inventory this project assesses. Answering it from the corporate tenant would describe staff, not customers, and would be wrong in the direction that matters: it would report a pass.",
@@ -914,6 +1066,12 @@
           "description": "Controls in the E8_ML1 baseline with an implemented automated check in this release.",
           "include-controls": [
             {
+              "control-id": "ism-1401",
+              "statement-ids": [
+                "ism-1401_smt"
+              ]
+            },
+            {
               "control-id": "ism-1488",
               "statement-ids": [
                 "ism-1488_smt"
@@ -929,6 +1087,12 @@
               "control-id": "ism-1501",
               "statement-ids": [
                 "ism-1501_smt"
+              ]
+            },
+            {
+              "control-id": "ism-1504",
+              "statement-ids": [
+                "ism-1504_smt"
               ]
             },
             {
@@ -1038,12 +1202,6 @@
               ]
             },
             {
-              "control-id": "ism-1401",
-              "statement-ids": [
-                "ism-1401_smt"
-              ]
-            },
-            {
               "control-id": "ism-1485",
               "statement-ids": [
                 "ism-1485_smt"
@@ -1053,12 +1211,6 @@
               "control-id": "ism-1486",
               "statement-ids": [
                 "ism-1486_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1504",
-              "statement-ids": [
-                "ism-1504_smt"
               ]
             },
             {

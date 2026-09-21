@@ -38,6 +38,7 @@
     "platform_family": {
       "type": "string",
       "enum": [
+        "common",
         "windows",
         "linux",
         "entra-id",
@@ -59,7 +60,7 @@
         "cloud",
         "organisation"
       ],
-      "description": "The platform the evidence comes from. `organisation` is for controls that belong to no system we operate -- a third party's authentication configuration, or an approval record. Those are only ever `attested`."
+      "description": "The platform the evidence comes from. `common` is for a check whose evaluator handles more than one platform -- operating-system support dates, say, which are read the same way everywhere. `organisation` is for controls that belong to no system we operate; those are only ever `attested`."
     },
     "component": {
       "type": "string",

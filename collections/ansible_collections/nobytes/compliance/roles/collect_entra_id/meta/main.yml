@@ -1,0 +1,10 @@
+---
+galaxy_info:
+  author: nobytes.io
+  description: >-
+    Read-only collection of Microsoft Entra ID tenant policy state via Microsoft
+    Graph. Issues GET requests only; the single POST is the OAuth token request.
+  license: Apache-2.0
+  min_ansible_version: "2.16"
+  galaxy_tags: [compliance, entra, identity]
+dependencies: []

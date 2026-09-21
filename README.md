@@ -177,8 +177,8 @@ content, gradually.
 | 05 | Component-definition model + Windows collectors | merged |
 | 06 | Linux collectors + end-of-life dataset | merged |
 | 07 | Dual execution environments + AAP/AWX configuration-as-code | merged |
-| 08 | Attestation model — declare what no tool can observe | **this PR** |
-| 09 | Identity collectors — Entra ID, ADFS, Keycloak | next |
+| 08 | Attestation model — declare what no tool can observe | open |
+| 09 | Entra ID collectors + Blueprint vendoring | **this PR** |
 | 10 | Evidence providers — Splunk, Change Auditor | planned |
 | 11 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
 | 12+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |

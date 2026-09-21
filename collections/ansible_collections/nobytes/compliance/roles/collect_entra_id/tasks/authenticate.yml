@@ -1,0 +1,35 @@
+---
+# THE ONE SANCTIONED NON-GET IN ANY COLLECT ROLE.
+#
+# Obtaining an OAuth token is a POST, and it changes nothing in the tenant. But
+# "it is only authentication" is exactly the reasoning that would later excuse a
+# second POST, so the exception is pinned rather than argued: this task file
+# exists to get a token and does nothing else, and
+# tests/test_collectors_are_read_only.py permits a non-GET only from a file
+# named here and only against the identity platform's host. Any other non-GET
+# in any collect role fails the suite.
+#
+# The credential itself is the real control. The app registration holds
+# read-only application permissions -- Policy.Read.All, Directory.Read.All,
+# UserAuthenticationMethod.Read.All -- so even a compromised collector cannot
+# write. See docs/13-security-model.md.
+
+- name: Obtain a Microsoft Graph access token
+  ansible.builtin.uri:
+    url: >-
+      {{ collect_entra_id_login_base }}/{{ collect_entra_id_tenant_id }}/oauth2/v2.0/token
+    method: POST
+    body_format: form-urlencoded
+    body:
+      grant_type: client_credentials
+      client_id: "{{ collect_entra_id_client_id }}"
+      client_secret: "{{ collect_entra_id_client_secret }}"
+      scope: https://graph.microsoft.com/.default
+    status_code: [200]
+    timeout: "{{ collect_entra_id_timeout }}"
+  register: collect_entra_id_token_response
+  # The response body carries a bearer token for the whole tenant. It must not
+  # reach a log, a job output, or an artefact.
+  no_log: true
+  changed_when: false
+  check_mode: false

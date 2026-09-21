@@ -1,0 +1,65 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: entra-mfa-factor-types
+version: 1.0.0
+title: Enabled authentication methods can form an acceptable multi-factor pair
+platform_family: entra-id
+component: entra-id-tenant
+
+controls:
+  - id: ism-1401
+    statement_id: ism-1401_smt
+    control_revision: "6"
+    statement_sha256: 44157f97438d319ff0142fd06af7c86abe41fcb2dc7e92708aa26e3c283cf0ec
+    coverage: partial
+    rationale: >-
+      Observes which authentication methods the TENANT POLICY enables, which is
+      a statement about what users may register -- not about what any user
+      actually registered or presented at a sign-in. The control speaks to what
+      multi-factor authentication "uses", and the gap between enabled and used
+      is real: a tenant may permit only acceptable methods while a given account
+      holds none of them. Closing it needs sign-in logs, which is PR 10's
+      evidence-provider work. Factor STRENGTH is deliberately out of scope here;
+      phishing resistance is an ML2/ML3 bar under a different control.
+
+method: TEST
+confidence: proxy
+assessability: automated
+scope: aggregate
+evidence_tier: passive
+freshness_hours: 24
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_entra_id
+  facts:
+    required:
+      - entra.authentication_methods_policy
+
+evaluator: nobytes_cca.checks.entra.authentication:multi_factor_authentication_factors
+parameters:
+  # Email OTP cannot form either factor pair the control accepts: a code sent
+  # to another mailbox is a second account, not "something people have".
+  disallowed_methods: [email]
+  # Reported in the evidence, not judged. A Temporary Access Pass is a
+  # time-limited bootstrap credential for registering a real factor, and ASD's
+  # Blueprint enables it deliberately.
+  reported_not_judged: [temporaryaccesspass]
+
+references:
+  - source: ASD's Blueprint for Secure Cloud — Authentication methods policies
+    url: https://blueprint.asd.gov.au/configuration/entra-id/protection/authentication-methods/policies/
+    version: v1.4.0
+    blueprint_page: content/en/configuration/entra-id/protection/authentication-methods/policies.md
+    note: >-
+      ASD's as-built method posture (FIDO2 and Microsoft Authenticator enabled;
+      SMS, voice, email OTP and OATH disabled). Note that the disabled set there
+      reflects ML2/ML3 phishing resistance, NOT ism-1401, which is why this
+      check does not adopt it wholesale.
+  - source: ASD's Blueprint for Secure Cloud — Essential Eight, multi-factor authentication
+    url: https://blueprint.asd.gov.au/security-and-governance/essential-eight/multi-factor-authentication/
+    version: v1.4.0
+    blueprint_page: content/en/security-and-governance/essential-eight/multi-factor-authentication.md
+    note: >-
+      ASD's own mapping of the MFA control families to maturity levels, which
+      places "Any" MFA at ML1 and phishing-resistant only at ML2 and ML3.

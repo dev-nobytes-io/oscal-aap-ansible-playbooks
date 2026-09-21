@@ -13,6 +13,7 @@ the security model does not rest on it -- see docs/13-security-model.md.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -66,6 +67,42 @@ CONDITIONALLY_MUTATING = {
 #: job is to get a token, and any other POST in a collect role fails.
 TOKEN_TASK_FILES = frozenset({"authenticate.yml"})
 TOKEN_HOST_SUFFIXES = ("login.microsoftonline.com", "login.microsoftonline.us")
+
+
+def _role_defaults(task_file: Path) -> dict:
+    """The role's `defaults/main.yml`, flattened to plain strings."""
+    defaults = task_file.parent.parent / "defaults" / "main.yml"
+    if not defaults.exists():
+        return {}
+    loaded = yaml.safe_load(defaults.read_text(encoding="utf-8")) or {}
+    return {k: v for k, v in loaded.items() if isinstance(v, (str, int))}
+
+
+def _resolve_url(url: str, task_file: Path) -> str:
+    """Substitute a role's default values into a templated URL.
+
+    A collector's URL is almost always `{{ some_base }}/path`, so parsing it
+    raw yields no host and the destination check would silently pass on an
+    empty string -- a rule that cannot see its target is not a rule. Resolving
+    against the role's declared defaults checks the host this role SHIPS
+    pointing at. A deployment that overrides the base is making a deliberate,
+    reviewable change; a hardcoded wrong host is not.
+    """
+    resolved = url
+    for name, value in _role_defaults(task_file).items():
+        resolved = re.sub(r"{{\s*" + re.escape(name) + r"\s*}}", str(value), resolved)
+    # Collapse whitespace introduced by YAML folded scalars.
+    resolved = " ".join(resolved.split())
+
+    # Only the DESTINATION has to be establishable. A tenant id or resource id
+    # later in the path is supplied per deployment and stays templated; that
+    # does not change which host is being contacted. An unresolved scheme or
+    # host does, so that fails closed.
+    head = resolved.split("/", 3)
+    authority = "/".join(head[:3])
+    if "{{" in authority or not authority.startswith("https://"):
+        return "unresolved://" + resolved
+    return authority
 
 
 def _collect_role_task_files() -> list:
@@ -146,7 +183,7 @@ def test_conditionally_mutating_modules_declare_a_read_only_method(path: Path) -
             if method in safe_methods:
                 continue
             # Not a read-only method: only the token exception may proceed.
-            url = str((args or {}).get("url", ""))
+            url = _resolve_url(str((args or {}).get("url", "")), path)
             host = urlsplit(url).hostname or ""
             assert path.name in TOKEN_TASK_FILES and host.endswith(TOKEN_HOST_SUFFIXES), (
                 f"{path.relative_to(ROOT)}: task {task.get('name')!r} calls {module} "
@@ -178,6 +215,38 @@ def test_the_conditionally_mutating_rule_actually_rejects_a_write() -> None:
     assert not host.endswith(TOKEN_HOST_SUFFIXES), (
         "a Graph host must not satisfy the token exception"
     )
+
+
+def test_url_resolution_fails_closed_and_still_rejects_a_wrong_host() -> None:
+    """The destination check must survive templating without going blind.
+
+    Collector URLs are templated, so a naive parse yields no host and the
+    destination check passes on an empty string -- a rule that cannot see its
+    target is not a rule. `_resolve_url` substitutes the role's defaults; these
+    cases pin the three behaviours that matter.
+    """
+    token_task = (
+        ROLES / "collect_entra_id" / "tasks" / "authenticate.yml"
+    )
+    if not token_task.exists():
+        pytest.skip("no Entra collector present to resolve defaults from")
+
+    # 1. The real token URL resolves to the identity platform, even though the
+    #    tenant id later in the path stays templated.
+    resolved = _resolve_url(
+        "{{ collect_entra_id_login_base }}/{{ collect_entra_id_tenant_id }}/oauth2/v2.0/token",
+        token_task,
+    )
+    assert (urlsplit(resolved).hostname or "").endswith(TOKEN_HOST_SUFFIXES)
+
+    # 2. The same shape pointed at Graph does NOT satisfy the exception.
+    graph = _resolve_url("{{ collect_entra_id_graph_base }}/policies/x", token_task)
+    assert not (urlsplit(graph).hostname or "").endswith(TOKEN_HOST_SUFFIXES)
+
+    # 3. An unresolvable host fails closed rather than parsing to nothing.
+    unknown = _resolve_url("{{ some_undeclared_base }}/token", token_task)
+    assert urlsplit(unknown).scheme == "unresolved"
+    assert not (urlsplit(unknown).hostname or "").endswith(TOKEN_HOST_SUFFIXES)
 
 
 def test_collect_roles_exist_and_were_scanned() -> None:
