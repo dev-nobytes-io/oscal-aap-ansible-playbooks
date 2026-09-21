@@ -30,7 +30,7 @@ BLUEPRINT_RELEASE ?= v1.4.0
 # Default baseline for coverage and local assessment runs.
 BASELINE    ?= E8_ML1
 
-.PHONY: help bootstrap deps lint docs generate validate test assess-local coverage report fetch clean ee-context ee-build
+.PHONY: help bootstrap deps lint docs generate validate test assess-local coverage report annex fetch clean ee-context ee-build
 
 help: ## Show this help
 	@awk 'BEGIN{FS=":.*?## "} /^[a-zA-Z_-]+:.*?## /{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -82,6 +82,9 @@ assess-local: ## End-to-end evaluate -> emit using the bundled fixtures
 report: ## Render the human-readable assessment report (markdown + html)
 	$(BIN)python tools/cca.py report --format markdown
 	$(BIN)python tools/cca.py report --format html
+
+annex: ## Populate ASD's SSP Annex from the assessment results
+	$(BIN)python tools/cca.py annex
 
 coverage: ## Report control coverage for a baseline (honest, not flattering)
 	$(BIN)python tools/cca.py coverage --baseline $(BASELINE)

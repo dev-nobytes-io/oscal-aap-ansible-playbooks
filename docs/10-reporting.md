@@ -11,7 +11,8 @@ this page covers the two that exist.
 |---|---|---|
 | OSCAL documents | assessment-plan, assessment-results, POA&M | **Always produced** |
 | Human-readable report | Markdown, self-contained HTML | **Delivered** |
-| ASD SSP Annex + Essential Eight | populated `.xlsx` / `.docx` | Planned — templates vendored |
+| **ASD SSP Annex** | populated `.xlsx` | **Delivered** |
+| Essential Eight template | populated `.docx` | Planned — template vendored |
 | Obligation reports | PSPF ICT view, APP 11 evidence pack, SOCI CIRMP | Planned |
 
 ```bash
@@ -90,10 +91,75 @@ phone. It escapes every value it renders — the statements are Commonwealth tex
 and the rest is our own, but a renderer that trusts its input is a renderer
 that will one day be handed something else, and a test pins that.
 
-Document formats that genuinely need third-party libraries — the SSP Annex
-`.xlsx`, the Essential Eight `.docx` — will need `openpyxl` and `python-docx`.
-Those live in a separate module, imported lazily, so the evaluator's
-stdlib-only constraint survives.
+The SSP Annex needs no third-party library either — see below. The Essential
+Eight `.docx` will need `python-docx`, in a separate lazily-imported module so
+the evaluator's stdlib-only constraint survives.
+
+## The SSP Annex
+
+```bash
+make annex        # -> out/ssp-annex-populated.xlsx
+```
+
+This is the artefact an agency hands an IRAP assessor, so two things matter
+more than convenience.
+
+### The qualifier has to reach the spreadsheet
+
+ASD's Implementation Status vocabulary — taken from the template's own Data
+sheet — is `Not Assessed`, `Effective`, `Alternate Control`, `Not Implemented`,
+`Ineffective`, `No Visibility`, `Not Applicable`. It has **no room** for the
+difference between a control satisfied on direct evidence and one satisfied on
+proxy evidence. Both write `Effective`.
+
+So the **Implementation Comments** cell carries it, and a test asserts the two
+comments differ. A cell reading only "Effective" would be the most expensive
+omission in this codebase, because somebody uses it to decide whether a system
+may hold PROTECTED data.
+
+### The mapping, and why each one
+
+| Assessment | ASD status | Reasoning |
+|---|---|---|
+| `satisfied` | `Effective` | Observed to meet the control, at the stated confidence |
+| `not-satisfied` | `Ineffective` | **Not** "Not Implemented" — we observed the required state is not met; whether the control is *absent* or *present-but-misconfigured* was not determined, and "Not Implemented" asserts the former |
+| `requires-attestation` | `No Visibility` | Literally true: no tool can see a third party's tenant or an approval record. The comment names where the evidence lives and who owns it |
+| `unreachable`, `partial-population`, `collection-error`, `insufficient-privilege` | `No Visibility` | We **tried** and could not see |
+| `not-implemented`, `no-subject-in-scope`, `insufficient-history` | `Not Assessed` | We **did not try** |
+
+Collapsing the last two groups would tell an assessor we looked when we did
+not.
+
+Rows outside the assessed baseline are **left exactly as ASD shipped them** —
+an agency may already have completed them, and overwriting destroys their work.
+
+### The template is edited, not rebuilt
+
+The obvious implementation loads the workbook with a spreadsheet library and
+saves it. That was tried first. `openpyxl` warns:
+
+```
+UserWarning: Conditional Formatting extension is not supported and will be removed
+UserWarning: Data Validation extension is not supported and will be removed
+```
+
+Which means handing an agency a submission template whose Implementation Status
+dropdowns no longer exist. Silently degrading a Commonwealth artefact to save
+effort is exactly what this project refuses elsewhere.
+
+So the Annex writer edits the Controls sheet XML inside the zip and copies every
+other part through byte-for-byte. Measured on the real template: **25 of 26
+parts identical**, all four conditional-formatting blocks and the validation
+`extLst` intact. Tests pin that, so nobody swaps the implementation for a
+simpler one without seeing what it costs.
+
+It also means **no third-party dependency at all**, so the Annex can be produced
+inside `ee-legacy` in an enclave — which is exactly where an agency air-gapped
+enough to need this is working.
+
+The vendored template is opened read-only and never modified; it is checksummed
+in `blueprint/MANIFEST.json` and a test asserts the hash still matches after a
+populate run.
 
 ## Related
 

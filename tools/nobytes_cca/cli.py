@@ -204,6 +204,58 @@ def cmd_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_annex(args: argparse.Namespace) -> int:
+    """Populate ASD's SSP Annex from the emitted assessment results.
+
+    The vendored template is opened read-only and a copy is written. It is
+    Commonwealth material redistributed unmodified under CC BY 4.0 and
+    checksummed; modifying it in place would break both the attribution and
+    `make validate`.
+    """
+    from .report.annex import populate
+    from .report.model import load
+
+    out = Path(args.out) if args.out else project_root() / "out"
+    plan_path = Path(args.plan) if args.plan else out / "assessment-plan.json"
+    results_path = Path(args.results) if args.results else out / "assessment-results.json"
+    for path in (plan_path, results_path):
+        if not path.exists():
+            print(f"missing {path}; run `cca evaluate` first", file=sys.stderr)
+            return 1
+
+    template = (
+        Path(args.template)
+        if args.template
+        else project_root()
+        / "blueprint"
+        / "static"
+        / "content"
+        / "files"
+        / "Blueprint System Security Plan Annex Template (June 2026).xlsx"
+    )
+    destination = Path(args.output) if args.output else out / "ssp-annex-populated.xlsx"
+
+    report = load(plan_path, results_path, Catalog.load(ism_catalog()))
+    try:
+        summary = populate(report, template, destination)
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"FAIL {exc}", file=sys.stderr)
+        return 1
+
+    print(f"wrote {summary['destination']}")
+    print(
+        f"  {summary['written']} of {summary['baseline_controls']} baseline "
+        f"controls written; rows outside the baseline left untouched"
+    )
+    for status, count in summary["by_status"].items():
+        print(f"      {status:<18} {count}")
+    print(
+        "\n  Generated, not authored. Every Implementation Comment states the "
+        "\n  confidence behind its status. Review before submission."
+    )
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="cca", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -220,6 +272,13 @@ def main() -> int:
     rep.add_argument("--results", default=None, help="default: <out>/assessment-results.json")
     rep.add_argument("--out", default=None, help="default: <project root>/out")
     rep.add_argument("--output", default=None, help="explicit output file path")
+
+    ann = sub.add_parser("annex", help="populate ASD's SSP Annex from assessment results")
+    ann.add_argument("--plan", default=None)
+    ann.add_argument("--results", default=None)
+    ann.add_argument("--out", default=None, help="default: <project root>/out")
+    ann.add_argument("--template", default=None, help="default: the vendored Blueprint template")
+    ann.add_argument("--output", default=None, help="default: <out>/ssp-annex-populated.xlsx")
 
     gen = sub.add_parser("generate", help="regenerate derived OSCAL artefacts")
     gen.add_argument("--out", default=None, help="default: <project root>/oscal")
@@ -244,6 +303,7 @@ def main() -> int:
         "coverage": cmd_coverage,
         "generate": cmd_generate,
         "report": cmd_report,
+        "annex": cmd_annex,
         "evaluate": cmd_evaluate,
     }[args.command](args)
 

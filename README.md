@@ -152,6 +152,7 @@ make test         # canary, invariant, purity and golden-OSCAL tests
 make coverage     # honest control coverage for a baseline
 make assess-local # end-to-end evaluate -> OSCAL against fixture bundles
 make report       # human-readable assessment report (markdown + html)
+make annex        # populate ASD's SSP Annex (.xlsx) from the results
 ```
 
 Targets for work that has not landed yet print an explicit `SKIP` naming the
@@ -180,7 +181,7 @@ content, gradually.
 | 07 | Dual execution environments + AAP/AWX configuration-as-code | merged |
 | 08 | Attestation model — declare what no tool can observe | open |
 | 09 | Entra ID collectors + Blueprint vendoring | open |
-| 10 | Reporting — human-readable assessment report | **this PR** |
+| 10 | Reporting — human-readable report + ASD SSP Annex | **this PR** |
 | 11 | Evidence providers — Splunk, Change Auditor | planned |
 | 12 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
 | 13+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
