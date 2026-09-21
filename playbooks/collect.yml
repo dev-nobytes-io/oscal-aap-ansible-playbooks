@@ -7,7 +7,11 @@
 #   ansible-playbook playbooks/collect.yml -i inventory/example.yml
 
 - name: Collect compliance evidence
-  hosts: "{{ cca_target | default('all') }}"
+  # Tenants are excluded here and collected by the play below. They are
+  # subjects, not hosts: nothing is executed on an endpoint, and running the
+  # Windows/Linux collectors against one would derive a platform family from
+  # the control node's own facts.
+  hosts: "{{ cca_target | default('all:!entra_tenants') }}"
   gather_facts: true
   # Assessment must never mutate. Any task that would is a bug, not a setting.
   any_errors_fatal: false
@@ -38,6 +42,38 @@
             name: nobytes.compliance.collect_linux_base
 
     - name: Write this host's fact bundle
+      ansible.builtin.include_role:
+        name: nobytes.compliance.fact_bundle
+        tasks_from: finalise
+
+# A tenant is one subject with a population inside it, reached over an API from
+# the control node. It gets its own play because `hosts` for the play above
+# means "machines we can log into", and a directory tenant is not one.
+#
+# This play is why the role exists at all: until PR 14 `collect_entra_id` was
+# referenced by nothing but its two registry entries, so the Entra collectors
+# had never run from any playbook -- the same class of defect as the missing
+# `ansible.cfg` found in PR 10, where documented behaviour had never worked
+# from a clean checkout.
+- name: Collect Entra ID tenant evidence
+  hosts: "{{ cca_tenant_target | default('entra_tenants') }}"
+  # The API is called FROM the control node. There is no endpoint to reach.
+  connection: local
+  gather_facts: true
+  any_errors_fatal: false
+  vars:
+    cca_platform_family: entra-id
+
+  tasks:
+    - name: Guard the redaction policy before anything is collected
+      ansible.builtin.include_role:
+        name: nobytes.compliance.fact_bundle
+
+    - name: Collect Entra ID tenant state
+      ansible.builtin.include_role:
+        name: nobytes.compliance.collect_entra_id
+
+    - name: Write this tenant's fact bundle
       ansible.builtin.include_role:
         name: nobytes.compliance.fact_bundle
         tasks_from: finalise

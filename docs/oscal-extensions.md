@@ -36,12 +36,34 @@ specification to read them against.
 | `check-id`, `check-version`, `collect-role`, `evaluator` | implemented-requirement, observation | free text |
 | `control-revision`, `statement-sha256`, `catalog-version` | implemented-requirement, observation, result | free text |
 | `freshness-hours`, `history-window-days` | implemented-requirement | integer |
-| `population-total`, `population-assessed`, `population-failing`, `population-na` | finding | integer |
+| `population-total` | finding | integer — in-scope subjects from INVENTORY, estate-wide |
+| `population-assessed`, `population-failing`, `population-na` | finding | integer — per control, counting distinct SUBJECTS |
+| `population-basis` | finding | `subject` · `aggregate-subject` |
 | `fact-bundle-sha256`, `aggregation-key`, `run-id`, `system-id` | various | free text |
 | `poam-status` | poam-item | `open` · `in-progress` · `risk-accepted` · `remediated` · `closed` · `deferred` |
 
 `poam-status` is a prop because `poam-item` has no status field in 1.1.2 — the
 same approach FedRAMP takes.
+
+### The population props mean something specific
+
+`population-total` is a property of the **estate**: how many subjects were in
+scope, from inventory. It is the same on every finding.
+
+The other three are per **control**, and count **distinct subjects**, not
+evaluations and not the run. `assessed` is the subjects the control was
+*determined* for; a subject it was not determined for appears in neither the
+numerator nor its complement, and `status.remarks` says so rather than leaving
+a reader to assume the difference passed.
+
+`population-basis` says what is being counted. An **aggregate** check judges a
+population from inside one subject — a directory tenant rather than a laptop —
+so its denominator is its own aggregate subjects and never the host estate.
+Reporting a whole tenant as "1 of 50 assessed subjects" would describe a
+different population from the one judged.
+
+All of this was wrong until PR 14, in output rather than in tooling. See
+[ADR 0014](adr/0014-population-figures-are-per-control-and-count-subjects.md).
 
 ## How each status is actually encoded
 

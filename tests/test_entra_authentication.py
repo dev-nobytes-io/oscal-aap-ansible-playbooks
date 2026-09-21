@@ -304,15 +304,23 @@ def test_a_check_with_no_subject_is_not_reported_as_our_failure() -> None:
     catalog = Catalog.load(catalog_file)
     baseline = catalog.baseline(e8="ML1")
 
+    # A run that covers only hosts. Built by EXCLUDING tenants rather than by
+    # asserting none exist: the golden fixtures now include one, because the
+    # aggregate emit path needs exercising, and a test whose premise is "nobody
+    # has added a tenant yet" stops testing anything the moment somebody does.
     fixtures = sorted((Path(__file__).parent / "fixtures" / "bundles").glob("*.json"))
     assert fixtures, "no fixture bundles; this test would pass vacuously"
-    assert not any(
-        str(load_bundle(f).subject.get("platform_family")) == "entra-id" for f in fixtures
-    ), "a fixture tenant exists, so this test no longer exercises the empty-scope path"
+    bundles = [load_bundle(f) for f in fixtures]
+    host_only = [b for b in bundles if str(b.subject.get("platform_family")) != "entra-id"]
+    assert host_only, "no host fixtures; the empty-scope path cannot be exercised"
+    assert len(host_only) < len(bundles), (
+        "no tenant fixture exists, so excluding one proves nothing -- this test "
+        "would pass whether or not the scoping logic works"
+    )
 
     evaluations = []
-    for fixture in fixtures:
-        evaluations.extend(evaluate_bundle(registry, load_bundle(fixture), baseline))
+    for bundle in host_only:
+        evaluations.extend(evaluate_bundle(registry, bundle, baseline))
 
     undetermined = unassessed_controls(baseline, registry, evaluations)
 

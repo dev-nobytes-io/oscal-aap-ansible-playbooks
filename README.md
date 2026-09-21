@@ -184,11 +184,14 @@ content, gradually.
 | 09 | Entra ID collectors + Blueprint vendoring | merged |
 | 10 | Reporting — human-readable report + ASD SSP Annex | merged |
 | 11 | Windows application control — AppLocker / WDAC | merged |
-| 12 | User application hardening — unsupported applications | open |
-| 13 | Application control reaches user profiles and temp folders | **this PR** |
-| 14 | Evidence providers — Splunk, Change Auditor | planned |
-| 15 | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
-| 16+ | CyberArk, AD, ADCS, Exchange, NetApp, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| 12 | User application hardening — unsupported applications | merged |
+| 13 | Application control reaches user profiles and temp folders | merged |
+| 14 | Population arithmetic, aggregate scope, and the guards that could not see | **this PR** |
+| 15 | Active Directory privileged access | planned |
+| 16 | Fact store — unblocks the 12 temporal ML1 controls | planned |
+| 17 | Web browser hardening | planned |
+| 18+ | CyberArk, ADCS, ADFS, Keycloak, Exchange, NetApp, Splunk, Change Auditor, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| then | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
 | last | Remediation scaffolding — opt-in, separated | planned |
 
 Assessment comes first throughout. Remediation is deliberately last, opt-in and

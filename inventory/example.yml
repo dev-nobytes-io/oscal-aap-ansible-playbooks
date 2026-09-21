@@ -34,3 +34,14 @@ all:
           hosts:
             srv-2012-01.example.invalid:
               cca_asset_id: corp.example.invalid/SRV-2012-01
+
+    # A tenant is a SUBJECT, not a host. It has no estate tier because no
+    # execution environment manages it -- the control node calls Graph. The
+    # credentials belong in a vault or an AAP credential, never here.
+    entra_tenants:
+      hosts:
+        contoso.onmicrosoft.com:
+          cca_asset_id: contoso.onmicrosoft.com
+          collect_entra_id_tenant_id: "{{ vault_entra_tenant_id | default('') }}"
+          collect_entra_id_client_id: "{{ vault_entra_client_id | default('') }}"
+          collect_entra_id_client_secret: "{{ vault_entra_client_secret | default('') }}"

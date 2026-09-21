@@ -1,0 +1,51 @@
+{
+  "schema": "https://nobytes.io/schema/oscal-cca/fact-bundle/1.0",
+  "run_id": "fixture:entra-tenant",
+  "collected": "2026-09-20T02:14:07+10:00",
+  "subject": {
+    "asset_id": "contoso.onmicrosoft.com",
+    "description": "Entra ID tenant contoso.onmicrosoft.com",
+    "platform_family": "entra-id",
+    "estate_tier": "current"
+  },
+  "collector": {
+    "collection": "nobytes.compliance",
+    "version": "0.1.0"
+  },
+  "marking": {
+    "system": "pspf",
+    "value": "OFFICIAL: Sensitive"
+  },
+  "facts": {
+    "entra.authentication_methods_policy": {
+      "collected": "2026-09-20T02:14:06+10:00",
+      "source": "graph:/policies/authenticationMethodsPolicy",
+      "value": {
+        "authenticationMethodConfigurations": [
+          {"id": "fido2", "state": "enabled"},
+          {"id": "microsoftAuthenticator", "state": "enabled"},
+          {"id": "sms", "state": "disabled"},
+          {"id": "voice", "state": "disabled"},
+          {"id": "email", "state": "disabled"},
+          {"id": "temporaryAccessPass", "state": "disabled"}
+        ]
+      }
+    },
+    "entra.conditional_access_policies": {
+      "collected": "2026-09-20T02:14:07+10:00",
+      "source": "graph:/identity/conditionalAccess/policies",
+      "value": [
+        {
+          "id": "usr-g-require-strong-auth",
+          "displayName": "USR - G - Require strong auth",
+          "state": "enabledForReportingButNotEnforced",
+          "conditions": {
+            "users": {"includeUsers": ["All"], "excludeUsers": []},
+            "applications": {"includeApplications": ["All"]}
+          },
+          "grantControls": {"builtInControls": ["mfa"]}
+        }
+      ]
+    }
+  }
+}

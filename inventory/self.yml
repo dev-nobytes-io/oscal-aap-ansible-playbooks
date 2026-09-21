@@ -13,3 +13,11 @@ all:
       # Modern host: the legacy tier needs a documented lab and stays
       # unverified until one signs it off.
       estate_tier: current
+
+  children:
+    # Declared and empty on purpose. `collect.yml` excludes this group from the
+    # host play and targets it from the tenant play, and Ansible warns on a
+    # host pattern that matches no group at all. Declaring it keeps a run
+    # against a tenant-less estate quiet, so the warning stays meaningful when
+    # it does appear somewhere that expected a tenant.
+    entra_tenants: {}

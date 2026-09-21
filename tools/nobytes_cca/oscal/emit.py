@@ -19,7 +19,7 @@ from __future__ import annotations
 import datetime as dt
 
 from ..catalog import Catalog
-from ..contract import Status
+from ..contract import Scope, Status
 from ..registry import Registry
 from . import NS, OSCAL_VERSION, ids
 
@@ -282,6 +282,55 @@ def _observation(
     return observation
 
 
+def _population(determined: list, estate_total: int) -> dict:
+    """The population figures for ONE control, counted in distinct SUBJECTS.
+
+    Every number here was previously wrong in a way that flattered the estate,
+    and the two mistakes were different:
+
+    `assessed` was computed once per RUN and stamped onto every control. A
+    control determined for one host out of four reported "1 of 4 assessed
+    subjects do not satisfy this control" -- quoting a 25% failure rate for
+    something that failed on 100% of what was actually looked at. The three
+    hosts the control was never determined for were counted into its
+    denominator as though they had passed, which is the inverse of Principle 3:
+    a subject a control was not determined for is neither passing nor failing,
+    it is absent.
+
+    `failing` and `na` counted EVALUATIONS, not subjects. Two checks bound to
+    the same control failing on one host reported two failing subjects out of
+    one. Population figures must count subjects or they are not population
+    figures.
+
+    `total` stays estate-wide and comes from inventory: the denominator is how
+    many subjects were in scope, which is a property of the estate and not of
+    the control. For an aggregate-scope finding it is overridden by the caller,
+    because a tenant is not one of fifty workstations.
+    """
+    subjects_of = lambda evs: {e.subject["asset_id"] for e in evs}  # noqa: E731
+
+    assessed = subjects_of(determined)
+    failing = subjects_of([e for e in determined if e.status is Status.NOT_SATISFIED])
+    # A subject is not-applicable only when EVERY determination for it says so.
+    # One applicable check on a host makes that host part of the population.
+    by_subject: dict = {}
+    for evaluation in determined:
+        by_subject.setdefault(evaluation.subject["asset_id"], []).append(evaluation)
+    na = {
+        asset_id
+        for asset_id, evs in by_subject.items()
+        if all(e.status is Status.NOT_APPLICABLE for e in evs)
+    }
+
+    return {
+        "total": max(estate_total, len(assessed)),
+        "assessed": len(assessed),
+        "failing": len(failing),
+        "na": len(na),
+        "observations": len(determined),
+    }
+
+
 def _finding(
     result_id: str,
     control_id: str,
@@ -290,12 +339,19 @@ def _finding(
     evaluations: list,
     aggregation_key: str,
     population: dict,
+    basis: str = "subject",
 ) -> dict | None:
     """One finding per (control, aggregation scope), from many observations.
 
     Returns None when no determination was made. That is not an omission -- it
     is the only honest encoding OSCAL 1.1.2 offers, because
     finding-target.status.state has no value meaning "undetermined".
+
+    `population` is this CONTROL's figures, from `_population`. `basis` says
+    what the numbers count: `subject` for hosts drawn from inventory, or
+    `aggregate-subject` where the check judges a population from inside a
+    single subject such as a directory tenant. Without it a reader cannot tell
+    whether "1 of 1" describes a whole tenant or one laptop.
     """
     determined = [e for e in evaluations if e.status.emits_finding]
     if not determined:
@@ -311,22 +367,28 @@ def _finding(
     confidence = max(confidences, key=lambda c: c.rank).value if confidences else "direct"
 
     state = "satisfied" if satisfied else "not-satisfied"
+    noun = "assessed subjects" if basis == "subject" else "assessed aggregate subjects"
     if failing:
         detail = (
-            f"{len(failing)} of {population['assessed']} assessed subjects do not "
+            f"{population['failing']} of {population['assessed']} {noun} do not "
             f"satisfy this control."
         )
     else:
-        detail = f"All {population['assessed']} assessed subjects satisfy this control."
+        detail = f"All {population['assessed']} {noun} satisfy this control."
 
     props = [
         _prop("assessment-status", "not-applicable" if na and satisfied and len(na) == len(determined) else state),
         _prop("confidence", confidence),
         _prop("aggregation-key", aggregation_key),
+        # These four count SUBJECTS this control was determined for, not
+        # evaluations and not the whole run. See `_population`.
         _prop("population-total", str(population["total"])),
         _prop("population-assessed", str(population["assessed"])),
-        _prop("population-failing", str(len(failing))),
-        _prop("population-na", str(len(na))),
+        _prop("population-failing", str(population["failing"])),
+        _prop("population-na", str(population["na"])),
+        # What the numbers above count. A reader cannot otherwise tell whether
+        # "1 of 1" is a whole directory tenant or a single laptop.
+        _prop("population-basis", basis),
     ]
 
     target = {
@@ -338,12 +400,14 @@ def _finding(
             "state": state,
             "reason": "pass" if satisfied else "fail",
             "remarks": (
-                f"Determined from {len(determined)} subject observation(s) at "
-                f"`{confidence}` confidence."
+                f"Determined from {population['observations']} observation(s) across "
+                f"{population['assessed']} subject(s) at `{confidence}` confidence."
                 + (
-                    " Coverage is incomplete: "
-                    f"{population['total'] - population['assessed']} in-scope subject(s) "
-                    "were not assessed and are not represented in this determination."
+                    " Coverage is incomplete: this control was not determined for "
+                    f"{population['total'] - population['assessed']} of "
+                    f"{population['total']} in-scope subject(s). Those subjects are "
+                    "not represented in this determination and must not be read as "
+                    "passing."
                     if population["assessed"] < population["total"]
                     else ""
                 )
@@ -389,8 +453,12 @@ def emit_assessment_results(
     result_id = ids.result_uuid(system_id, run_id)
 
     subjects = {e.subject["asset_id"]: e.subject for e in evaluations}
-    assessed = len(subjects)
-    total = population_total if population_total is not None else assessed
+    # The estate denominator: how many subjects were in scope, from INVENTORY.
+    # It is a property of the estate, so it is the same for every control. How
+    # many of them a given control was actually determined for is a different
+    # number entirely, computed per control by `_population` -- conflating the
+    # two is what made every finding understate its own failure rate.
+    estate_total = population_total if population_total is not None else len(subjects)
 
     observations = [
         _observation(result_id, ev, catalog, classification) for ev in evaluations
@@ -404,14 +472,33 @@ def emit_assessment_results(
     findings = []
     for control_id in sorted(by_control):
         control = catalog.require(control_id)
+        contributing = by_control[control_id]
+        determined = [e for e in contributing if e.status.emits_finding]
+        if not determined:
+            continue
+
+        # `scope` is read here, and this is the first place in the codebase
+        # that reads it for anything other than stamping a string into a prop.
+        # An aggregate check judges a population from INSIDE one subject -- a
+        # directory tenant, not a laptop -- so the host estate is not its
+        # denominator. Reporting a tenant as "1 of 50 assessed subjects" would
+        # describe a completely different population from the one judged.
+        scopes = {e.check.scope for e in determined}
+        aggregate_only = scopes == {Scope.AGGREGATE}
+
+        population = _population(
+            determined,
+            estate_total=len(determined) if aggregate_only else estate_total,
+        )
         finding = _finding(
             result_id,
             control_id,
             control.statement_id,
             control.statement,
-            by_control[control_id],
+            contributing,
             aggregation_key=f"{system_id}/{baseline}",
-            population={"total": total, "assessed": assessed},
+            population=population,
+            basis="aggregate-subject" if aggregate_only else "subject",
         )
         if finding is not None:
             findings.append(finding)
@@ -470,8 +557,12 @@ def emit_assessment_results(
                         _prop("controls-in-baseline", str(len(baseline_controls))),
                         _prop("controls-determined", str(len(findings))),
                         _prop("controls-unassessed", str(len(undetermined))),
-                        _prop("subjects-in-scope", str(total)),
-                        _prop("subjects-assessed", str(assessed)),
+                        # Run-level, and genuinely run-wide: how big the estate
+                        # is and how much of it this run reached. Per-control
+                        # figures live on each finding and are a different
+                        # number -- see `_population`.
+                        _prop("subjects-in-scope", str(estate_total)),
+                        _prop("subjects-assessed", str(len(subjects))),
                     ]
                     # WHY each control went undetermined, carried in the
                     # document rather than only printed to a terminal. OSCAL

@@ -48,6 +48,61 @@ MUTATING_MODULES = frozenset(
 #: carry `changed_when: false` -- asserted separately below.
 READ_ONLY_EXECUTORS = frozenset({"ansible.windows.win_powershell"})
 
+#: Ansible keywords that are task structure rather than a module. Everything a
+#: task declares that is NOT one of these is the module it runs.
+TASK_KEYWORDS = frozenset(
+    {
+        "name", "when", "become", "become_user", "become_method", "register", "vars",
+        "loop", "loop_control", "with_items", "with_dict", "with_fileglob", "until",
+        "retries", "delay", "changed_when", "failed_when", "check_mode", "ignore_errors",
+        "no_log", "tags", "delegate_to", "run_once", "environment", "notify", "listen",
+        "block", "rescue", "always", "args", "throttle", "any_errors_fatal",
+        "module_defaults", "connection", "timeout", "poll", "async", "collections",
+        "debugger", "diff", "port", "remote_user", "vars_files",
+    }
+)
+
+#: The ONLY modules a collect role may run. Everything else fails.
+#:
+#: This was a denylist until PR 14, and the difference matters more than it
+#: looks. `MUTATING_MODULES.intersection(task.keys())` catches only what someone
+#: remembered to enumerate, so its failure mode is to SILENTLY PERMIT anything
+#: unlisted -- and the next chunk adds `microsoft.ad`, which brings 23 mutating
+#: modules including `domain_controller` (promotes, demotes and reboots domain
+#: controllers) and `offline_join`, whose name reads inert while it creates a
+#: computer account. A denylist would have admitted every one of them.
+#:
+#: This repository has now found the same shape in itself five times: a guard
+#: structurally unable to see what it was guarding. An allowlist fails closed --
+#: adding a module to a collect role is a deliberate, reviewable edit here.
+ALLOWED_MODULES = frozenset(
+    {
+        # Fact gathering and pure reads
+        "ansible.builtin.setup",
+        "ansible.builtin.slurp",
+        "ansible.builtin.stat",
+        "ansible.builtin.find",
+        "ansible.builtin.uri",
+        "ansible.builtin.set_fact",
+        "ansible.builtin.assert",
+        "ansible.builtin.debug",
+        "ansible.builtin.fail",
+        "ansible.builtin.include_role",
+        "ansible.builtin.include_tasks",
+        "ansible.builtin.include_vars",
+        "ansible.builtin.import_role",
+        "ansible.builtin.import_tasks",
+        "ansible.builtin.group_by",
+        "ansible.builtin.meta",
+        # Windows reads
+        "ansible.windows.win_powershell",
+        "ansible.windows.win_stat",
+        "ansible.windows.win_reg_stat",
+        "ansible.windows.win_slurp",
+        "ansible.windows.win_find",
+    }
+)
+
 #: Modules whose safety depends on an ARGUMENT rather than on the module name.
 #:
 #: Everything in MUTATING_MODULES is mutating by nature and everything else used
@@ -133,8 +188,14 @@ def _tasks(path: Path) -> list:
     return out
 
 
+def _modules_used(task: dict) -> set:
+    """The modules a task runs: every key that is not an Ansible task keyword."""
+    return {k for k in task if k not in TASK_KEYWORDS}
+
+
 @pytest.mark.parametrize("path", _collect_role_task_files(), ids=lambda p: str(p.relative_to(ROOT)))
 def test_collect_roles_use_no_mutating_modules(path: Path) -> None:
+    """The named-and-shamed case, kept for its specific message."""
     for task in _tasks(path):
         used = MUTATING_MODULES.intersection(task.keys())
         assert not used, (
@@ -142,6 +203,50 @@ def test_collect_roles_use_no_mutating_modules(path: Path) -> None:
             f"Collect roles must have no mutating module surface -- move this to a "
             f"remediate_* role."
         )
+
+
+@pytest.mark.parametrize("path", _collect_role_task_files(), ids=lambda p: str(p.relative_to(ROOT)))
+def test_collect_roles_run_only_allowlisted_modules(path: Path) -> None:
+    """Fails closed. A module nobody listed is refused, not admitted."""
+    for task in _tasks(path):
+        for module in sorted(_modules_used(task)):
+            assert module in ALLOWED_MODULES, (
+                f"{path.relative_to(ROOT)}: task {task.get('name')!r} runs {module!r}, "
+                f"which is not in ALLOWED_MODULES. Collect roles are read-only by "
+                f"construction: if this module genuinely only reads, add it to the "
+                f"allowlist in this file with a one-line justification. If it writes, "
+                f"it belongs in a remediate_* role."
+            )
+
+
+def test_the_allowlist_rejects_an_unlisted_module() -> None:
+    """Guards the guard.
+
+    The allowlist passes trivially while every collect role happens to comply,
+    so prove it fires. `microsoft.ad.domain_controller` is the real example:
+    the next chunk adds that collection, and this module promotes, demotes and
+    reboots domain controllers.
+    """
+    task = {"name": "seems harmless", "microsoft.ad.domain_controller": {"dns_domain_name": "x"}}
+    assert _modules_used(task) == {"microsoft.ad.domain_controller"}
+    assert "microsoft.ad.domain_controller" not in ALLOWED_MODULES
+    # And the old denylist would have waved it straight through.
+    assert not MUTATING_MODULES.intersection(task.keys())
+
+
+def test_task_keywords_are_not_mistaken_for_modules() -> None:
+    """An allowlist that flagged `when:` as a module would be useless noise."""
+    task = {
+        "name": "read something",
+        "ansible.builtin.slurp": {"src": "/etc/os-release"},
+        "register": "out",
+        "changed_when": False,
+        "check_mode": False,
+        "when": "ansible_os_family == 'RedHat'",
+        "loop": [1, 2],
+        "vars": {"x": 1},
+    }
+    assert _modules_used(task) == {"ansible.builtin.slurp"}
 
 
 @pytest.mark.parametrize("path", _collect_role_task_files(), ids=lambda p: str(p.relative_to(ROOT)))
