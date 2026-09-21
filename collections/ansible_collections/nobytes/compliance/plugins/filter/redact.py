@@ -26,7 +26,19 @@ __metaclass__ = type
 
 import hashlib
 
-from ansible.errors import AnsibleFilterError
+try:
+    from ansible.errors import AnsibleFilterError
+except ImportError:  # pragma: no cover - taken by the in-image test run
+    # Inside an execution environment the evaluator test suite runs on
+    # /usr/bin/python3 (3.9), where ansible-core is NOT installed -- it lives
+    # under /usr/bin/python3.11 via PYCMD. A module-level ansible import makes
+    # this file uncollectable there, which broke the in-image run.
+    #
+    # The filter's correctness does not depend on the exception TYPE; it
+    # depends on raising rather than silently continuing. Ansible still gets
+    # AnsibleFilterError when running under Ansible.
+    class AnsibleFilterError(Exception):
+        """Stand-in used only where ansible-core is not importable."""
 
 DOCUMENTATION = r"""
 name: redact_facts

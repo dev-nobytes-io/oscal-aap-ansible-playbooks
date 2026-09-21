@@ -215,3 +215,48 @@ def test_evaluator_runtime_imports_stay_within_the_allowed_set() -> None:
     assert not offenders, (
         "runtime dependency outside stdlib + PyYAML:\n  " + "\n  ".join(offenders)
     )
+
+
+def test_nothing_the_in_image_suite_collects_imports_ansible_at_module_level() -> None:
+    """The in-image test run has no ansible-core, and it must stay collectable.
+
+    Inside an execution environment the evaluator suite runs on
+    `/usr/bin/python3` -- 3.9, the system interpreter -- while ansible-core is
+    installed under `/usr/bin/python3.11` via `PYCMD`. So a module-level
+    `import ansible` anywhere pytest collects makes the whole run uncollectable,
+    not merely that one test fail.
+
+    That is exactly what happened: PR 16 added a filter plugin importing
+    `ansible.errors` and a test importing the plugin. The `ee-build` workflow
+    was path-filtered to `tools/nobytes_cca/**`, so it never ran on that pull
+    request and fired on the next unrelated one instead -- a guard structurally
+    unable to see the change that broke it. The filter has been widened; this
+    test is the part that does not depend on remembering to.
+    """
+    targets = sorted(
+        list((ROOT / "tests").rglob("*.py"))
+        + list(
+            (ROOT / "collections" / "ansible_collections" / "nobytes").rglob(
+                "plugins/**/*.py"
+            )
+        )
+    )
+    assert targets, "nothing to scan; this test would pass vacuously"
+
+    offenders = []
+    for path in targets:
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            stripped = line.strip()
+            if not (stripped.startswith("import ansible") or stripped.startswith("from ansible")):
+                continue
+            # Indented means it is inside a function or a try/except fallback,
+            # which is the supported shape: the module still imports without
+            # ansible present.
+            if line[:1] in (" ", "\t"):
+                continue
+            offenders.append(f"{path.relative_to(ROOT)}:{number}: {stripped}")
+
+    assert not offenders, (
+        "module-level ansible import(s) would make the in-image suite "
+        "uncollectable on the EE's python3.9:\n  " + "\n  ".join(offenders)
+    )
