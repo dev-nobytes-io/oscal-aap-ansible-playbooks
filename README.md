@@ -188,7 +188,7 @@ content, gradually.
 | 13 | Application control reaches user profiles and temp folders | merged |
 | 14 | Population arithmetic, aggregate scope, and the guards that could not see | **this PR** |
 | 15 | Active Directory privileged access — one attestation, five documented refusals | **this PR** |
-| 16 | Redaction is applied, not merely declared | planned |
+| 16 | Redaction is applied, not merely declared | **this PR** |
 | 17 | Fact store — unblocks the 12 temporal ML1 controls | planned |
 | 18 | Web browser hardening | planned |
 | 19+ | CyberArk, ADCS, ADFS, Keycloak, Exchange, NetApp, Splunk, Change Auditor, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |

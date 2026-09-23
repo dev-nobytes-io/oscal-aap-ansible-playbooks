@@ -8,4 +8,9 @@
       identifiers would be trivially reversible and correlatable across
       organisations. Set it from a vault before collecting anything.
     success_msg: Redaction salt is set.
-  when: fact_bundle_redaction_default == 'hash'
+  # Fires whenever ANY key is hashed, not merely when the default action is.
+  # Gating on the default alone meant a policy hashing sid, username, upn and
+  # email under a `retain` default would have skipped this guard entirely.
+  when: >-
+    'hash' in (fact_bundle_redaction_keys | default({}) | dict2items | map(attribute='value') | list)
+    or fact_bundle_redaction_default == 'hash'

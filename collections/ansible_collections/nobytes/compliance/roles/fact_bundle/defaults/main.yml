@@ -20,7 +20,12 @@ fact_bundle_marking: "OFFICIAL: Sensitive"
 #   truncate - keep structure, drop the identifying portion
 #   drop     - remove entirely
 fact_bundle_redaction_policy_version: "1.0"
-fact_bundle_redaction_default: hash
+# Action for keys NOT named below. `retain`, not `hash`: the policy applies to
+# identifier keys by name, so hashing everything else would turn `vbawarnings: 2`
+# into an opaque digest and destroy the evidence the bundle exists to carry.
+# This is also what the code actually did before PR 16 -- nothing was redacted —
+# so `retain` describes the shipped behaviour rather than changing it silently.
+fact_bundle_redaction_default: retain
 fact_bundle_redaction_keys:
   sid: hash
   username: hash

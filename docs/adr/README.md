@@ -27,3 +27,4 @@ audit evidence.
 | [0013](0013-declare-unobservable-controls-as-attested.md) | Declare structurally unobservable controls as `attested` | Accepted |
 | [0014](0014-population-figures-are-per-control-and-count-subjects.md) | Population figures are per-control and count subjects | Accepted |
 | [0015](0015-refuse-five-active-directory-privileged-access-checks.md) | Refuse five Active Directory privileged-access checks, with reasons | Accepted |
+| [0016](0016-apply-the-redaction-policy.md) | Apply the redaction policy | Accepted |
