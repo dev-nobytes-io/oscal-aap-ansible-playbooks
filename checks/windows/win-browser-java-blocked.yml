@@ -1,0 +1,82 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-browser-java-blocked
+version: 1.0.0
+title: Web browsers do not process Java from the internet
+platform_family: windows
+component: web-browser-windows
+
+controls:
+  - id: ism-1486
+    statement_id: ism-1486_smt
+    control_revision: "1"
+    statement_sha256: 55c579b62c33ab798847026780814b4d36a1ecd66e9de36fd69d8f63afb4bac0
+    coverage: partial
+    rationale: >-
+      There is no browser policy value that answers this control. NPAPI, the
+      plug-in interface Java applets required, was removed from Chrome in
+      version 45 and from Firefox in version 53 -- note 53 and not 52, because
+      plug-ins kept working in ESR 52, which is exactly the build a
+      conservative government standard operating environment is most likely to
+      have pinned. Chromium's DefaultPluginsSetting and PluginsBlockedForUrls
+      are documented as obsolete and concerned Flash; reading either would be
+      reading a dead key and reporting a pass for a reason that stopped
+      existing.
+
+      So the control is answered from which browsers are installed and at what
+      version -- satisfied by construction, with the evidence of the
+      construction recorded rather than asserted.
+
+      With one live exception, which is the reason this check exists at all.
+      Internet Explorer never used NPAPI: its Java plug-in was an ActiveX
+      control. Edge Internet Explorer mode runs the Trident engine and supports
+      ActiveX controls. ism-1654 deliberately records Edge IE mode without
+      judging it, because that control speaks to Internet Explorer 11 as a
+      browser rather than to the MSHTML engine. That leaves Edge plus IE mode
+      plus a registered Java runtime as a current, exploitable configuration
+      that every other check in this repository passes, and it is reported as
+      not-satisfied here.
+
+      What this does not prove: whether a Java plug-in is actually registered
+      as an ActiveX control. The plug-in CLSID could not be verified against a
+      current vendor document, so the collector emits whatever it finds under
+      HKLM\SOFTWARE\JavaSoft verbatim rather than matching an unverified
+      constant -- a collector that matches a constant nobody confirmed reports
+      "absent" for something it merely failed to look for correctly. Presence
+      of a Java runtime alongside IE mode is therefore treated as sufficient
+      to fail, which may over-report where the runtime is headless.
+
+method: TEST
+confidence: proxy
+assessability: automated
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_browsers
+  facts:
+    required:
+      - windows.browsers.policy
+      - windows.browsers.java_surface
+    optional:
+      - windows.applications.installed
+
+evaluator: nobytes_cca.checks.windows.browsers:java_not_processed
+
+references:
+  - source: ASD's Blueprint for Secure Cloud — Essential Eight, user application hardening
+    url: https://blueprint.asd.gov.au/security-and-governance/essential-eight/user-application-hardening/
+    version: v1.4.0
+    blueprint_page: content/en/security-and-governance/essential-eight/user-application-hardening.md
+    note: >-
+      ASD's own stated implementation for this control is application control
+      (WDAC) rather than browser configuration, which is a second and arguably
+      stronger evidence path already covered by win-application-control-*.
+  - source: Chromium — NPAPI deprecation
+    url: https://www.chromium.org/developers/npapi-deprecation/
+    note: >-
+      The authority for the Chrome 45 removal threshold, and for
+      DefaultPluginsSetting having been repurposed to Flash and since
+      deprecated.

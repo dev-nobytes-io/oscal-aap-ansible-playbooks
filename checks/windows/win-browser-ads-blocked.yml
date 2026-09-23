@@ -1,0 +1,78 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-browser-ads-blocked
+version: 1.0.0
+title: Web browsers do not process advertisements from the internet
+platform_family: windows
+component: web-browser-windows
+
+controls:
+  - id: ism-1485
+    statement_id: ism-1485_smt
+    control_revision: "1"
+    statement_sha256: 72ea2ab8953237954404e5921b58d05eb4f9d1a61ab09a24603262829f5d668b
+    coverage: partial
+    rationale: >-
+      The obvious evidence for this control is Chromium's
+      AdsSettingForIntrusiveAdsSites, and it is the wrong evidence. ASD's own
+      Blueprint states that "Microsoft Edge's native web advertisement
+      capability is limited and does not provide an effective mitigation
+      against the risk of malicious web advertisement", and BlockAds is Edge's
+      DEFAULT value -- so a check resting on it would report every unmanaged
+      Edge installation in an estate as satisfying a control ASD says it does
+      not meet. Chrome's unset default is the opposite (allow advertisements
+      everywhere), and Chromium documents that the blocking value does nothing
+      when SafeBrowsingEnabled is false. All three are recorded as supporting
+      facts and none is decisive.
+
+      The verdict rests instead on a force-installed ad-blocking extension,
+      which ASD names as the effective mechanism. The recognised-extension list
+      is deliberately not exhaustive: ASD names uBlock Origin and Adblock Plus
+      as examples while explicitly declining to recommend either, so an estate
+      using a different product is reported as having an unrecognised forced
+      extension rather than as failing.
+
+      What this does not prove, in three parts. ASD also names PROXY LEVEL
+      filtering as part of this control, and that is invisible from a host --
+      an estate blocking advertisements at the gateway will read here as a
+      failure it has in fact mitigated, and that false red is accepted and
+      stated rather than hidden. Forcelist membership means policy requires the
+      extension, not that it is enabled and running in a profile; a
+      non-domain-joined host can only force-install from the vendor store, and
+      a stale extension id after a store migration looks identical to a current
+      one. And a registry value is an administrator's intent rather than the
+      running browser's behaviour.
+
+method: TEST
+confidence: partial
+assessability: automated
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_browsers
+  facts:
+    required:
+      - windows.browsers.policy
+    optional:
+      - windows.applications.installed
+
+evaluator: nobytes_cca.checks.windows.browsers:advertisements_not_processed
+
+references:
+  - source: ASD's Blueprint for Secure Cloud — Microsoft Edge hardening
+    url: https://blueprint.asd.gov.au/design/endpoints/windows/security/edge-hardening/
+    version: v1.4.0
+    blueprint_page: content/en/design/endpoints/windows/security/edge-hardening.md
+    note: >-
+      The authority for refusing to report this control satisfied from
+      AdsSettingForIntrusiveAdsSites, and for naming third-party extensions and
+      proxy-level filtering as the effective mechanisms.
+  - source: Chromium policy definition — AdsSettingForIntrusiveAdsSites
+    url: https://chromeenterprise.google/policies/#AdsSettingForIntrusiveAdsSites
+    note: >-
+      Documents that the policy is ineffective when SafeBrowsingEnabled is
+      false, and that Chrome's unset default allows advertisements on all sites
+      -- the opposite of Edge's default.

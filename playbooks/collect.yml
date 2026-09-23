@@ -34,6 +34,22 @@
           ansible.builtin.include_role:
             name: nobytes.compliance.collect_windows_office
 
+        # The three roles below were referenced by their registry entries and
+        # by NO playbook -- the same defect PR 14 fixed for collect_entra_id
+        # and PR 10 found in the missing ansible.cfg. A collector nothing
+        # invokes has never run, whatever its tests say.
+        - name: Collect installed application inventory
+          ansible.builtin.include_role:
+            name: nobytes.compliance.collect_windows_applications
+
+        - name: Collect application control state
+          ansible.builtin.include_role:
+            name: nobytes.compliance.collect_windows_appcontrol
+
+        - name: Collect web browser policy state
+          ansible.builtin.include_role:
+            name: nobytes.compliance.collect_windows_browsers
+
     - name: Collect Linux evidence
       when: ansible_facts.os_family | default('') != 'Windows'
       block:

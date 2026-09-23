@@ -1,0 +1,87 @@
+---
+# yaml-language-server: $schema=../schema.json
+id: win-browser-settings-locked
+version: 1.0.0
+title: Web browser security settings cannot be changed by human users
+platform_family: windows
+component: web-browser-windows
+
+controls:
+  - id: ism-1585
+    statement_id: ism-1585_smt
+    control_revision: "3"
+    statement_sha256: 40ec0064ceda52fc19cf0a3b7e9f42ef3f57e5f577e036d9ff6f4e4a0e96fb2c
+    coverage: partial
+    rationale: >-
+      Chromium browsers publish every policy at TWO registry paths: the vendor
+      Policies key, which is mandatory and cannot be changed by the user, and a
+      \Recommended subkey beneath it, which sets a default the user MAY
+      override. Both contain the string \Policies\, so the derivation used by
+      the Office macro collector -- a path glob -- would classify a
+      user-overridable default as locked, which is the precise inverse of what
+      this control asks. The collector classifies into mandatory, recommended
+      or preference instead, and this check trusts that classification rather
+      than the path.
+
+      The control is a statement about web browsers, plural, so the semantics
+      are EVERY installed browser and not "at least one". A hardened Edge
+      alongside a developer's per-user Chrome installation carrying no policy
+      does not meet it.
+
+      Firefox is different in kind. Its only locking mechanism is the
+      Preferences policy, a single JSON document in one registry value where
+      locking is expressed as a Status field rather than as a key path. That
+      document is emitted as raw text and parsed by the evaluator.
+
+      What this does not prove, in four parts. A registry value is an
+      administrator's intent, not the running browser's behaviour; only
+      edge://policy or chrome://policy reporting Status OK would show the
+      latter, and neither is readable from a read-only remote query, which is
+      why this can never be direct confidence. Chromium deprecates policy names
+      on a six-week cadence, so a value present in the registry may name a
+      policy the installed build no longer honours. A local administrator can
+      still change anything. And a Firefox estate managed through
+      policies.json in the installation directory rather than through the
+      registry is invisible here -- the two are combined from Firefox 87 with
+      the registry winning, while before 87 the JSON was ignored entirely if
+      any registry policy was set, so a registry-only reading is structurally
+      incomplete on that estate rather than merely unlucky.
+
+method: TEST
+confidence: partial
+assessability: automated
+scope: subject
+evidence_tier: passive
+freshness_hours: 168
+history_window_days: 0
+
+collect:
+  role: nobytes.compliance.collect_windows_browsers
+  facts:
+    required:
+      - windows.browsers.policy
+    optional:
+      - windows.applications.installed
+
+evaluator: nobytes_cca.checks.windows.browsers:security_settings_locked
+
+references:
+  - source: Microsoft — Microsoft Edge policy reference, SmartScreenEnabled
+    url: https://learn.microsoft.com/en-us/deployedge/microsoft-edge-policies/smartscreenenabled
+    note: >-
+      The authority for the mandatory versus recommended distinction: every
+      policy documents a mandatory path and, where supported, a \Recommended
+      path, with "Can be recommended" stated per policy.
+  - source: ASD's Blueprint for Secure Cloud — ASD Edge hardening guidelines
+    url: https://blueprint.asd.gov.au/configuration/intune/devices/configuration-policies/asd-edge-hardening-guidelines/
+    version: v1.4.0
+    blueprint_page: content/en/configuration/intune/devices/configuration-policies/asd-edge-hardening-guidelines.md
+    note: >-
+      ASD's as-built list of Edge security settings expected to be mandatory,
+      and confirmation that they are set at device scope rather than as
+      recommended defaults.
+  - source: Mozilla — Firefox Preferences policy
+    url: https://firefox-admin-docs.mozilla.org/reference/policies/preferences/
+    note: >-
+      Documents Status values default, locked, user and clear, and that the
+      whole policy is one JSON document rather than individual registry values.

@@ -1,0 +1,8 @@
+---
+galaxy_info:
+  role_name: collect_windows_browsers
+  description: >-
+    Read-only collection of web browser policy state for ism-1485, ism-1486
+    and ism-1585. Emits raw values and judges nothing.
+  min_ansible_version: "2.16"
+dependencies: []
