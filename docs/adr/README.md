@@ -26,3 +26,4 @@ audit evidence.
 | [0012](0012-mine-ansible-lockdown-tags-do-not-execute-its-roles.md) | Mine ansible-lockdown's tags; do not execute its roles | Accepted |
 | [0013](0013-declare-unobservable-controls-as-attested.md) | Declare structurally unobservable controls as `attested` | Accepted |
 | [0014](0014-population-figures-are-per-control-and-count-subjects.md) | Population figures are per-control and count subjects | Accepted |
+| [0015](0015-refuse-five-active-directory-privileged-access-checks.md) | Refuse five Active Directory privileged-access checks, with reasons | Accepted |

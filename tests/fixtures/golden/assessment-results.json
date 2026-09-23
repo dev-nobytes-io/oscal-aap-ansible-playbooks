@@ -227,7 +227,7 @@
           },
           {
             "name": "undetermined",
-            "value": "ism-1883=not-implemented",
+            "value": "ism-1883=requires-attestation",
             "ns": "https://nobytes.io/ns/oscal/cca/1.0"
           },
           {

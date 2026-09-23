@@ -344,6 +344,92 @@
           }
         },
         {
+          "uuid": "b78588fd-6319-5adc-94b5-500d9b28d8bd",
+          "title": "Privileged online-service access is limited to what duties require",
+          "description": "The control compares two quantities and neither is a system state, which is what separates it from the four other privileged-access controls examined alongside it and deferred rather than attested.\n\"Explicitly authorised to access online services\" is an approval. A security group, a proxy rule or an Entra group is the *implementation* of an authorisation decision, never the decision -- the same substitution this project already refused for ism-1507. Here it cuts deeper: for ism-1507 the approval merely produces a membership the control is about, while here the approval *defines the population the control is a statement about*, so a directory read cannot even compute the denominator.\n\"Only what is required for users to undertake their duties or functions\" is a proportionality judgement about a person's job. No directory, PAM vault, identity governance platform, proxy or CASB holds an attribute meaning \"what this person's duties require\". An access review records that an approver clicked approve, which returns you to the first term. A job title is a string, not a set of required services.\nWhat settles it is that no product implements \"strictly limited to what is required\" the way a conditional access policy implements \"MFA is required\". Where such a mechanism exists this project automates at proxy or partial confidence and accepts the ceiling; here there is no mechanism to read, which makes this structure rather than effort.\nThree observables were considered and rejected on principle, not cost. Counting the authorised set against a threshold would publish a number this project invented inside an OSCAL document citing an ASD control id. Observing egress from a proxy or CASB measures what access exists, not what is authorised, and its only detectable failure belongs to ism-1175. Reading an identity-governance campaign's completion records that a review happened, not that its outcome was proportionate.",
+          "props": [
+            {
+              "name": "check-id",
+              "value": "org-privileged-online-service-access-limited",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "check-version",
+              "value": "1.0.0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "method",
+              "value": "EXAMINE",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "confidence",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "scope",
+              "value": "aggregate",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "evidence-tier",
+              "value": "passive",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "freshness-hours",
+              "value": "4320",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "history-window-days",
+              "value": "0",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "assessability",
+              "value": "attested",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-source",
+              "value": "The register of privileged user accounts explicitly authorised to access online services, recording for each account the services authorised, the business function requiring them, the approving authority and the date of the most recent proportionality review.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-owner",
+              "value": "Privileged access management process owner",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "attestation-renewal-days",
+              "value": "180",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            },
+            {
+              "name": "why-not-observable",
+              "value": "Both sides of the control's comparison are approval and judgement artefacts. The authorised population is defined by an approval decision rather than by any group membership that implements it, and \"what a user's duties require\" exists in no system as an attribute. No product implements the limitation the way a policy engine implements an authentication requirement, so there is no configuration state to read -- this is a gap no amount of engineering closes, not a collector nobody has written yet.",
+              "ns": "https://nobytes.io/ns/oscal/cca/1.0"
+            }
+          ],
+          "related-controls": {
+            "control-selections": [
+              {
+                "include-controls": [
+                  {
+                    "control-id": "ism-1883",
+                    "statement-ids": [
+                      "ism-1883_smt"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "uuid": "677800d2-0848-54c1-b86d-32904800aea9",
           "title": "Multi-factor authentication on third-party online customer services",
           "description": "Combines both barriers at once: the service belongs to a third party, and the people being authenticated are customers rather than staff. Neither the configuration nor the population appears anywhere in the estate this project can reach.",
@@ -1483,6 +1569,12 @@
               ]
             },
             {
+              "control-id": "ism-1883",
+              "statement-ids": [
+                "ism-1883_smt"
+              ]
+            },
+            {
               "control-id": "ism-1893",
               "statement-ids": [
                 "ism-1893_smt"
@@ -1659,12 +1751,6 @@
               "control-id": "ism-1877",
               "statement-ids": [
                 "ism-1877_smt"
-              ]
-            },
-            {
-              "control-id": "ism-1883",
-              "statement-ids": [
-                "ism-1883_smt"
               ]
             },
             {
