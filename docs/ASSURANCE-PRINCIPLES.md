@@ -175,7 +175,7 @@ Principles are worth little if they rely on remembering them. These are tests:
 | 5 | `coverage: partial` without a `rationale` fails validation |
 | 7 | Evaluators run with `socket.socket` and `subprocess.Popen` patched to raise, and with networking disabled in CI |
 | 8 | Expiry applied at report generation; golden tests cover the stale case |
-| 9 | `test_prose_drift.py` fails on any upstream statement hash change |
+| 9 | `test_registry_integrity.py` fails on any upstream statement hash change |
 | 11 | Crosswalk entries without a citation and confidence are rejected |
 
 The rest rely on review. That is why they are written down.
