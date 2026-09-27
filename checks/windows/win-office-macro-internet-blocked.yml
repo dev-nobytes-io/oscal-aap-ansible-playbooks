@@ -36,8 +36,6 @@ collect:
     required:
       - windows.office.install
       - windows.office.macro_policy
-    optional:
-      - windows.gpo.applied_computer
 
 evaluator: nobytes_cca.checks.windows.office:macro_internet_blocked
 

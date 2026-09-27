@@ -25,20 +25,6 @@
 - name: Obtain a Graph access token
   ansible.builtin.include_tasks: authenticate.yml
 
-- name: Read the tenant organisation record
-  ansible.builtin.uri:
-    url: "{{ collect_entra_id_graph_base }}/organization"
-    method: GET
-    headers:
-      Authorization: "Bearer {{ collect_entra_id_token_response.json.access_token }}"
-    status_code: [200]
-    timeout: "{{ collect_entra_id_timeout }}"
-  register: collect_entra_id_org
-  no_log: true
-  changed_when: false
-  check_mode: false
-  failed_when: false
-
 - name: Read the tenant authentication methods policy
   ansible.builtin.uri:
     url: "{{ collect_entra_id_graph_base }}/policies/authenticationMethodsPolicy"
@@ -96,11 +82,6 @@
     _cca_ca_body: "{{ collect_entra_id_ca_policies.json | default({}) }}"
     _cca_as_body: "{{ collect_entra_id_auth_strengths.json | default({}) }}"
     fact_records:
-      entra.tenant:
-        source: "GET /organization"
-        partial: "{{ collect_entra_id_org.json is not defined }}"
-        value:
-          tenant_id: "{{ (collect_entra_id_org.json | default({})).get('value', [{}]) | first | default({}) | ansible.builtin.combine({}) }}"
       entra.authentication_methods_policy:
         source: "GET /policies/authenticationMethodsPolicy"
         partial: "{{ collect_entra_id_auth_methods.json is not defined }}"
