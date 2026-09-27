@@ -33,6 +33,36 @@ def ie11_disabled_or_removed(
             reason=UnassessedReason.COLLECTION_ERROR,
             detail="fact `windows.os.optional_features` absent from the bundle",
         )
+    # Fail closed BEFORE the absence-of-evidence branches below, which read an
+    # empty feature list as proof that Internet Explorer is not installed and
+    # return `satisfied` at DIRECT confidence -- the strongest claim this
+    # project makes anywhere.
+    #
+    # `Get-WindowsOptionalFeature -Online` requires elevation and is absent on
+    # Server SKUs without the DISM cmdlets; before ADR 0017 the collector
+    # swallowed both cases as an empty list, so a host that could not be asked
+    # was reported as a host with no Internet Explorer. A real Windows install
+    # always enumerates many optional features, so an empty list is a failed
+    # read, never an estate fact.
+    if features.partial:
+        return CheckResult.unassessed(
+            reason=UnassessedReason.COLLECTION_ERROR,
+            detail=(
+                "the Windows optional feature list could not be enumerated, so "
+                "whether Internet Explorer 11 is installed is unknown: "
+                + str(features.meta.get("collection_error", "no reason recorded"))
+            ),
+        )
+    if not features.value:
+        return CheckResult.unassessed(
+            reason=UnassessedReason.COLLECTION_ERROR,
+            detail=(
+                "the Windows optional feature list came back empty. Every "
+                "supported Windows build enumerates optional features, so this "
+                "is a failed read rather than a system without them, and it is "
+                "not evidence that Internet Explorer 11 is absent."
+            ),
+        )
 
     ie_features = [
         f
