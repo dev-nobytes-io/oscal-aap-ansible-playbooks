@@ -1,20 +1,32 @@
 ---
 # READ-ONLY.
+#
+# Every task below ends its script with `ConvertTo-Json`, so what
+# `win_powershell` returns in `output[0]` is JSON TEXT, not a mapping --
+# win_powershell passes strings through unchanged. The
+# `nobytes.compliance.ps_object` filter is the single place that parses it and
+# reports whether a usable object came back. See ADR 0017.
 
 - name: Enumerate Windows optional features
   ansible.windows.win_powershell:
     script: |
       $ErrorActionPreference = 'Stop'
       $features = @()
+      $err = ''
       try {
-        $features = Get-WindowsOptionalFeature -Online |
-          Select-Object @{n='name';e={$_.FeatureName}}, @{n='state';e={"$($_.State)"}}
+        $features = @(Get-WindowsOptionalFeature -Online |
+          Select-Object @{n='name';e={$_.FeatureName}}, @{n='state';e={"$($_.State)"}})
       } catch {
-        # Server SKUs without DISM cmdlets, or insufficient privilege. Emit
-        # nothing rather than guessing; the evaluator reports unassessed.
-        $features = @()
+        # Server SKUs without the DISM cmdlets, and non-elevated sessions
+        # (Get-WindowsOptionalFeature -Online requires elevation), both land
+        # here. Record WHY: an empty list that means "could not ask" must not
+        # be reported as "asked, and there are none".
+        $err = $_.Exception.Message
       }
-      ,$features | ConvertTo-Json -Depth 4 -Compress
+      [ordered]@{
+        features         = $features
+        collection_error = $err
+      } | ConvertTo-Json -Depth 4 -Compress
   register: collect_windows_base_features
   changed_when: false
   check_mode: false
@@ -64,7 +76,13 @@
     name: nobytes.compliance.fact_bundle
     tasks_from: record
   vars:
-    _cca_win: "{{ (collect_windows_base_release.output | default([{}]))[0] | default({}) }}"
+    _cca_release_out: >-
+      {{ collect_windows_base_release.output | nobytes.compliance.ps_object }}
+    _cca_features_out: >-
+      {{ collect_windows_base_features.output | nobytes.compliance.ps_object }}
+    _cca_ie_out: >-
+      {{ collect_windows_base_ie_policy.output | nobytes.compliance.ps_object }}
+    _cca_win: "{{ _cca_release_out.value }}"
     # Raw identity only. Deriving the end-of-life lookup key is interpretation,
     # so it lives in the evaluator where it is unit-testable -- not here.
     _cca_windows_release:
@@ -77,12 +95,25 @@
     fact_records:
       windows.os.optional_features:
         source: Get-WindowsOptionalFeature
-        partial: "{{ (collect_windows_base_features.output | default([]) | length) == 0 }}"
-        value: "{{ collect_windows_base_features.output | default([]) }}"
+        # Unusable output OR a recorded collection error are both "could not
+        # ask", never "asked and found none".
+        partial: >-
+          {{ (not _cca_features_out.ok)
+             or ((_cca_features_out.value.collection_error | default('')) | length > 0) }}
+        meta:
+          collection_error: >-
+            {{ _cca_features_out.error
+               or (_cca_features_out.value.collection_error | default('')) }}
+        value: "{{ _cca_features_out.value.features | default([]) }}"
       windows.browser.ie_policy:
         source: "registry:HKLM\\SOFTWARE\\Policies\\Microsoft\\Internet Explorer"
-        value: "{{ (collect_windows_base_ie_policy.output | default([{}]))[0] | default({}) }}"
+        partial: "{{ not _cca_ie_out.ok }}"
+        meta:
+          collection_error: "{{ _cca_ie_out.error }}"
+        value: "{{ _cca_ie_out.value }}"
       os.release:
         source: "registry:HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"
-        partial: "{{ (collect_windows_base_release.output | default([]) | length) == 0 }}"
+        partial: "{{ not _cca_release_out.ok }}"
+        meta:
+          collection_error: "{{ _cca_release_out.error }}"
         value: "{{ _cca_windows_release }}"

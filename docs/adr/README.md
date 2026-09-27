@@ -29,3 +29,4 @@ audit evidence.
 | [0015](0015-refuse-five-active-directory-privileged-access-checks.md) | Refuse five Active Directory privileged-access checks, with reasons | Accepted |
 | [0016](0016-apply-the-redaction-policy.md) | Apply the redaction policy | Accepted |
 | [0018](0018-redaction-must-reach-identifiers-inside-lists.md) | Redaction must reach identifiers inside lists | Accepted |
+| [0017](0017-the-collector-output-contract.md) | Parse what `win_powershell` returns, and make the guards fail closed | Accepted |
