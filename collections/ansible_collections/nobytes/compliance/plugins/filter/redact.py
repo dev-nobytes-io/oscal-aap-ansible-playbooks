@@ -25,6 +25,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import hashlib
+import re
 
 try:
     from ansible.errors import AnsibleFilterError
@@ -76,6 +77,26 @@ ACTIONS = ("retain", "hash", "truncate", "drop")
 #: at a third would mangle data rather than protect it, so anything else keeps
 #: a two-character prefix and says how much it dropped.
 _MASK = "***"
+
+#: A Windows security identifier, recognised by SHAPE rather than by the key
+#: that happens to hold it.
+#:
+#: Until ADR 0018 the policy matched on key NAME only -- `sid`, `username`,
+#: `upn`, `email` -- while the collectors emit SIDs under `allow_write_sids`,
+#: `deny_write_sids` and `profiles_unloaded`, as bare strings inside lists. None
+#: of those names matched, list elements carry no key to match on, and so real
+#: domain SIDs travelled verbatim into every bundle that claimed to redact them.
+#:
+#: Only SIDs get shape detection. The form `S-1-<authority>-...` is unambiguous
+#: -- nothing else in a fact bundle looks like it. Email and UPN are NOT
+#: detected by shape, because plenty of legitimate configuration values contain
+#: an "@" and hashing them would destroy evidence to protect nothing. Those
+#: still rely on their key name, which now propagates into containers.
+_SID_RE = re.compile(r"^S-1-\d+(-\d+){2,}$", re.IGNORECASE)
+
+
+def _looks_like_a_sid(value):
+    return isinstance(value, str) and bool(_SID_RE.match(value))
 
 
 def _hash(value, salt):
@@ -152,24 +173,70 @@ def redact_facts(facts, keys=None, default="retain", salt=""):
                 "Set it from a vault before collecting anything."
             )
 
-    def walk(node):
+    sid_action = policy.get("sid", default)
+
+    def action_for(key, value, inherited):
+        """The action to apply to `value`, which sits under `key`.
+
+        `inherited` is the action of the nearest enclosing named key, so a list
+        or sub-mapping under `sid: hash` hashes its leaves. Before ADR 0018 the
+        action was dropped at every container boundary.
+        """
+        if key is not None:
+            named = policy.get(str(key).lower())
+            if named is not None:
+                return named
+        if inherited is not None:
+            return inherited
+        # No name matched anywhere up the tree. A value that IS a SID is still a
+        # SID, whatever it is filed under.
+        if _looks_like_a_sid(value):
+            return sid_action
+        return default
+
+    def walk(node, key=None, inherited=None):
         if isinstance(node, dict):
             out = {}
-            for key, value in node.items():
-                action = policy.get(str(key).lower(), default)
-                if action == "drop":
+            for child_key, value in node.items():
+                named = policy.get(str(child_key).lower())
+                if named == "drop":
                     continue
-                if isinstance(value, (dict, list)):
-                    # A container never carries an identifier itself; its
-                    # leaves might. Recurse rather than hashing a whole subtree
-                    # into one opaque string, which would destroy the evidence.
-                    out[key] = walk(value)
+                # Containers carry no identifier themselves, but their leaves
+                # do, so the action travels down with them.
+                # A LIST under a named key holds instances of the thing the key
+                # names, so the action travels into it: `allow_write_sids` is a
+                # list of SIDs. A SUB-MAPPING does not -- its child keys name
+                # different fields, and `{"sid": {"count": 3}}` must not hash
+                # the count. Inheritance therefore resets at every dict
+                # boundary, and each child key is matched on its own name.
+                if isinstance(value, dict):
+                    out[child_key] = walk(value, child_key, None)
+                elif isinstance(value, list):
+                    out[child_key] = walk(
+                        value, child_key, named if named is not None else inherited
+                    )
                 else:
-                    out[key] = _apply(action, value, salt)
+                    out[child_key] = _apply(
+                        action_for(child_key, value, inherited), value, salt
+                    )
             return out
         if isinstance(node, list):
-            return [walk(item) for item in node]
-        return node
+            items = []
+            for item in node:
+                if isinstance(item, dict):
+                    # Reset: the dict's own keys decide, not the list's key.
+                    items.append(walk(item, key, None))
+                    continue
+                if isinstance(item, list):
+                    items.append(walk(item, key, inherited))
+                    continue
+                action = action_for(None, item, inherited)
+                if action == "drop":
+                    continue
+                items.append(_apply(action, item, salt))
+            return items
+        # A bare scalar reached with no enclosing key: shape is all there is.
+        return _apply(action_for(key, node, inherited), node, salt)
 
     return walk(facts)
 

@@ -236,3 +236,151 @@ def test_no_raw_identifier_survives_the_shipped_policy() -> None:
     assert not re.search(r'"S-1-5-21-[\d-]+"', json.dumps(out)), (
         "a raw domain SID survived the shipped redaction policy"
     )
+
+
+# --------------------------------------------------------------------------
+# PR 19: the policy has to REACH the identifiers, not merely be applied.
+#
+# PR 16 made redaction run. It did not make it arrive. `walk()` selected the
+# action from a mapping KEY, so:
+#
+#   - a bare SID inside a list had no key to match on and was returned
+#     unchanged by the scalar branch;
+#   - the enclosing key's action was discarded at every container boundary
+#     (`out[key] = walk(value)`), so even `sid: hash` left a list of SIDs
+#     untouched;
+#   - and the shipped policy names `sid` / `username` / `upn` / `email`, while
+#     the collectors emit SIDs under `allow_write_sids`, `deny_write_sids` and
+#     `meta.profiles_unloaded`. None of those names matched anything.
+#
+# So real domain SIDs travelled verbatim into bundles stamped
+# `redaction_policy: "1.0"`. See ADR 0018.
+# --------------------------------------------------------------------------
+
+#: A domain SID with a RID well above the well-known range: a person, not a role.
+PERSON_SID = "S-1-5-21-1111111111-2222222222-3333333333-1174"
+#: Domain Admins. RID 512 is identical on every Windows domain, so it names a
+#: role and is deliberately KEPT -- see the carve-out in `_truncate`.
+ROLE_SID = "S-1-5-32-544"
+
+TRUNCATE_POLICY = {"sid": "truncate", "upn": "hash", "email": "hash"}
+
+
+def test_a_sid_inside_a_list_is_redacted() -> None:
+    """The live leak. `allow_write_sids` is a list of bare strings.
+
+    Fails against the code as it shipped: the scalar branch returned any value
+    reached without a key unchanged, so this came back verbatim.
+    """
+    out = redact_facts(
+        {
+            "windows.appcontrol.writable_paths": {
+                "value": {"probes": [{"path": "C:\\Temp", "allow_write_sids": [PERSON_SID]}]}
+            }
+        },
+        keys=TRUNCATE_POLICY,
+        salt=SALT,
+    )
+    got = out["windows.appcontrol.writable_paths"]["value"]["probes"][0]["allow_write_sids"]
+    assert PERSON_SID not in got, f"a raw domain SID survived redaction: {got}"
+    assert got == ["S-1-5-21-1111111111-2222222222-3333333333-***"]
+
+
+def test_a_well_known_rid_inside_a_list_is_still_kept() -> None:
+    """Truncating role SIDs would break the controls they were collected for."""
+    out = redact_facts(
+        {"a": {"deny_write_sids": [ROLE_SID, PERSON_SID]}},
+        keys=TRUNCATE_POLICY,
+        salt=SALT,
+    )
+    assert out["a"]["deny_write_sids"][0] == ROLE_SID
+    assert out["a"]["deny_write_sids"][1].endswith("***")
+
+
+def test_the_enclosing_keys_action_reaches_into_a_list() -> None:
+    """`sid: hash` must hash a list of SIDs, not skip it."""
+    out = redact_facts({"a": {"sid": [PERSON_SID]}}, keys=SHIPPED_POLICY, salt=SALT)
+    assert out["a"]["sid"][0].startswith("sha256:")
+
+
+def test_a_sid_is_redacted_whatever_key_holds_it() -> None:
+    """Shape detection is the backstop for the key names nobody thought of."""
+    for key in ("allow_write_sids", "profiles_unloaded", "some_future_field"):
+        out = redact_facts({"x": {key: [PERSON_SID]}}, keys=TRUNCATE_POLICY, salt=SALT)
+        assert PERSON_SID not in out["x"][key], f"{key} leaked a raw SID"
+
+
+def test_an_email_shaped_value_is_NOT_detected_by_shape() -> None:
+    """Deliberately narrower than SIDs.
+
+    Plenty of legitimate configuration values contain an "@" -- a proxy
+    exception list, an ADMX policy string. Hashing those would destroy evidence
+    to protect nothing, so email and UPN rely on their key name. `S-1-<n>-<n>-…`
+    is unambiguous; an "@" is not.
+    """
+    out = redact_facts(
+        {"a": {"note": "report issues to help@example.gov.au"}},
+        keys=SHIPPED_POLICY,
+        salt=SALT,
+    )
+    assert out["a"]["note"] == "report issues to help@example.gov.au"
+
+
+def test_a_sub_mapping_under_a_named_key_does_not_inherit_the_action() -> None:
+    """The counterpart to the propagation fix, and the reason it is narrow.
+
+    A LIST under `sid` holds SIDs. A MAPPING under `sid` holds different fields,
+    and hashing `count` would destroy the evidence the bundle exists to carry.
+    Inheritance therefore resets at every dict boundary.
+    """
+    out = redact_facts(
+        {"x": {"sid": {"nested": PERSON_SID, "count": 3}}},
+        keys=TRUNCATE_POLICY,
+        salt=SALT,
+    )
+    assert out["x"]["sid"]["count"] == 3
+    # ...but the nested value is still a SID by shape, so it is still redacted.
+    assert out["x"]["sid"]["nested"].endswith("***")
+
+
+def _every_string(node):
+    if isinstance(node, dict):
+        for value in node.values():
+            yield from _every_string(value)
+    elif isinstance(node, list):
+        for item in node:
+            yield from _every_string(item)
+    elif isinstance(node, str):
+        yield node
+
+
+@pytest.mark.parametrize(
+    "policy", [TRUNCATE_POLICY, SHIPPED_POLICY], ids=["truncate", "hash"]
+)
+def test_no_committed_fixture_leaks_a_personal_sid_through_the_policy(policy) -> None:
+    """End to end over the real fixture corpus, not a hand-made example.
+
+    The fixtures deliberately CONTAIN realistic SIDs -- that is how the SID
+    logic gets tested. What must not happen is one surviving the policy. Any
+    RID >= 1000 identifies an account rather than a role.
+    """
+    import json
+    import re
+
+    bundles = sorted((ROOT / "tests" / "fixtures" / "bundles").glob("*.json"))
+    assert bundles, "no fixture bundles found to scan"
+
+    personal = re.compile(r"^S-1-5-21-[\d-]+-(\d{4,})$")
+    checked = 0
+    for path in bundles:
+        facts = json.loads(path.read_text(encoding="utf-8")).get("facts", {})
+        if not facts:
+            continue
+        for text in _every_string(redact_facts(facts, keys=policy, salt=SALT)):
+            match = personal.match(text)
+            assert match is None, (
+                f"{path.name} leaked {text!r} through the redaction policy: "
+                f"RID {match.group(1)} identifies an account, not a role"
+            )
+            checked += 1
+    assert checked, "scanned no strings; the corpus or the walk is broken"
