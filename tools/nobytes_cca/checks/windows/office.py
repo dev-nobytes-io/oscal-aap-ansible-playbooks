@@ -43,6 +43,19 @@ def macro_internet_blocked(
             reason=UnassessedReason.COLLECTION_ERROR,
             detail="fact `windows.office.install` absent from the bundle",
         )
+    # `partial` FIRST. An inventory that could not be read comes back empty,
+    # and "empty" must not be spelled "no Office is installed here" -- that is
+    # a not_applicable, which silently removes the host from the population.
+    # See ADR 0017.
+    if install.partial:
+        return CheckResult.unassessed(
+            reason=UnassessedReason.COLLECTION_ERROR,
+            detail=(
+                "the Office installation inventory could not be read, so whether "
+                "Office is present is unknown: "
+                + str(install.meta.get("collection_error", "no reason recorded"))
+            ),
+        )
     if not install.value:
         return CheckResult.not_applicable(
             detail="No Microsoft Office or Microsoft 365 Apps installation detected.",
@@ -155,6 +168,16 @@ def _office_guard(bundle: FactBundle):
         return None, CheckResult.unassessed(
             reason=UnassessedReason.COLLECTION_ERROR,
             detail="fact `windows.office.install` absent from the bundle",
+        )
+    # See the note in macros_disabled: partial is checked before emptiness.
+    if install.partial:
+        return None, CheckResult.unassessed(
+            reason=UnassessedReason.COLLECTION_ERROR,
+            detail=(
+                "the Office installation inventory could not be read, so whether "
+                "Office is present is unknown: "
+                + str(install.meta.get("collection_error", "no reason recorded"))
+            ),
         )
     if not install.value:
         return None, CheckResult.not_applicable(
