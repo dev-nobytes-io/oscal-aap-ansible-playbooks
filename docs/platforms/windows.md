@@ -362,9 +362,33 @@ installed build no longer honours.
 | Browser `policy_level` classification | **Tested by execution** — `Get-PolicyLevel` runs under PowerShell in CI, including the `\Recommended` case the Office glob gets wrong |
 | WinRM/Kerberos transport | **Not verified** — needs a domain |
 | Legacy tier (Server 2012, Win 10) | **Not verified** — no such CI runners exist; needs a documented lab |
+| Collector output contract (`win_powershell` -> role) | **Tested on the wire form** — `tests/test_collector_output_contract.py` asserts no role indexes `output[0]` as a mapping, and that an unreadable fact reaches no verdict. See [ADR 0017](../adr/0017-the-collector-output-contract.md) |
 
 Legacy-tier checks stay marked unverified in the coverage ledger until a lab run
 signs them off. This repository will not claim a path is tested when it is not.
+
+### The output contract, and why it was wrong until ADR 0017
+
+Every collector on this page ends `| ConvertTo-Json -Compress`, so
+`win_powershell` hands the role back a **JSON string** — it passes strings
+through unchanged (`win_powershell.ps1:528-531`). Until
+[ADR 0017](../adr/0017-the-collector-output-contract.md) every role read
+`output[0]` as a mapping and nothing called `from_json`, so on a real Windows
+host every fact resolved to empty while `partial` — derived from the output
+list's *length*, which is 1 — reported a successful collection.
+
+That produced a false `not-satisfied` for `ism-0843`/`ism-1657` and a false
+`satisfied` at **direct** confidence for `ism-1654`. All 261 tests passed
+throughout, because every fixture is a hand-written mapping that never
+travelled through `win_powershell`.
+
+Two consequences worth stating plainly on this page:
+
+- **Any Windows fact bundle collected before ADR 0017 is void**, not merely
+  incomplete — it recorded `partial: false` over empty values.
+- The contract is now enforced on the **wire form** in both directions, and the
+  evaluators fail closed independently of it. That is still not the same claim
+  as "the collectors work on Windows", which remains unverified.
 
 Two of those rows are new and deliberately narrow. Parsing is a long way short
 of running, and running `ConvertFrom-AppLockerPolicyXml` on Linux says nothing

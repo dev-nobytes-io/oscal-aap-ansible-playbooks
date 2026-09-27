@@ -108,6 +108,29 @@ def _guard(bundle: FactBundle):
             reason=UnassessedReason.COLLECTION_ERROR,
             detail="fact `windows.appcontrol.state` absent from the bundle",
         )
+    # Fail closed on a structurally unusable fact, BEFORE any verdict logic.
+    #
+    # This guard previously degraded only on `fact.partial`, and `partial` was
+    # derived from the collector output's LENGTH -- which is 1 even when the
+    # single element is an unparsed JSON string. So a host whose state could
+    # not be read arrived here with partial=False and an empty value, every
+    # `available` lookup returned False, and control fell through to
+    # `not_satisfied`: "No enforcing application control was found." A
+    # confident red about a host nothing had been read from. See ADR 0017.
+    #
+    # The role now sets partial correctly, but a guard that depends on the
+    # collector getting one flag right is the same defect waiting to recur.
+    if not isinstance(fact.value, dict) or not (
+        "applocker" in fact.value or "wdac" in fact.value
+    ):
+        return None, CheckResult.unassessed(
+            reason=UnassessedReason.COLLECTION_ERROR,
+            detail=(
+                "fact `windows.appcontrol.state` carries neither an `applocker` "
+                "nor a `wdac` observation, so nothing was read from this host. "
+                "An unreadable host is not a host without application control."
+            ),
+        )
     if fact.partial:
         return None, CheckResult.unassessed(
             reason=UnassessedReason.PARTIAL_POPULATION,

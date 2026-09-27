@@ -26,22 +26,35 @@
     name: nobytes.compliance.fact_bundle
     tasks_from: record
   vars:
-    _cca_ac: "{{ (collect_windows_appcontrol_state.output | default([{}]))[0] | default({}) }}"
-    _cca_paths: "{{ (collect_windows_appcontrol_paths.output | default([{}]))[0] | default({}) }}"
+    _cca_ac_out: >-
+      {{ collect_windows_appcontrol_state.output | nobytes.compliance.ps_object }}
+    _cca_paths_out: >-
+      {{ collect_windows_appcontrol_paths.output | nobytes.compliance.ps_object }}
+    _cca_ac: "{{ _cca_ac_out.value }}"
+    _cca_paths: "{{ _cca_paths_out.value }}"
     fact_records:
       windows.appcontrol.state:
         source: "Get-AppLockerPolicy -Effective + Win32_DeviceGuard"
+        meta:
+          collection_error: "{{ _cca_ac_out.error }}"
         # Neither source being readable is a partial read, not an absence of
         # application control: the evaluator must report unassessed rather
         # than inventing a verdict about a host it could not inspect.
+        # Output that could not be parsed is the strongest form of "not read":
+        # it must not fall through to a verdict about application control.
         partial: >-
-          {{ not (_cca_ac.applocker.available | default(false))
-             and not (_cca_ac.wdac.available | default(false)) }}
+          {{ (not _cca_ac_out.ok)
+             or (not (_cca_ac.applocker.available | default(false))
+                 and not (_cca_ac.wdac.available | default(false))) }}
         value: "{{ _cca_ac }}"
       windows.appcontrol.writable_paths:
         source: "Get-Acl over the locations named by ism-1870"
+        meta:
+          collection_error: "{{ _cca_paths_out.error }}"
         # No probe at all means the filesystem could not be inspected. A policy
         # that allows execution from a directory nobody could read is not a
         # pass and not a failure -- it is a thing we did not observe.
-        partial: "{{ (_cca_paths.probes | default([])) | length == 0 }}"
+        partial: >-
+          {{ (not _cca_paths_out.ok)
+             or ((_cca_paths.probes | default([])) | length == 0) }}
         value: "{{ _cca_paths }}"

@@ -3,6 +3,12 @@
 # "assessment never changes a host" visible in review rather than promised in
 # a comment. The guarantee that survives adversarial review is the credential
 # these tasks run under -- see docs/13-security-model.md.
+#
+# Both scripts end in ConvertTo-Json, so win_powershell returns their output as
+# a STRING. `nobytes.compliance.ps_object` is the only thing that parses it.
+# Before ADR 0017 this role tested `output | length > 0` to decide whether
+# Office was installed -- which is 1 on every host, because there is always
+# exactly one JSON string, even when it reads "[]".
 
 - name: Detect Microsoft Office installations
   ansible.windows.win_powershell:
@@ -24,6 +30,16 @@
   changed_when: false
   check_mode: false
 
+# Parsed here rather than in the record task's vars because the next task's
+# `when:` depends on it. This is a controller-side fact; it touches no host.
+- name: Parse the Office installation inventory
+  ansible.builtin.set_fact:
+    # `expect: any` because this collector's contract is a JSON ARRAY of
+    # installations -- zero of them is the legitimate "no Office" answer.
+    _cca_office_install: >-
+      {{ collect_windows_office_install.output
+         | nobytes.compliance.ps_object(expect='any') }}
+
 - name: Enumerate Office macro policy across machine and user scopes
   ansible.windows.win_powershell:
     parameters:
@@ -33,21 +49,32 @@
   register: collect_windows_office_macro_policy
   changed_when: false
   check_mode: false
-  when: (collect_windows_office_install.output | default([]) | length) > 0
+  when: (_cca_office_install.value | default([]) | length) > 0
 
 - name: Record Office facts into this host's bundle
   ansible.builtin.include_role:
     name: nobytes.compliance.fact_bundle
     tasks_from: record
   vars:
+    _cca_macro_out: >-
+      {{ collect_windows_office_macro_policy.output | default([])
+         | nobytes.compliance.ps_object }}
     fact_records:
       windows.office.install:
         source: "registry:HKLM\\SOFTWARE\\Microsoft\\Office\\ClickToRun"
-        value: "{{ collect_windows_office_install.output | default([]) }}"
+        # An unparseable inventory is not an absence of Office. Without this the
+        # evaluator reads a one-element list holding the string "[]" as an
+        # installation and never reaches not_applicable.
+        partial: "{{ not _cca_office_install.ok }}"
+        meta:
+          collection_error: "{{ _cca_office_install.error }}"
+        value: "{{ _cca_office_install.value | default([]) }}"
       windows.office.macro_policy:
         source: "registry:HKLM+HKU\\*\\SOFTWARE\\Policies\\Microsoft\\office"
+        # Only meaningful where Office is actually installed: the scan is
+        # skipped otherwise, and a skipped scan is not a failed one.
         partial: >-
-          {{ (collect_windows_office_macro_policy.output | default([]) | length) == 0
-             and (collect_windows_office_install.output | default([]) | length) > 0 }}
-        meta: "{{ (collect_windows_office_macro_policy.output | default([{}]))[0].meta | default({}) }}"
-        value: "{{ (collect_windows_office_macro_policy.output | default([{}]))[0].rows | default([]) }}"
+          {{ (_cca_office_install.value | default([]) | length) > 0
+             and not _cca_macro_out.ok }}
+        meta: "{{ _cca_macro_out.value.meta | default({}) }}"
+        value: "{{ _cca_macro_out.value.rows | default([]) }}"

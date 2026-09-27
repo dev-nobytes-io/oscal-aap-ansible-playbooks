@@ -14,7 +14,9 @@
     name: nobytes.compliance.fact_bundle
     tasks_from: record
   vars:
-    _cca_inv: "{{ (collect_windows_applications_inventory.output | default([{}]))[0] | default({}) }}"
+    _cca_inv_out: >-
+      {{ collect_windows_applications_inventory.output | nobytes.compliance.ps_object }}
+    _cca_inv: "{{ _cca_inv_out.value }}"
     fact_records:
       windows.applications.installed:
         source: "registry:HKLM+HKU\\*\\...\\CurrentVersion\\Uninstall"
@@ -22,6 +24,9 @@
         # application. The evaluator reports partial-population rather than
         # claiming a clean inventory.
         partial: >-
-          {{ (_cca_inv.meta.unloaded_hives | default([]) | length) > 0 }}
-        meta: "{{ _cca_inv.meta | default({}) }}"
+          {{ (not _cca_inv_out.ok)
+             or ((_cca_inv.meta.unloaded_hives | default([]) | length) > 0) }}
+        meta: >-
+          {{ (_cca_inv.meta | default({}))
+             | combine({'collection_error': _cca_inv_out.error}) }}
         value: "{{ _cca_inv.applications | default([]) }}"
