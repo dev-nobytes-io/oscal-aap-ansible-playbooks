@@ -1,0 +1,220 @@
+---
+# Is this control node, this inventory and this target ready to be assessed?
+#
+# Run this BEFORE `collect.yml`. Nothing like it existed: `coverage_gate.yml`
+# runs AFTER collection, so the first real run against a host either worked or
+# produced an Ansible traceback with nothing in between -- and the two most
+# likely failures were both on the control node rather than the target.
+#
+# READ-ONLY, like every assessment path here. win_ping and win_whoami read and
+# report; neither changes a host.
+#
+#   ansible-playbook -i inventory/lab.yml playbooks/preflight.yml \
+#     -e fact_bundle_redaction_salt="$(vault-read …)" \
+#     -e ansible_user=LAB\\svc-cca -e ansible_password=…
+#
+# Every failure below names the fix. That is the whole point: a specific message
+# on the control node beats a stack trace from a WinRM handshake.
+
+- name: Preflight the control node
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  # A control-node problem affects every target, so stop rather than fan out.
+  any_errors_fatal: true
+
+  vars:
+    # Defaults to the interpreter running ansible-playbook, which is the one the
+    # winrm connection plugin will import pywinrm from. Overridable ONLY so the
+    # guard itself can be tested against an interpreter that lacks pywinrm --
+    # `ansible_playbook_python` is a magic var that -e cannot override, so
+    # without this indirection there is no way to prove this check fires.
+    cca_preflight_python: "{{ ansible_playbook_python }}"
+
+  tasks:
+    - name: Check the Windows transport library is importable
+      # `ansible.windows` over WinRM needs pywinrm on the CONTROL NODE. Its
+      # absence is silent until the first Windows host is contacted, and the
+      # error names a module rather than a remedy. Both execution environment
+      # images carry it; requirements.txt did not until PR 23.
+      ansible.builtin.command:
+        argv:
+          - "{{ cca_preflight_python }}"
+          - "-c"
+          - "import winrm"
+      register: cca_preflight_winrm
+      changed_when: false
+      failed_when: false
+
+    - name: Report a missing Windows transport library
+      ansible.builtin.assert:
+        that: cca_preflight_winrm.rc == 0
+        fail_msg: >-
+          pywinrm is not importable by {{ cca_preflight_python }}, so no
+          Windows host can be reached. Fix: `pip install -r requirements.txt`
+          (or `pip install pywinrm`). Running through an AAP/AWX execution
+          environment instead? Those images already carry it.
+        success_msg: "pywinrm importable"
+
+    - name: Resolve the Windows collection by loading a module's documentation
+      # Cheapest honest check that `make deps` has been run: if the collection
+      # is missing, this fails naming it, instead of a later task failing with
+      # "couldn't resolve module/action".
+      ansible.builtin.command:
+        argv:
+          - "{{ cca_preflight_python }}"
+          - "-c"
+          - >-
+            import importlib.util, sys;
+            sys.exit(0 if importlib.util.find_spec('ansible_collections.ansible.windows') else 1)
+      register: cca_preflight_collection
+      changed_when: false
+      failed_when: false
+      environment:
+        PYTHONPATH: "{{ playbook_dir }}/../collections"
+
+    - name: Report a missing ansible.windows collection
+      ansible.builtin.assert:
+        that: cca_preflight_collection.rc == 0
+        fail_msg: >-
+          the ansible.windows collection is not installed. Fix: `make deps`.
+          Air-gapped? See the air-gapped section of README.md -- and note the
+          requirements.yml that `ansible-galaxy collection download` writes
+          references its tarballs by RELATIVE path, so the offline install must
+          run from inside the download directory.
+        success_msg: "ansible.windows resolved"
+
+    - name: Check the redaction salt is set and is not the shipped placeholder
+      # The fact_bundle role refuses to start without this, but it refuses
+      # halfway through a run. Better to say so before anything connects.
+      ansible.builtin.assert:
+        that:
+          - fact_bundle_redaction_salt | default('') | length > 0
+          - fact_bundle_redaction_salt | default('') != 'CHANGE-ME-PER-DEPLOYMENT'
+        fail_msg: >-
+          fact_bundle_redaction_salt is unset or still the shipped placeholder.
+          Collection will refuse to start. Fix: pass
+          -e fact_bundle_redaction_salt=... from a vault. A hash under a known
+          salt is reversible and correlatable across organisations, which is why
+          there is no usable default (ADR 0016).
+        success_msg: "redaction salt set"
+
+    - name: Control node is ready
+      ansible.builtin.debug:
+        msg: "PREFLIGHT control node OK -- pywinrm, collections and salt all present"
+
+- name: Preflight the inventory and each Windows target
+  hosts: "{{ cca_preflight_target | default('all:!entra_tenants') }}"
+  gather_facts: false
+  # One unreachable host must not stop the others being reported.
+  any_errors_fatal: false
+
+  tasks:
+    - name: Check the subject declares an asset id
+      ansible.builtin.assert:
+        that: cca_asset_id | default('') | length > 0
+        fail_msg: >-
+          {{ inventory_hostname }} has no cca_asset_id. It is the correlation key
+          that gives a POA&M item continuity across runs, so a bundle without one
+          cannot be tracked. Fix: set it in inventory -- see
+          inventory/lab.yml.example.
+        success_msg: "{{ inventory_hostname }}: cca_asset_id present"
+
+    - name: Check the WinRM transport variables are coherent
+      when: ansible_connection | default('') == 'winrm'
+      ansible.builtin.assert:
+        that:
+          - ansible_winrm_transport | default('') | length > 0
+          - ansible_user | default('') | length > 0
+        fail_msg: >-
+          {{ inventory_hostname }} uses the winrm connection but
+          {{ 'ansible_winrm_transport is unset' if (ansible_winrm_transport | default('') | length == 0)
+             else 'ansible_user is unset' }}.
+          Without a username NTLM fails UNREACHABLE with "auth method ntlm
+          requires a username". Fix: pass -e ansible_user=DOMAIN\\account and
+          -e ansible_password=... at run time; never put them in inventory.
+        success_msg: "{{ inventory_hostname }}: transport vars coherent"
+
+    - name: Check the WinRM port is open
+      # Separates "port shut or host down" from "auth failed", which the raw
+      # Ansible error does not: both surface as UNREACHABLE.
+      when: ansible_connection | default('') == 'winrm'
+      ansible.builtin.wait_for:
+        host: "{{ ansible_host | default(inventory_hostname) }}"
+        port: "{{ ansible_port | default(5985) }}"
+        timeout: "{{ cca_preflight_timeout | default(10) | int }}"
+        state: started
+      delegate_to: localhost
+      register: cca_preflight_port
+      changed_when: false
+      # ignore_errors, NOT failed_when: false. The latter redefines success, so
+      # `.failed` would always be false and the assert below could never fire --
+      # a guard structurally unable to see what it guards, which is the defect
+      # class this repository keeps finding. Caught by running it.
+      ignore_errors: true
+
+    - name: Report a closed WinRM port
+      when: ansible_connection | default('') == 'winrm'
+      ansible.builtin.assert:
+        that: not (cca_preflight_port.failed | default(false))
+        fail_msg: >-
+          {{ inventory_hostname }}:{{ ansible_port | default(5985) }} did not
+          accept a connection. Nothing is listening, or a firewall is in the way.
+          Fix on the host: `Enable-PSRemoting -Force`, then confirm with
+          `winrm enumerate winrm/config/listener`. This is a network result, not
+          an authentication one -- no credential has been offered yet.
+        success_msg: "{{ inventory_hostname }}: port {{ ansible_port | default(5985) }} open"
+
+    - name: Authenticate and confirm the host answers
+      when: ansible_connection | default('') == 'winrm'
+      ansible.windows.win_ping:
+      register: cca_preflight_ping
+      changed_when: false
+      # Same reasoning as the port check. `ignore_unreachable` is needed as well:
+      # an auth failure surfaces as UNREACHABLE, not as a task failure, and
+      # without it the play stops before the message below is ever printed.
+      ignore_errors: true
+      ignore_unreachable: true
+
+    - name: Report an authentication failure
+      when: ansible_connection | default('') == 'winrm'
+      ansible.builtin.assert:
+        that: not (cca_preflight_ping.unreachable | default(false) or cca_preflight_ping.failed | default(false))
+        fail_msg: >-
+          {{ inventory_hostname }} accepted a connection but
+          {{ ansible_winrm_transport | default('?') }} authentication did not
+          succeed: {{ cca_preflight_ping.msg | default('no message') }}
+          Kerberos needs pywinrm[kerberos], krb5 client tools and a current
+          ticket -- none of which `make bootstrap` installs; NTLM needs only a
+          username and password. See docs/lab/README.md.
+        success_msg: "{{ inventory_hostname }}: authenticated"
+
+    - name: Report which identity actually authenticated
+      # This is not a convenience. docs/lab/README.md insists that running as
+      # Domain Admin proves the collectors WORK but not that they work with the
+      # read-only credential the documentation specifies -- and until now
+      # nothing evidenced which one a run used. A result recorded as read-only
+      # that in fact used Domain Admin is the class of unverified claim this
+      # repository exists to refuse.
+      when:
+        - ansible_connection | default('') == 'winrm'
+        - not (cca_preflight_ping.unreachable | default(false) or cca_preflight_ping.failed | default(false))
+      ansible.windows.win_whoami:
+      register: cca_preflight_whoami
+      changed_when: false
+      ignore_errors: true
+      ignore_unreachable: true
+
+    - name: State the authenticated identity and its privilege
+      when:
+        - ansible_connection | default('') == 'winrm'
+        - cca_preflight_whoami is defined
+        - not (cca_preflight_whoami.skipped | default(false))
+      ansible.builtin.debug:
+        msg: >-
+          PREFLIGHT {{ inventory_hostname }} OK as
+          {{ cca_preflight_whoami.account.sid | default('?') }}
+          ({{ cca_preflight_whoami.label | default('?') }}),
+          groups: {{ (cca_preflight_whoami.groups | default([]) | length) }}.
+          RECORD THIS with the run: a floor met under an administrator and a
+          floor met under a scoped read-only account are not the same result.

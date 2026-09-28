@@ -181,6 +181,14 @@ ansible.windows:3.8.0 was installed successfully
 community.general:12.6.5 was installed successfully
 ```
 
+`make bootstrap` installs `pywinrm`, which `ansible.windows` needs on the
+**control node** to reach a Windows host over WinRM. Its absence is silent until
+the first Windows target is contacted, so it is pinned rather than left to the
+reader. **Kerberos is not installed** — it needs `pywinrm[kerberos]` (a compiler
+and krb5 headers, which would break the no-toolchain property above), krb5 client
+tools and a realm. Use NTLM for a first test; see
+[`docs/lab/README.md`](docs/lab/README.md).
+
 **Those two commands are the only steps that touch the network.** Everything
 below runs fully offline:
 
@@ -193,6 +201,7 @@ make assess-local # evaluate -> OSCAL against the bundled fixtures
 make report       # human-readable report (markdown + html)
 make annex        # populate ASD's SSP Annex (.xlsx) from the results
 make ps-lint      # parse every Windows collector with PowerShell (needs pwsh)
+make lab-preflight # check control node, inventory and target BEFORE collecting
 make assess-self  # run the REAL collect playbook against this host, then evaluate
 make help         # everything else
 ```

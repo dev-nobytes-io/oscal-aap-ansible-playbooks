@@ -2,14 +2,16 @@
 # Lab inventory TEMPLATE. Copy to inventory/lab.yml (gitignored) and edit.
 #
 # Real inventories do not belong in this repository -- see inventory/README.md.
-# This file carries no host names, no credentials and no domain names, and the
-# host below is a placeholder.
+# This file carries no host names, no credentials and no domain names.
 #
 # Credentials NEVER go here. Supply them at run time from a vault:
 #
-#   ansible-playbook -i inventory/lab.yml playbooks/collect.yml \
-#     -e fact_bundle_redaction_salt="$(vault-read cca/lab/salt)" \
-#     -e ansible_password="$(vault-read cca/lab/collect-account)"
+#   make lab-preflight LAB_SALT="$(vault-read cca/lab/salt)" \
+#     LAB_EXTRA='-e ansible_user=LAB\\svc-cca -e ansible_password=...'
+#
+# Run `make lab-preflight` BEFORE `make lab-validate`. It separates a control-node
+# problem from an inventory problem from a target problem, and reports which
+# identity actually authenticated.
 
 all:
   vars:
@@ -22,18 +24,49 @@ all:
         windows_current:
           vars:
             ansible_connection: winrm
-            # Explicit, never inferred. microsoft.ad's own documentation
-            # contains a typo giving 686 for LDAPS; inferring transport is how
-            # a bind password crosses the wire in cleartext while the collector
-            # believes it is protected.
-            ansible_winrm_transport: kerberos
-            ansible_port: 5986
-            ansible_winrm_scheme: https
+
+            # --- NTLM over 5985: the default, because it WORKS with the
+            # --- dependencies `make bootstrap` installs and nothing else.
+            #
+            # NTLM encrypts the message payload, so plain 5985 does not put
+            # credentials or evidence on the wire in clear. It needs no
+            # certificate, no Kerberos realm and no system packages -- which
+            # matters, because every alternative below needs at least one.
+            ansible_winrm_transport: ntlm
+            ansible_port: 5985
+            ansible_winrm_scheme: http
+
+            # --- Alternative: HTTPS on 5986 -------------------------------
+            # Needs a certificate on the host. For a self-signed lab cert also
+            # set server_cert_validation, or the handshake fails with an
+            # SSLError that does not mention the certificate:
+            #
+            #   ansible_port: 5986
+            #   ansible_winrm_scheme: https
+            #   ansible_winrm_server_cert_validation: ignore
+
+            # --- Alternative: Kerberos ------------------------------------
+            # Preferred in production and the harder path in a lab. It needs
+            # ALL of the following, none of which `make bootstrap` installs:
+            #
+            #   pip install pywinrm[kerberos]   (needs a compiler + krb5 headers)
+            #   krb5 client tools on PATH       (kinit, klist)
+            #   /etc/krb5.conf with the realm, and a current ticket
+            #
+            # Without them the run fails UNREACHABLE with "the python kerberos
+            # library is not installed". Set it explicitly rather than relying
+            # on inference: microsoft.ad's own documentation contains a typo
+            # giving port 686 for LDAPS, and inferring transport is how a bind
+            # password crosses the wire in clear while the caller believes it
+            # is protected.
+            #
+            #   ansible_winrm_transport: kerberos
+
           hosts:
             dc01.lab.invalid:
-              # The estate's own identifier for the subject. It is deliberately
-              # NOT redacted -- it is the correlation key that gives a POA&M
-              # item continuity across runs (ADR 0016). Set it to an already
+              # The estate's own identifier for the subject. Deliberately NOT
+              # redacted: it is the correlation key giving a POA&M item
+              # continuity across runs (ADR 0016). Set it to an already
               # pseudonymous value if that matters for your lab.
               cca_asset_id: lab.invalid/DC01
 

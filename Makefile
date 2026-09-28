@@ -34,7 +34,18 @@ BASELINE    ?= E8_ML1
 SELF_RUN    ?= self
 SELF_SALT   ?= make-assess-self-not-for-production
 
-.PHONY: help bootstrap deps lint docs ps-lint generate validate test assess-local coverage report annex assess-self fetch clean ee-context ee-build
+.PHONY: help bootstrap deps lint docs ps-lint generate validate test assess-local coverage report annex assess-self fetch clean ee-context ee-build lab-preflight lab-validate lab-digest lab-diff
+
+# --- Lab validation -----------------------------------------------------------
+# LAB_SALT is deliberately undefined: the digest refuses to hash content keys
+# without a real per-deployment salt, for the same reason ADR 0016 refuses to
+# hash identifiers under a known one.
+LAB_INV     ?= inventory/lab.yml
+LAB_RUN     ?= lab
+LAB_DIGEST  ?= $(OUT)/lab/digest.json
+# Credentials are passed at run time, never stored in inventory:
+#   make lab-preflight LAB_SALT=... LAB_EXTRA='-e ansible_user=LAB\\svc -e ansible_password=...'
+LAB_EXTRA   ?=
 
 help: ## Show this help
 	@awk 'BEGIN{FS=":.*?## "} /^[a-zA-Z_-]+:.*?## /{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -150,6 +161,14 @@ ee-build: ## Build an execution environment image (EE=ee-current|ee-legacy)
 	$(BIN)ansible-builder build -f $(EE_DEF) -t $(EE_TAG) \
 	  -c $(OUT)/ee-context-$(EE) --build-arg PYCMD=$(EE_PYCMD) \
 	  --container-runtime $(EE_RUNTIME) -v 2
+
+lab-preflight: ## Check the control node, inventory and target BEFORE collecting (LAB_SALT=, LAB_EXTRA=)
+	@test -n "$(LAB_SALT)" || { echo "LAB_SALT is required -- see docs/lab/README.md"; exit 1; }
+	@test -f "$(LAB_INV)" || { echo "$(LAB_INV) not found; copy inventory/lab.yml.example"; exit 1; }
+	# Run this FIRST. It separates a control-node problem from an inventory
+	# problem from a target problem, and reports which identity authenticated.
+	$(BIN)ansible-playbook -i $(LAB_INV) playbooks/preflight.yml \
+	  -e fact_bundle_redaction_salt=$(LAB_SALT) $(LAB_EXTRA)
 
 lab-validate: ## Run the REAL collect playbook against the lab inventory (LAB_SALT=, LAB_INV=)
 	@test -n "$(LAB_SALT)" || { echo "LAB_SALT is required -- see docs/lab/README.md"; exit 1; }

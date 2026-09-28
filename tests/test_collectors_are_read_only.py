@@ -82,6 +82,10 @@ ALLOWED_MODULES = frozenset(
         "ansible.builtin.slurp",
         "ansible.builtin.stat",
         "ansible.builtin.find",
+        # Used by playbooks/preflight.yml to test whether a WinRM port accepts a
+        # connection before any credential is offered. Waits on a socket; writes
+        # nothing anywhere.
+        "ansible.builtin.wait_for",
         "ansible.builtin.uri",
         "ansible.builtin.set_fact",
         "ansible.builtin.assert",
@@ -96,6 +100,14 @@ ALLOWED_MODULES = frozenset(
         "ansible.builtin.meta",
         # Windows reads
         "ansible.windows.win_powershell",
+        # Used by playbooks/preflight.yml, which reports whether a target can be
+        # reached and WHICH identity authenticated. win_ping returns a literal
+        # pong; win_whoami reads the access token. Neither writes anything, and
+        # the identity report is load-bearing: a run recorded as read-only that
+        # in fact used Domain Admin is the class of unverified claim this
+        # repository refuses.
+        "ansible.windows.win_ping",
+        "ansible.windows.win_whoami",
         "ansible.windows.win_stat",
         "ansible.windows.win_reg_stat",
         "ansible.windows.win_slurp",
