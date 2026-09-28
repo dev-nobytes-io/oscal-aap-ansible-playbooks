@@ -1,0 +1,43 @@
+---
+# Lab inventory TEMPLATE. Copy to inventory/lab.yml (gitignored) and edit.
+#
+# Real inventories do not belong in this repository -- see inventory/README.md.
+# This file carries no host names, no credentials and no domain names, and the
+# host below is a placeholder.
+#
+# Credentials NEVER go here. Supply them at run time from a vault:
+#
+#   ansible-playbook -i inventory/lab.yml playbooks/collect.yml \
+#     -e fact_bundle_redaction_salt="$(vault-read cca/lab/salt)" \
+#     -e ansible_password="$(vault-read cca/lab/collect-account)"
+
+all:
+  vars:
+    ism_baseline: E8_ML1
+  children:
+    ee_current:
+      vars:
+        estate_tier: current
+      children:
+        windows_current:
+          vars:
+            ansible_connection: winrm
+            # Explicit, never inferred. microsoft.ad's own documentation
+            # contains a typo giving 686 for LDAPS; inferring transport is how
+            # a bind password crosses the wire in cleartext while the collector
+            # believes it is protected.
+            ansible_winrm_transport: kerberos
+            ansible_port: 5986
+            ansible_winrm_scheme: https
+          hosts:
+            dc01.lab.invalid:
+              # The estate's own identifier for the subject. It is deliberately
+              # NOT redacted -- it is the correlation key that gives a POA&M
+              # item continuity across runs (ADR 0016). Set it to an already
+              # pseudonymous value if that matters for your lab.
+              cca_asset_id: lab.invalid/DC01
+
+    # Declared with no members so Ansible does not warn on the tenant play's
+    # host pattern. A tenant is a subject, not a host -- see inventory/README.md.
+    entra_tenants:
+      hosts: {}

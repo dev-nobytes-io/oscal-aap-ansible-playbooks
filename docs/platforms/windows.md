@@ -362,6 +362,7 @@ installed build no longer honours.
 | Browser `policy_level` classification | **Tested by execution** — `Get-PolicyLevel` runs under PowerShell in CI, including the `\Recommended` case the Office glob gets wrong |
 | WinRM/Kerberos transport | **Not verified** — needs a domain |
 | Legacy tier (Server 2012, Win 10) | **Not verified** — no such CI runners exist; needs a documented lab |
+| Lab validation harness | **Built, not yet run** — `make lab-validate` drives the real `collect.yml`; the digest, floors and three-way reconciliation are exercised against the fixture corpus. See [ADR 0020](../adr/0020-lab-validation-is-a-shape-digest-and-a-three-way-diff.md) and [`docs/lab/`](../lab/README.md) |
 | Collector output contract (`win_powershell` -> role) | **Tested on the wire form** — `tests/test_collector_output_contract.py` asserts no role indexes `output[0]` as a mapping, and that an unreadable fact reaches no verdict. See [ADR 0017](../adr/0017-the-collector-output-contract.md) |
 
 Legacy-tier checks stay marked unverified in the coverage ledger until a lab run

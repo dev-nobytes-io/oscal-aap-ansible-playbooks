@@ -55,3 +55,9 @@ credentials.yml
 .vscode/
 *.swp
 .DS_Store
+
+# ---- Lab ----
+# A real lab inventory names real hosts. The template is inventory/lab.yml.example.
+inventory/lab.yml
+# Lab digests are reviewed before being committed deliberately, never by accident.
+out/lab/

@@ -1,0 +1,89 @@
+---
+# Per-fact non-empty FLOORS, declared BEFORE any lab run.
+#
+# Why this file exists: a shape diff over an empty fact yields zero differences,
+# and zero differences reads as agreement. On a domain controller Office is not
+# installed and no Edge policy exists, so three of the five Windows collectors
+# return nothing -- and without a floor declared in advance, "no differences"
+# would be indistinguishable from "verified". That is the exact mistake this
+# repository keeps making: a guard structurally unable to see what it guards.
+#
+# Declared in advance, and committed, so the result cannot be fitted to whatever
+# the run happened to produce. A floor that is not met means the run establishes
+# NOTHING about that fact -- not that the estate lacks the thing.
+#
+# Keyed by platform_family, because the same fact legitimately carries different
+# shapes: os.release is product_name/current_build on Windows and id/version_id
+# on Linux. A floor keyed on fact alone would either be wrong on one platform or
+# accept anything on both.
+#
+# `min_n` applies to a list path. A path with no `min_n` need only be PRESENT --
+# `applocker.available: false` is a real observation and passes, because the
+# claim being tested is "the collector read the host", not "the host is
+# compliant".
+
+windows:
+  os.release:
+    require:
+      # A real Windows install always has these. Empty means the registry read
+      # failed, which PR 18 showed was the shipped state.
+      - path: os.release.product_name
+      - path: os.release.current_build
+
+  windows.os.optional_features:
+    require:
+      # Every supported Windows build enumerates optional features. An empty
+      # list is a failed read -- Get-WindowsOptionalFeature -Online requires
+      # elevation and is absent on Server SKUs without DISM. os_state.py now
+      # refuses an empty list outright (ADR 0017); this is the harness saying
+      # the same thing.
+      - path: windows.os.optional_features
+        min_n: 1
+
+  windows.applications.installed:
+    require:
+      # The HKLM Uninstall key is never empty on a real Windows install.
+      - path: windows.applications.installed
+        min_n: 1
+      # The collector always emits this meta. The fixture corpus modelled the
+      # fact WITHOUT it until PR 22, so app_support.py:124's read of
+      # `unloaded_hives` had never seen a bundle.
+      - path: windows.applications.installed.@meta.unloaded_hives
+
+  windows.appcontrol.state:
+    require:
+      # Presence, not truth: `available: false` on a host with no AppLocker
+      # policy is a real observation. What must not happen is the whole fact
+      # arriving empty, which is how ism-0843 produced a confident false red.
+      - path: windows.appcontrol.state.applocker.available
+      - path: windows.appcontrol.state.wdac.available
+
+  windows.appcontrol.writable_paths:
+    require:
+      # The %WINDIR% walk always probes something on a real host.
+      - path: windows.appcontrol.writable_paths.probes
+        min_n: 1
+
+  # --- Expected NOT to be met on a domain controller -------------------------
+  # Stated here rather than omitted, so the run reports them as unmet floors
+  # instead of as silent agreement. See docs/lab/experiment-sheet.md.
+
+  windows.office.macro_policy:
+    require:
+      - path: windows.office.macro_policy
+        min_n: 1
+
+  windows.browsers.policy:
+    require:
+      - path: windows.browsers.policy.rows
+        min_n: 1
+
+  windows.browsers.java_surface:
+    require:
+      - path: windows.browsers.java_surface.ie_integration_level
+
+linux:
+  os.release:
+    require:
+      - path: os.release.id
+      - path: os.release.version_id

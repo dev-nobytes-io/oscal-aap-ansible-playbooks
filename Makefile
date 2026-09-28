@@ -151,6 +151,26 @@ ee-build: ## Build an execution environment image (EE=ee-current|ee-legacy)
 	  -c $(OUT)/ee-context-$(EE) --build-arg PYCMD=$(EE_PYCMD) \
 	  --container-runtime $(EE_RUNTIME) -v 2
 
+lab-validate: ## Run the REAL collect playbook against the lab inventory (LAB_SALT=, LAB_INV=)
+	@test -n "$(LAB_SALT)" || { echo "LAB_SALT is required -- see docs/lab/README.md"; exit 1; }
+	@test -f "$(LAB_INV)" || { echo "$(LAB_INV) not found; copy inventory/lab.yml.example"; exit 1; }
+	# The REAL collect.yml, not a parallel lab playbook. A second code path
+	# could diverge from the one production uses, which is this repository's
+	# recurring defect in a new costume.
+	$(BIN)ansible-playbook -i $(LAB_INV) playbooks/collect.yml \
+	  -e fact_bundle_redaction_salt=$(LAB_SALT) \
+	  -e fact_bundle_run_id=$(LAB_RUN)
+
+lab-digest: ## Reduce lab bundles to a value-free shape digest (LAB_SALT=)
+	@test -n "$(LAB_SALT)" || { echo "LAB_SALT is required -- see docs/lab/README.md"; exit 1; }
+	$(PY) tools/cca.py lab-digest $(OUT)/bundles/$(LAB_RUN)/*.json \
+	  --salt $(LAB_SALT) --output $(LAB_DIGEST)
+
+lab-diff: ## Reconcile a lab digest against the fixtures and the evaluators (LAB_SALT=)
+	@test -n "$(LAB_SALT)" || { echo "LAB_SALT is required -- see docs/lab/README.md"; exit 1; }
+	$(PY) tools/cca.py lab-diff --lab $(LAB_DIGEST) --salt $(LAB_SALT) \
+	  --floors docs/lab/floors.yml --json $(OUT)/lab/reconciliation.json
+
 clean: ## Remove generated output and caches
 	rm -rf $(OUT) .pytest_cache .ruff_cache .mypy_cache htmlcov .coverage
 	find . -name '__pycache__' -type d -prune -exec rm -rf {} + 2>/dev/null || true
