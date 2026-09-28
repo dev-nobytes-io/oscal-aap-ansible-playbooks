@@ -183,3 +183,67 @@ def test_it_reports_which_identity_authenticated() -> None:
         "the identity report must tell the operator to record it alongside the "
         "run, or the distinction it exists to draw is lost"
     )
+
+
+# --------------------------------------------------------------------------
+# The Makefile. PR 22 shipped three targets referencing undefined variables.
+# --------------------------------------------------------------------------
+
+MAKEFILE = ROOT / "Makefile"
+
+
+def test_every_variable_a_target_references_is_defined() -> None:
+    """`make lab-validate` failed with " not found" -- an empty path.
+
+    PR 22 meant to add `LAB_INV`, `LAB_RUN` and `LAB_DIGEST` alongside the lab
+    targets. Its edit used a search string that omitted `ps-lint`, matched
+    nothing, and carried no assertion, so it silently did nothing -- and the
+    targets shipped expanding undefined variables to the empty string. Make does
+    not error on that; it substitutes nothing and carries on, so the failure
+    surfaced as a message with a blank filename.
+
+    Found by cloning the repository fresh and running the documented command.
+    """
+    import re
+
+    body = MAKEFILE.read_text(encoding="utf-8")
+
+    defined = set(re.findall(r"^([A-Z][A-Z0-9_]*)\s*[?:+]?=", body, re.MULTILINE))
+    # Automatic and environment variables Make or the shell provides.
+    defined |= {"MAKE", "MAKEFILE_LIST", "SHELL", "CURDIR", "HOME", "PATH"}
+    # Deliberately undefined, and each one guarded with an explicit `test -n`
+    # that names the remedy. Declared here rather than loosening the rule:
+    #
+    #   LAB_SALT  no default is possible. A per-deployment salt is the whole
+    #             protection -- hashing under a known one is reversible and
+    #             correlatable across organisations (ADR 0016), so the targets
+    #             refuse to run rather than supply a placeholder.
+    INTENTIONALLY_UNDEFINED = {"LAB_SALT"}
+    defined |= INTENTIONALLY_UNDEFINED
+
+    for name in INTENTIONALLY_UNDEFINED:
+        assert f'test -n "$({name})"' in body, (
+            f"{name} is exempted as intentionally undefined but no target guards "
+            f"it with `test -n`, so a run would silently proceed without it"
+        )
+    assert "OUT" in defined, "variable extraction is broken -- OUT should be defined"
+
+    referenced = set(re.findall(r"\$\(([A-Z][A-Z0-9_]*)\)", body))
+    assert len(referenced) >= 8, f"only {len(referenced)} variable references found"
+
+    missing = sorted(referenced - defined)
+    assert not missing, (
+        f"the Makefile references variables that are never defined: {missing}. "
+        f"Make expands an undefined variable to the empty string without error, "
+        f"so a target silently runs against a blank path."
+    )
+
+
+def test_the_lab_targets_are_phony() -> None:
+    """A target sharing a name with a directory would otherwise be skipped."""
+    body = MAKEFILE.read_text(encoding="utf-8")
+    phony = " ".join(
+        line for line in body.splitlines() if line.startswith(".PHONY:")
+    )
+    for target in ("lab-preflight", "lab-validate", "lab-digest", "lab-diff"):
+        assert target in phony, f"{target} is not declared .PHONY"

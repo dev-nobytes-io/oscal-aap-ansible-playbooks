@@ -34,7 +34,18 @@ BASELINE    ?= E8_ML1
 SELF_RUN    ?= self
 SELF_SALT   ?= make-assess-self-not-for-production
 
-.PHONY: help bootstrap deps lint docs ps-lint generate validate test assess-local coverage report annex assess-self fetch clean ee-context ee-build
+.PHONY: help bootstrap deps lint docs ps-lint generate validate test assess-local coverage report annex assess-self fetch clean ee-context ee-build lab-preflight lab-validate lab-digest lab-diff
+
+# --- Lab validation -----------------------------------------------------------
+# LAB_SALT is deliberately undefined: the digest refuses to hash content keys
+# without a real per-deployment salt, for the same reason ADR 0016 refuses to
+# hash identifiers under a known one.
+LAB_INV     ?= inventory/lab.yml
+LAB_RUN     ?= lab
+LAB_DIGEST  ?= $(OUT)/lab/digest.json
+# Credentials are passed at run time, never stored in inventory:
+#   make lab-preflight LAB_SALT=... LAB_EXTRA='-e ansible_user=LAB\\svc -e ansible_password=...'
+LAB_EXTRA   ?=
 
 help: ## Show this help
 	@awk 'BEGIN{FS=":.*?## "} /^[a-zA-Z_-]+:.*?## /{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
