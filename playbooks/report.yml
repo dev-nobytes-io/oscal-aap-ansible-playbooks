@@ -1,0 +1,53 @@
+---
+# Render the human-readable report (markdown + html) and populate ASD's SSP
+# Annex from the OSCAL documents evaluate.yml emitted. READ-ONLY: runs on the
+# controller and reads the documents, not the registry (docs/10-reporting.md),
+# so it can be re-run later from the same out/ without touching a target.
+#
+#   ansible-playbook playbooks/report.yml
+#
+# assess.yml imports this after evaluate.yml. Until it did, an assessment run
+# (AWX included) stopped at the OSCAL JSON and the documented `make report` /
+# `make annex` outputs were only produced by hand -- the same class of defect as
+# a collector no playbook invokes.
+
+- name: Render reports from the assessment documents
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    # Same resolution as evaluate.yml, so the two always meet in one directory.
+    cca_out_dir: >-
+      {{ lookup('ansible.builtin.env', 'CCA_OUT_DIR')
+         | default(playbook_dir ~ '/../out', true) }}
+
+  tasks:
+    - name: Render the assessment report
+      ansible.builtin.command:
+        argv:
+          - python3
+          - "{{ playbook_dir }}/../tools/cca.py"
+          - report
+          - --format
+          - "{{ item }}"
+          - --out
+          - "{{ cca_out_dir | trim }}"
+      loop: [markdown, html]
+      register: cca_report
+      changed_when: true
+
+    - name: Populate the SSP Annex
+      ansible.builtin.command:
+        argv:
+          - python3
+          - "{{ playbook_dir }}/../tools/cca.py"
+          - annex
+          - --out
+          - "{{ cca_out_dir | trim }}"
+      register: cca_annex
+      changed_when: true
+
+    - name: Show what was written
+      ansible.builtin.debug:
+        msg: "{{ (cca_report.results | map(attribute='stdout_lines') | flatten) + cca_annex.stdout_lines }}"
