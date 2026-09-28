@@ -51,9 +51,40 @@ stating plainly:
 
 ## Running it
 
+### Step 0 — prove the pipeline works before involving Windows
+
+```bash
+make assess-self
+```
+
+This runs the **real** `collect.yml` against the control node itself, evaluates it
+and emits three schema-valid OSCAL documents. It exercises the install, the
+evaluators, the emitters and the reporting — everything except the Windows
+transport. **It works today**, so if it is green you have a known-good baseline
+and any later failure is isolated to Windows.
+
+### Step 1 — preflight
+
 ```bash
 cp inventory/lab.yml.example inventory/lab.yml   # gitignored; edit for your lab
-make lab-validate LAB_SALT="$(vault-read cca/lab/salt)"
+
+make lab-preflight LAB_SALT="$(vault-read cca/lab/salt)" \
+  LAB_EXTRA='-e ansible_user=LAB\\svc-cca -e ansible_password=...'
+```
+
+Run this **before** `lab-validate`. It separates a control-node problem from an
+inventory problem from a target problem, and every failure names its fix. Two of
+the four things it catches were found by pointing this repository at a Windows
+host and watching it fail on the control node rather than the target.
+
+It also reports **which identity actually authenticated** — see the credential
+note above. Record that with the run.
+
+### Step 2 — collect and reconcile
+
+```bash
+make lab-validate LAB_SALT="$(vault-read cca/lab/salt)" \
+  LAB_EXTRA='-e ansible_user=LAB\\svc-cca -e ansible_password=...'
 ```
 
 That runs the **real** `playbooks/collect.yml` — not a parallel lab playbook.
@@ -95,3 +126,41 @@ AST.
 Only the two FAIL rows are failures. Everything else needs a person, and saying
 so is deliberate: a guard that cried wolf on every difference would be switched
 off within a week, and a guard that is switched off is worse than none.
+
+## Troubleshooting
+
+Every message below was **reproduced** by running this repository, not written
+from memory. Match on the text you see.
+
+| What you get | What it means | Fix |
+|---|---|---|
+| `"winrm or requests is not installed: No module named 'winrm'"` | `pywinrm` is missing from the control node. It was absent from `requirements.txt` until PR 23 while both EE images carried it, so AAP worked and local `ansible-playbook` could not reach Windows at all | `pip install -r requirements.txt` |
+| `"WinRM Kerberos authentication requested but the python kerberos library is not installed"` | Kerberos needs `pywinrm[kerberos]` (a compiler and krb5 headers), krb5 client tools on `PATH`, `/etc/krb5.conf` and a current ticket. None is installed by `make bootstrap` | Use `ansible_winrm_transport: ntlm` for a first test, or install all four |
+| `"ntlm: auth method ntlm requires a username"` | No credential was supplied | `-e ansible_user=DOMAIN\\account -e ansible_password=...` at run time. Never in inventory |
+| `"ntlm: ('Connection aborted.', ConnectionResetError(104, ...))"` or a DNS resolution error | Nothing is listening, the name does not resolve, or a firewall is in the way. **No credential has been offered yet** — this is a network result, not an auth one | On the host: `Enable-PSRemoting -Force`, then `winrm enumerate winrm/config/listener` |
+| `"fact_bundle_redaction_salt is unset or still the shipped default"` | The role refuses to start rather than hash identifiers under a known salt (ADR 0016) | `-e fact_bundle_redaction_salt=...` from a vault |
+| An `SSLError` that does not mention certificates | A self-signed certificate on 5986 | `ansible_winrm_server_cert_validation: ignore`, or use NTLM on 5985 |
+
+`make lab-preflight` produces a specific message for each of the first five
+before anything is collected, which is the reason it exists.
+
+## What to expect on a domain controller
+
+**Roughly three of five collectors return data and two return nothing**, and
+several controls come back `unassessed`. That is the correct result, not a
+fault — Office is not installed on a DC, and browser policy keys do not exist
+until an Edge GPO is applied. `make lab-diff` reports those as **unmet floors**
+declared in advance in [`floors.yml`](floors.yml), precisely so "nothing was
+learned" cannot be mistaken for "the estate is compliant".
+
+[`experiment-sheet.md`](experiment-sheet.md) records per collector, before any
+run, what is and is not promotable.
+
+**The honest residual risk:** no Windows collector has ever executed against
+Windows. The output-contract fix in
+[ADR 0017](../adr/0017-the-collector-output-contract.md) is reasoned from
+`win_powershell.ps1:528-531` and unit-tested on the wire form, never run. If
+something breaks after preflight passes, the likeliest cause is a
+`ConvertTo-Json -Depth` value (the collectors use 3–8) being too shallow for
+real estate data. The facts will carry a `collection_error` in `meta` rather
+than silently reading as empty.

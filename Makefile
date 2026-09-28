@@ -151,6 +151,14 @@ ee-build: ## Build an execution environment image (EE=ee-current|ee-legacy)
 	  -c $(OUT)/ee-context-$(EE) --build-arg PYCMD=$(EE_PYCMD) \
 	  --container-runtime $(EE_RUNTIME) -v 2
 
+lab-preflight: ## Check the control node, inventory and target BEFORE collecting (LAB_SALT=, LAB_EXTRA=)
+	@test -n "$(LAB_SALT)" || { echo "LAB_SALT is required -- see docs/lab/README.md"; exit 1; }
+	@test -f "$(LAB_INV)" || { echo "$(LAB_INV) not found; copy inventory/lab.yml.example"; exit 1; }
+	# Run this FIRST. It separates a control-node problem from an inventory
+	# problem from a target problem, and reports which identity authenticated.
+	$(BIN)ansible-playbook -i $(LAB_INV) playbooks/preflight.yml \
+	  -e fact_bundle_redaction_salt=$(LAB_SALT) $(LAB_EXTRA)
+
 lab-validate: ## Run the REAL collect playbook against the lab inventory (LAB_SALT=, LAB_INV=)
 	@test -n "$(LAB_SALT)" || { echo "LAB_SALT is required -- see docs/lab/README.md"; exit 1; }
 	@test -f "$(LAB_INV)" || { echo "$(LAB_INV) not found; copy inventory/lab.yml.example"; exit 1; }

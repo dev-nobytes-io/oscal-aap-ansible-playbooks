@@ -19,6 +19,23 @@
 # line is a deliberate, documented capability -- not technical debt.
 ansible-core==2.19.13
 
+# Windows transport. ansible.windows over WinRM needs these on the CONTROL NODE,
+# and their absence is silent until the first Windows host is contacted:
+#
+#   fatal: [host]: FAILED! => "winrm or requests is not installed: No module named 'winrm'"
+#
+# Both execution environment images already carry them
+# (aap/execution-environment/*/requirements.txt), so AAP and AWX worked while the
+# documented `ansible-playbook` path could not talk to Windows at all.
+#
+# Pure wheels, deliberately: the README's from-scratch install states that no
+# compiler or development headers are needed, and that was verified by clean-clone
+# install. `pywinrm[kerberos]` is NOT pinned here because pykerberos requires a
+# compiler and krb5 headers -- Kerberos is opt-in, with its prerequisites named in
+# docs/lab/README.md.
+pywinrm>=0.4.3
+requests>=2.32.2
+
 # Linting / static analysis
 ansible-lint==26.8.0
 ruff==0.16.8
