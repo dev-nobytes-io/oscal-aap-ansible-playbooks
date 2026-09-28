@@ -353,12 +353,14 @@ content, gradually.
 | 15 | Active Directory privileged access — one attestation, five documented refusals | merged |
 | 16 | Redaction is applied, not merely declared | merged |
 | 17 | Web browser hardening — and three traps in it | merged |
-| 18 | The Windows collection path has never worked — output contract + guards that fail closed | **this PR** |
-| 19 | Redaction reaches identifiers inside lists | planned |
-| 20 | Three-way fact-key reconciliation — declared, emitted, consumed | planned |
-| 21 | Lab validation harness + a derived verification axis | planned |
-| 22 | Fact store — unblocks the 12 temporal ML1 controls | planned |
-| 23+ | CyberArk, ADCS, ADFS, Keycloak, Exchange, NetApp, Splunk, Change Auditor, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
+| 18 | The Windows collection path has never worked — output contract + guards that fail closed | merged |
+| 19 | Redaction reaches identifiers inside lists | merged |
+| 20 | Three-way fact-key reconciliation — declared, emitted, consumed | merged |
+| 21 | A from-scratch installation guide, verified by running it | open |
+| 22 | Lab validation harness — shape digest + three-way reconciliation | **this PR** |
+| 23 | Derived verification axis — recorded from an attestation, never declared | planned |
+| 24 | Fact store — unblocks the 12 temporal ML1 controls | planned |
+| 25+ | CyberArk, ADCS, ADFS, Keycloak, Exchange, NetApp, Splunk, Change Auditor, VMware, Proxmox, XCP-ng, containers, network, cloud | planned |
 | then | Obligation layer — PSPF, APPs, SOCI/CIRMP | planned |
 | last | Remediation scaffolding — opt-in, separated | planned |
 

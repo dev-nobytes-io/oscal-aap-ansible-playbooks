@@ -31,3 +31,4 @@ audit evidence.
 | [0017](0017-the-collector-output-contract.md) | Parse what `win_powershell` returns, and make the guards fail closed | Accepted |
 | [0018](0018-redaction-must-reach-identifiers-inside-lists.md) | Redaction must reach identifiers inside lists | Accepted |
 | [0019](0019-fact-keys-must-be-declared-emitted-and-consumed.md) | Fact keys must be declared, emitted and consumed | Accepted |
+| [0020](0020-lab-validation-is-a-shape-digest-and-a-three-way-diff.md) | Lab validation is a shape digest and a three-way reconciliation | Accepted |
