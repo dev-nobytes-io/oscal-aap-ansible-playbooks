@@ -60,22 +60,39 @@
       # Cheapest honest check that `make deps` has been run: if the collection
       # is missing, this fails naming it, instead of a later task failing with
       # "couldn't resolve module/action".
+      #
+      # ansible-doc resolves collections exactly as ansible-playbook does: from
+      # the checkout's ansible.cfg (collections_path = ./collections) when run
+      # from the repo root, and from the job environment inside an AAP/AWX
+      # execution environment, where the collection lives in the image. The
+      # previous check imported ansible_collections.ansible.windows with
+      # PYTHONPATH pinned to ./collections, so it failed in every execution
+      # environment even though the collection was present and collect.yml ran
+      # (found running preflight in AWX, 2026-09-28).
+      #
+      # ansible-doc exits 0 even when the plugin is NOT found (it only warns),
+      # so the return code proves nothing. --json prints the module's
+      # documentation keyed by its name when it resolves, and `{}` when it
+      # does not; the assert below reads that.
       ansible.builtin.command:
         argv:
           - "{{ cca_preflight_python }}"
-          - "-c"
-          - >-
-            import importlib.util, sys;
-            sys.exit(0 if importlib.util.find_spec('ansible_collections.ansible.windows') else 1)
+          - -m
+          - ansible.cli.doc
+          - --json
+          - --type
+          - module
+          - ansible.windows.win_ping
+        chdir: "{{ playbook_dir }}/.."
       register: cca_preflight_collection
       changed_when: false
       failed_when: false
-      environment:
-        PYTHONPATH: "{{ playbook_dir }}/../collections"
 
     - name: Report a missing ansible.windows collection
       ansible.builtin.assert:
-        that: cca_preflight_collection.rc == 0
+        that: >-
+          cca_preflight_collection.stdout is match('\s*\{')
+          and 'ansible.windows.win_ping' in (cca_preflight_collection.stdout | from_json)
         fail_msg: >-
           the ansible.windows collection is not installed. Fix: `make deps`.
           Air-gapped? See the air-gapped section of README.md -- and note the
